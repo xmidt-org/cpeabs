@@ -79,6 +79,8 @@ jobs:
       - name: Upload Codecov.io
         uses: codecov/codecov-action@v2
         with:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          flags: unittests
           directory: .
           files: build/meson-logs/coverage.xml
           fail_ci_if_error: true
