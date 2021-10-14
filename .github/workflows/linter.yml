@@ -1,4 +1,7 @@
-name: Run clang-format Linter
+# SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC
+# SPDX-License-Identifier: Apache-2.0
+
+name: Clang-format Lint Check
 
 on:
   pull_request:
