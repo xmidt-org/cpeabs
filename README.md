@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 -->
 # cpeabs
 
-ADD
+An abstraction layer for consumer preference equipment systems.
 
 [![Build Status](https://github.com/xmidt-org/cpeabs/workflows/CI/badge.svg)](https://github.com/xmidt-org/cpeabs/actions)
 [![codecov.io](https://codecov.io/gh/xmidt-org/cpeabs/branch/main/graph/badge.svg?token=D267HYdfCD)](https://codecov.io/gh/xmidt-org/cpeabs)
@@ -12,6 +12,8 @@ ADD
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=xmidt-org_cpeabs&metric=alert_status)](https://sonarcloud.io/dashboard?id=xmidt-org_cpeabs)
 [![Language Grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/xmidt-org/cpeabs.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/xmidt-org/cpeabs/context:cpp)
 [![GitHub release](https://img.shields.io/github/release/xmidt-org/cpeabs.svg)](CHANGELOG.md)
+
+## Add more information here.
 
 # Building and Testing Instructions
 
