@@ -35,5 +35,5 @@
 /*----------------------------------------------------------------------------*/
 void do_something()
 {
-    printf("I do something.\n");
+    printf("I do something well.\n");
 }
