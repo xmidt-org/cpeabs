@@ -15,11 +15,69 @@ if not meson.is_subproject()
     werror = true
 endif
 
+prefix = get_option('prefix')
+
+################################################################################
+# Dependencies
+################################################################################
+
+#rtMessage
+rtMessagecmake  = import('cmake')
+
+rtMessage_proj = rtMessagecmake.subproject('rtMessage')
+
+librtMessage_dep = rtMessage_proj.dependency('rtMessage')
+
+#rbus-core
+rbuscorecmake  = import('cmake')
+
+rbuscore_opts = rbuscorecmake.subproject_options()
+
+rbuscore_opts.add_cmake_defines({'BUILD_FOR_DESKTOP': true, 'CMAKE_INSTALL_PREFIX': prefix+'/include'})
+
+rbuscore_proj = rbuscorecmake.subproject('rbus-core', options: rbuscore_opts)
+
+librbuscore_dep = rbuscore_proj.dependency('rbus-core')
+
+message(prefix+'/include')
+
+#rbus
+
+
+#rbuscmake  = import('cmake')
+
+#rbus_opts = rbuscmake.subproject_options()
+
+#rbus_opts.add_cmake_defines({'BUILD_FOR_DESKTOP': true, 'CMAKE_INSTALL_PREFIX': prefix+'/include'})
+
+#rbus_proj = rbuscmake.subproject('rbus', options: rbus_opts)
+
+#librbus_dep = rbus_proj.dependency('rbus')
+
+all_dep = [librtMessage_dep, librbuscore_dep]#, librbus_dep]
+
+#wdmp-c dependencies
+
+#wdmpcmake = import('cmake')
+
+#wdmp_opts = wdmpcmake.subproject_options()
+
+#wdmp_opts.add_cmake_defines({'CMAKE_POSITION_INDEPENDENT_CODE': true})
+
+#wdmp_proj = wdmpcmake.subproject('wdmp', options: wdmp_opts)
+
+#libwdmp_dep = wdmp_proj.dependency('wdmp-c')
+
+#cjson dependencies
+#libcjson_dep = dependency('libcjson', version: '>=1.7.14', fallback: ['cjson'])
+
+#all_dep = [libcjson_dep, libwdmp_dep]
+
 ################################################################################
 # Common variable definitions
 ################################################################################
 
-inc_base = 'include/'+meson.project_name()
+inc_base = ['include/'+meson.project_name()]
 
 ################################################################################
 # Generate the version header file
@@ -35,12 +93,20 @@ install_headers([headers, ver_h], subdir: meson.project_name())
 
 inc = include_directories(inc_base)
 
+src_args = ['-lcjson']
 sources = ['src/common.c']
 
 libcpeabs = library(meson.project_name(),
                     sources,
                     include_directories: inc,
                     install: true)
+
+executable(meson.project_name(),
+                    sources,
+                    include_directories: inc,
+                    dependencies: all_dep,
+                    install: true,
+                    link_args: src_args)
 
 ################################################################################
 # Define the tests
