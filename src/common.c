@@ -8,6 +8,7 @@
 #include <cpeabs.h>
 //#include "../../subprojects/wdmp/src/wdmp-c.h"
 #include <rbus/rbus.h>
+#include <rtMessageHeader.h>
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/

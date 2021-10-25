@@ -20,12 +20,22 @@ prefix = get_option('prefix')
 ################################################################################
 # Dependencies
 ################################################################################
+#cjson
+libcjson_dep         = dependency('libcjson',      version: '>=1.7.14', fallback: ['cjson'])
 
 #rtMessage
 rtMessagecmake  = import('cmake')
 
-rtMessage_proj = rtMessagecmake.subproject('rtMessage')
+rtMessage_opts = rtMessagecmake.subproject_options()
+rtMessage_opts.add_cmake_defines({ #'BUILD_FOR_DESKTOP': true,
+                                   'CMAKE_C_FLAGS': '-std=c99 -D_GNU_SOURCE=1',
+                                   'CMAKE_CXX_FLAGS': '-std=c99 -D_GNU_SOURCE=1',
+                                   'BUILD_RTMESSAGE_SAMPLE_APP': true,
+                                   'BUILD_RTMESSAGE_LIB': true,
+                                   'BUILD_DATAPROVIDER_LIB': false,
+                                   })
 
+rtMessage_proj = rtMessagecmake.subproject('rtMessage', options: rtMessage_opts)
 librtMessage_dep = rtMessage_proj.dependency('rtMessage')
 
 #rbus-core
@@ -33,7 +43,11 @@ rbuscorecmake  = import('cmake')
 
 rbuscore_opts = rbuscorecmake.subproject_options()
 
-rbuscore_opts.add_cmake_defines({'BUILD_FOR_DESKTOP': true, 'CMAKE_INSTALL_PREFIX': prefix+'/include'})
+rbuscore_opts.add_cmake_defines({ #'BUILD_FOR_DESKTOP': true,
+                                  #'CMAKE_INSTALL_PREFIX': prefix+'/include',
+                                  'RTMESSAGE_INCLUDE_DIRS': 'subprojects/rtMessage',
+                                  'RTMESSAGE_LIBRARIES': 'subprojects/rtMessage',
+                                  })
 
 rbuscore_proj = rbuscorecmake.subproject('rbus-core', options: rbuscore_opts)
 
@@ -44,17 +58,22 @@ message(prefix+'/include')
 #rbus
 
 
-#rbuscmake  = import('cmake')
+rbuscmake  = import('cmake')
 
-#rbus_opts = rbuscmake.subproject_options()
+rbus_opts = rbuscmake.subproject_options()
 
-#rbus_opts.add_cmake_defines({'BUILD_FOR_DESKTOP': true, 'CMAKE_INSTALL_PREFIX': prefix+'/include'})
+rbus_opts.add_cmake_defines({'BUILD_FOR_DESKTOP': true,
+                             'RTMESSAGE_INCLUDE_DIRS': 'subprojects/rtMessage',
+                             'RTMESSAGE_LIBRARIES': 'subprojects/rtMessage',
+                             'RBUSCORE_INCLUDE_DIRS': 'subprojects/rbus-core',
+                             'RBUSCORE_LIBRARIES':'subprojects/rbus-core'
+                             })
 
-#rbus_proj = rbuscmake.subproject('rbus', options: rbus_opts)
+rbus_proj = rbuscmake.subproject('rbus', options: rbus_opts)
 
-#librbus_dep = rbus_proj.dependency('rbus')
+librbus_dep = rbus_proj.dependency('rbus')
 
-all_dep = [librtMessage_dep, librbuscore_dep]#, librbus_dep]
+all_dep = [libcjson_dep, librtMessage_dep, librbuscore_dep, librbus_dep]
 
 #wdmp-c dependencies
 
@@ -77,7 +96,7 @@ all_dep = [librtMessage_dep, librbuscore_dep]#, librbus_dep]
 # Common variable definitions
 ################################################################################
 
-inc_base = ['include/'+meson.project_name()]
+inc_base = ['include/'+meson.project_name()]#, 'subprojects/rtMessage', 'subprojects/rbus-core', 'subprojects/rbus']
 
 ################################################################################
 # Generate the version header file
@@ -85,28 +104,30 @@ inc_base = ['include/'+meson.project_name()]
 
 subdir('include/'+meson.project_name())
 
-install_headers([headers, ver_h], subdir: meson.project_name())
+install_headers(['include/'+meson.project_name()+'/cpeabs.h', ver_h], subdir: meson.project_name())
 
 ################################################################################
 # Define the libraries
 ################################################################################
 
-inc = include_directories(inc_base)
+inc = include_directories([inc_base])
 
-src_args = ['-lcjson']
+src_args = ['-lcjson', '-lpthread']
 sources = ['src/common.c']
 
 libcpeabs = library(meson.project_name(),
                     sources,
                     include_directories: inc,
-                    install: true)
-
-executable(meson.project_name(),
-                    sources,
-                    include_directories: inc,
                     dependencies: all_dep,
                     install: true,
                     link_args: src_args)
+
+#executable(meson.project_name(),
+ #                   sources,
+  #                  include_directories: inc,
+                   # dependencies: all_dep,
+   #                 install: true,
+    #                link_args: src_args)
 
 ################################################################################
 # Define the tests

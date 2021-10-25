@@ -7,4 +7,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <rtRetainable.h>
+
 #endif
