@@ -5,6 +5,7 @@
 
 project('cpeabs', 'c',
         version: '0.0.0',
+        meson_version: '>=0.53',
         license: ['Apache-2.0'],
         default_options: ['c_std=c99',
                           'b_coverage=true'])
@@ -20,11 +21,22 @@ prefix = get_option('prefix')
 ################################################################################
 # Dependencies
 ################################################################################
-#cjson
+
+if meson.version().version_compare('>=0.54.0')
 libcjson_dep     = dependency('libcjson',      version: '>=1.7.14', fallback: ['cjson'])
 librtMessage_dep = dependency('librtMessage')
 librbuscore_dep  = dependency('librbuscore')
 librbus_dep      = dependency('librbus')
+else
+warning('You are running an older version of meson.')
+warning('In order for dependency management to be supported you need a newer version of meson (0.54+)')
+# For older versions of meson, you need to have the upstream dependencies installed
+# in the correct locations.
+libcjson_dep     = dependency('libcjson')
+librtMessage_dep = dependency('librtMessage')
+librbuscore_dep  = dependency('librbuscore')
+librbus_dep      = dependency('librbus')
+endif
 
 all_dep = [libcjson_dep, librtMessage_dep, librbuscore_dep, librbus_dep]
 
