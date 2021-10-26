@@ -3,6 +3,7 @@ directory = rbus
 
 url = https://github.com/rdkcmf/rbus.git
 revision = rdk-next
+patch_filename = rbus.tar.gz
 
 [provide]
 librbus = librbus_dep

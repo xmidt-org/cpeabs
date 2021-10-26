@@ -41,10 +41,11 @@ librtMessage = library('rtMessage',
                     'local_benchmarking.c'],
                    c_args:   ['-D_GNU_SOURCE', '-D_POSIX_C_SOURCE=199309L'],
                    cpp_args: ['-D_GNU_SOURCE', '-D_POSIX_C_SOURCE=199309L'],
-                   dependencies: [ libcjson_dep ],
+                   dependencies: [ libcjson_dep, thread_dep ],
                    install: true)
 
-librtMessage_dep = declare_dependency(include_directories: ['include-workaround-meson'],
+librtMessage_dep = declare_dependency(include_directories: ['include-workaround-meson',
+                                                            'include-workaround-meson/rtmessage'],
                                   link_with: librtMessage)
 
 if meson.version().version_compare('>=0.54.0')

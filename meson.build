@@ -21,8 +21,10 @@ prefix = get_option('prefix')
 # Dependencies
 ################################################################################
 #cjson
-libcjson_dep         = dependency('libcjson',      version: '>=1.7.14', fallback: ['cjson'])
-librtMessage_dep     = dependency('librtMessage')
+libcjson_dep     = dependency('libcjson',      version: '>=1.7.14', fallback: ['cjson'])
+librtMessage_dep = dependency('librtMessage')
+librbuscore_dep  = dependency('librbuscore')
+librbus_dep      = dependency('librbus')
 
 all_dep = [libcjson_dep, librtMessage_dep, librbuscore_dep, librbus_dep]
 
