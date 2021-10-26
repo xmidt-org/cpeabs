@@ -15,6 +15,16 @@ if not meson.is_subproject()
     werror = true
 endif
 
+script = join_paths(meson.source_root(), 'workaround.sh')
+
+r = run_command('/bin/sh', script)
+if r.returncode() != 0
+  message('script failed')
+endif
+
+output = r.stdout().strip()
+errortxt = r.stderr().strip()
+
 prefix = get_option('prefix')
 
 ################################################################################
@@ -70,12 +80,12 @@ libcpeabs = library(meson.project_name(),
                     install: true,
                     link_args: src_args)
 
-#executable(meson.project_name(),
- #                   sources,
-  #                  include_directories: inc,
-                   # dependencies: all_dep,
-   #                 install: true,
-    #                link_args: src_args)
+executable(meson.project_name(),
+                    sources,
+                    include_directories: inc,
+                    dependencies: all_dep,
+                    install: true,
+                    link_args: src_args)
 
 ################################################################################
 # Define the tests
