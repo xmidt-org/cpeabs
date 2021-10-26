@@ -1,8 +1,0 @@
-[wrap-git]
-directory = rbus-core 
-
-url = https://github.com/rdkcmf/rbuscore
-revision = rdk-next
-
-[provide]
-librbus-core = librbus-core_dep

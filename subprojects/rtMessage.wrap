@@ -3,6 +3,7 @@ directory = rtMessage
 
 url = https://github.com/rdkcmf/rdk-rtmessage.git
 revision = rdk-next
+patch_filename = rtMessage.tar.gz
 
 [provide]
 librtMessage = librtMessage_dep

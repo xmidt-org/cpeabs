@@ -21,57 +21,10 @@ prefix = get_option('prefix')
 # Dependencies
 ################################################################################
 #cjson
-libcjson_dep         = dependency('libcjson',      version: '>=1.7.14', fallback: ['cjson'])
-
-#rtMessage
-rtMessagecmake  = import('cmake')
-
-rtMessage_opts = rtMessagecmake.subproject_options()
-rtMessage_opts.add_cmake_defines({ #'BUILD_FOR_DESKTOP': true,
-                                   'CMAKE_C_FLAGS': '-std=c99 -D_GNU_SOURCE=1',
-                                   'CMAKE_CXX_FLAGS': '-std=c99 -D_GNU_SOURCE=1',
-                                   'BUILD_RTMESSAGE_SAMPLE_APP': true,
-                                   'BUILD_RTMESSAGE_LIB': true,
-                                   'BUILD_DATAPROVIDER_LIB': false,
-                                   })
-
-rtMessage_proj = rtMessagecmake.subproject('rtMessage', options: rtMessage_opts)
-librtMessage_dep = rtMessage_proj.dependency('rtMessage')
-
-#rbus-core
-rbuscorecmake  = import('cmake')
-
-rbuscore_opts = rbuscorecmake.subproject_options()
-
-rbuscore_opts.add_cmake_defines({ #'BUILD_FOR_DESKTOP': true,
-                                  #'CMAKE_INSTALL_PREFIX': prefix+'/include',
-                                  'RTMESSAGE_INCLUDE_DIRS': 'subprojects/rtMessage',
-                                  'RTMESSAGE_LIBRARIES': 'subprojects/rtMessage',
-                                  })
-
-rbuscore_proj = rbuscorecmake.subproject('rbus-core', options: rbuscore_opts)
-
-librbuscore_dep = rbuscore_proj.dependency('rbus-core')
-
-message(prefix+'/include')
-
-#rbus
-
-
-rbuscmake  = import('cmake')
-
-rbus_opts = rbuscmake.subproject_options()
-
-rbus_opts.add_cmake_defines({'BUILD_FOR_DESKTOP': true,
-                             'RTMESSAGE_INCLUDE_DIRS': 'subprojects/rtMessage',
-                             'RTMESSAGE_LIBRARIES': 'subprojects/rtMessage',
-                             'RBUSCORE_INCLUDE_DIRS': 'subprojects/rbus-core',
-                             'RBUSCORE_LIBRARIES':'subprojects/rbus-core'
-                             })
-
-rbus_proj = rbuscmake.subproject('rbus', options: rbus_opts)
-
-librbus_dep = rbus_proj.dependency('rbus')
+libcjson_dep     = dependency('libcjson',      version: '>=1.7.14', fallback: ['cjson'])
+librtMessage_dep = dependency('librtMessage')
+librbuscore_dep  = dependency('librbuscore')
+librbus_dep      = dependency('librbus')
 
 all_dep = [libcjson_dep, librtMessage_dep, librbuscore_dep, librbus_dep]
 
@@ -86,11 +39,6 @@ all_dep = [libcjson_dep, librtMessage_dep, librbuscore_dep, librbus_dep]
 #wdmp_proj = wdmpcmake.subproject('wdmp', options: wdmp_opts)
 
 #libwdmp_dep = wdmp_proj.dependency('wdmp-c')
-
-#cjson dependencies
-#libcjson_dep = dependency('libcjson', version: '>=1.7.14', fallback: ['cjson'])
-
-#all_dep = [libcjson_dep, libwdmp_dep]
 
 ################################################################################
 # Common variable definitions

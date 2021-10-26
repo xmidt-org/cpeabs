@@ -1,0 +1,9 @@
+[wrap-git]
+directory = rbuscore 
+
+url = https://github.com/rdkcmf/rbuscore
+revision = rdk-next
+patch_filename = rbuscore.tar.gz
+
+[provide]
+librbuscore = librbuscore_dep
