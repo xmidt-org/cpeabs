@@ -8,6 +8,5 @@
 #include <stdint.h>
 
 /* Don't do this ... you loose the portability you are after. */
-#include <rtmessage/rtRetainable.h>
 
 #endif

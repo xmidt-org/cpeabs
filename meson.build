@@ -43,12 +43,12 @@ warning('In order for dependency management to be supported you need a newer ver
 # For older versions of meson, you need to have the upstream dependencies installed
 # in the correct locations.
 libcjson_dep     = dependency('libcjson')
-librtMessage_dep = dependency('librtMessage')
-librbuscore_dep  = dependency('librbuscore')
-librbus_dep      = dependency('librbus')
+#librtMessage_dep = dependency('rtMessage')
+#librbuscore_dep  = dependency('rbus-core')
+#librbus_dep      = dependency('rbus')
 endif
 
-all_dep = [libcjson_dep, librtMessage_dep, librbuscore_dep, librbus_dep]
+all_dep = [libcjson_dep]#, librbuscore_dep, librbus_dep]
 
 #wdmp-c dependencies
 
@@ -106,7 +106,7 @@ executable(meson.project_name(),
 if not meson.is_subproject()
     test_args = ['-fprofile-arcs', '-ftest-coverage', '-O0']
 
-    cunit_dep = dependency('cunit')
+  #  cunit_dep = dependency('cunit')
 
     tests = [
               ['test common', 'test_common'],
@@ -116,7 +116,7 @@ if not meson.is_subproject()
       test(test[0],
            executable(test[1], ['tests/'+test[1]+'.c'],
                       include_directories: inc,
-                      dependencies: cunit_dep,
+                     # dependencies: cunit_dep,
                       install: false,
                       link_args: test_args,
                       link_with: libcpeabs))
