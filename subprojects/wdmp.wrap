@@ -1,8 +1,0 @@
-[wrap-git]
-directory = wdmp
-
-url = https://github.com/xmidt-org/wdmp-c.git
-revision = dd95994163333dc997a2620ee482ed99c35d1d3c
-
-[provide]
-libwdmp = libwdmp_dep

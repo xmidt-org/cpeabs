@@ -1,12 +1,7 @@
-/* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
-/* SPDX-License-Identifier: Apache-2.0 */
-
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <cpeabs.h>
-//#include "../../subprojects/wdmp/src/wdmp-c.h"
 #include <rbus/rbus.h>
 #include <rbus/rbus_value.h>
 #include <rtMessageHeader.h>
@@ -37,7 +32,7 @@ void do_something();
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
-int main()
+int cpeabs()
 {
   /* req_struct *req = NULL;
    req = (req_struct *) malloc (sizeof(req_struct)); 

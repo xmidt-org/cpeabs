@@ -18,11 +18,11 @@ An abstraction layer for consumer preference equipment systems.
 # Building and Testing Instructions
 
 ```
-./workaround.sh
-meson build
+mkdir build
 cd build
-ninja all test coverage
-firefox meson-logs/coveragereport/index.html
+cmake ..
+make
+make test
 ```
 
 The `workaround.sh` script makes it so we don't need to add the rbus stuff to the
