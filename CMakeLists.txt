@@ -43,24 +43,9 @@ include_directories(${INCLUDE_DIR}
                     ${INCLUDE_DIR}/rbus
 		    ${INCLUDE_DIR}/rbus-core
 		    ${INCLUDE_DIR}/rtmessage
-		    #${INCLUDE_DIR}/trower-base64
-		    #${INCLUDE_DIR}/wdmp-c
-		    #${INCLUDE_DIR}/cimplog
-			#${INCLUDE_DIR}/wrp-c
-#                    ${INCLUDE_DIR}/curl
+		    ${INCLUDE_DIR}/wdmp-c
+		    ${INCLUDE_DIR}/cimplog
                     )
-#if (FEATURE_SUPPORT_AKER)
-#include_directories(${INCLUDE_DIR}/nanomsg
-#		    ${INCLUDE_DIR}/libparodus
-#)
-#endif (FEATURE_SUPPORT_AKER)
-
-#if (WEBCONFIG_BIN_SUPPORT)
-#include_directories(${INCLUDE_DIR}/rbus
-#		    ${INCLUDE_DIR}/rbus-core
-#		    ${INCLUDE_DIR}/rtmessage
-#)
-#endif (WEBCONFIG_BIN_SUPPORT)
 
 if (NOT BUILD_YOCTO)
 
@@ -78,6 +63,17 @@ ExternalProject_Add(msgpack
 add_library(libmsgpack STATIC SHARED IMPORTED)
 add_dependencies(libmsgpack msgpack)
 
+# cimplog external dependency
+#-------------------------------------------------------------------------------
+ExternalProject_Add(cimplog
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/_prefix/cimplog
+    GIT_REPOSITORY https://github.com/Comcast/cimplog.git
+    GIT_TAG "1.0.2"
+    CMAKE_ARGS += -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
+)
+add_library(libcimplog STATIC SHARED IMPORTED)
+add_dependencies(libcimplog cimplog)
+
 # cJSON external dependency
 #-------------------------------------------------------------------------------
 ExternalProject_Add(cJSON
@@ -88,6 +84,18 @@ ExternalProject_Add(cJSON
 )
 add_library(libcJSON STATIC IMPORTED)
 add_dependencies(libcJSON cJSON)
+
+# wdmp-c external dependency
+#-------------------------------------------------------------------------------
+ExternalProject_Add(wdmp-c
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/_prefix/wdmp-c
+    GIT_REPOSITORY https://github.com/Comcast/wdmp-c.git
+    GIT_TAG "796dddbcfa7686ec63536d950775e79b52ee5c3f"
+    CMAKE_ARGS += -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
+                  -DBUILD_TESTING=OFF
+)
+add_library(libwdmp-c STATIC SHARED IMPORTED)
+add_dependencies(libwdmp-c wdmp-c)
 
 # rtMessage external dependency
 #-------------------------------------------------------------------------------

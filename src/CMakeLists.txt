@@ -13,8 +13,8 @@
 #   limitations under the License.
 
 set(PROJ_CPEABS cpeabs)
-set(HEADERS common.h)
-set(SOURCES common.c)
+set(HEADERS webcfg_util.h)
+set(SOURCES webcfg_util.c)
 
 #Support webcfg lib for backward compatibility
 add_library(${PROJ_CPEABS} STATIC ${HEADERS} ${SOURCES})

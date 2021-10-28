@@ -25,15 +25,15 @@ link_directories ( ${LIBRARY_DIR} )
 #-------------------------------------------------------------------------------
 #   test_common
 #-------------------------------------------------------------------------------
-add_test(NAME test_common COMMAND ${MEMORY_CHECK} ./test_common)
+add_test(NAME test_webcfgutil COMMAND ${MEMORY_CHECK} ./test_webcfgutil)
 
-set(SOURCES test_common.c ../src/common.c )
+set(SOURCES test_webcfgutil.c ../src/webcfg_util.c )
 
-add_executable(test_common ${SOURCES})
+add_executable(test_webcfgutil ${SOURCES})
 
-target_link_libraries (test_common -lcunit -lmsgpackc -lpthread -lrbus -lrbus-core -lrtMessage)
+target_link_libraries (test_webcfgutil -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus -lrbus-core)
 
-target_link_libraries (test_common gcov -Wl,--no-as-needed )
+target_link_libraries (test_webcfgutil gcov -Wl,--no-as-needed )
 
 
 # Code coverage
