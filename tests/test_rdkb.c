@@ -18,7 +18,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "../src/webcfg_util.h"
+#include "../include/cpeabs.h"
 
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */

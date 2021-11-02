@@ -23,7 +23,7 @@
 #include <rbus/rbus_value.h>
 #include <rbus-core/rbus_core.h>
 #include <rbus-core/rbus_session_mgr.h>
-#include "webcfg_util.h"
+#include "../../include/cpeabs.h"
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/

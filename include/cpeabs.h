@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __WEBCFGUTIL_H__
-#define __WEBCFGUTIL_H__
+#ifndef __CPEABS_H__
+#define __CPEABS_H__
 
 #include <stdint.h>
+
+#ifdef WEBCONFIG_BIN_SUPPORT
+
 #include <wdmp-c.h>
 #include <cimplog.h>
 #include <rbus/rbus.h>
@@ -25,18 +28,25 @@
 #include <rbus/rbus_value.h>
 #include <rbus-core/rbus_core.h>
 #include <rbus-core/rbus_session_mgr.h>
+
+#endif
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
+
+#ifdef WEBCONFIG_BIN_SUPPORT
+
 #define DEST_COMP_ID_PSM   "com.cisco.spvtg.ccsp.psm"
 #define WEB_FREE(__x__) if(__x__ != NULL) { free((void*)(__x__)); __x__ = NULL;} else {printf("Trying to free null pointer\n");}
 #define UNUSED(x) (void )(x)
 #define MAX_BUFF_SIZE 256
 
+#endif
+
 /**
  * @brief Enables or disables debug logs.
  */
-#ifdef WEBCONFIG_BIN_SUPPORT
+#if defined WEBCONFIG_BIN_SUPPORT && defined BUILD_YOCTO
 
 #define WEBCFG_LOG_MODULE                     "WEBCONFIG"
 #define WEBCFG_RDK_LOG_MODULE                 "LOG.RDK.WEBCONFIG"
@@ -63,10 +73,14 @@
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
 
+#ifdef WEBCONFIG_BIN_SUPPORT
 char * getParamValue(char *paramName);
 void getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus);
 int rbus_GetValueFromDB( char* paramName, char** paramValue);
 int rbus_StoreValueIntoDB(char *paramName, char *value);
+#else
+void do_something();
+#endif
 
 #endif
 

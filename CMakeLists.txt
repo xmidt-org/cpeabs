@@ -37,6 +37,8 @@ set(COMMON_LIBRARY_DIR ${INSTALL_DIR}/lib/${CMAKE_LIBRARY_ARCHITECTURE})
 set(TEST_RESULTS_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_results)
 file(MAKE_DIRECTORY ${TEST_RESULTS_DIR})
 
+if (WEBCONFIG_BIN_SUPPORT)
+
 include_directories(${INCLUDE_DIR}
                     ${INCLUDE_DIR}/cjson
                     ${INCLUDE_DIR}/msgpack
@@ -139,6 +141,9 @@ add_library(librbus STATIC SHARED IMPORTED)
 add_dependencies(librbus rbus)
 
 endif ()
+
+endif (WEBCONFIG_BIN_SUPPORT)
+
 link_directories ( ${LIBRARY_DIR} ${COMMON_LIBRARY_DIR} ${LIBRARY_DIR64} )
 
 add_subdirectory(src)

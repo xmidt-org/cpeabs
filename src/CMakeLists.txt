@@ -13,8 +13,22 @@
 #   limitations under the License.
 
 set(PROJ_CPEABS cpeabs)
-set(HEADERS webcfg_util.h)
-set(SOURCES webcfg_util.c)
+
+if (BUILD_YOCTO)
+add_definitions(-DBUILD_YOCTO)
+endif (BUILD_YOCTO)
+
+if (WEBCONFIG_BIN_SUPPORT)
+add_definitions(-DWEBCONFIG_BIN_SUPPORT)
+endif (WEBCONFIG_BIN_SUPPORT)
+
+set(HEADERS ../include/cpeabs.h)
+
+if (WEBCONFIG_BIN_SUPPORT)
+set(SOURCES rdkb/impl.c)
+else()
+set(SOURCES pods/impl.c)
+endif (WEBCONFIG_BIN_SUPPORT)
 
 #Support webcfg lib for backward compatibility
 add_library(${PROJ_CPEABS} STATIC ${HEADERS} ${SOURCES})

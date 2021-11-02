@@ -22,19 +22,45 @@ set (MEMORY_CHECK valgrind --leak-check=full --show-reachable=yes --track-origin
 endif ()
 
 link_directories ( ${LIBRARY_DIR} )
+
+if (BUILD_YOCTO)
+add_definitions(-DBUILD_YOCTO)
+endif (BUILD_YOCTO)
+
+if (WEBCONFIG_BIN_SUPPORT)
+add_definitions(-DWEBCONFIG_BIN_SUPPORT)
+endif (WEBCONFIG_BIN_SUPPORT)
+
+if(WEBCONFIG_BIN_SUPPORT)
 #-------------------------------------------------------------------------------
-#   test_common
+#   test_rdkb
 #-------------------------------------------------------------------------------
-add_test(NAME test_webcfgutil COMMAND ${MEMORY_CHECK} ./test_webcfgutil)
+add_test(NAME test_rdkb COMMAND ${MEMORY_CHECK} ./test_rdkb)
 
-set(SOURCES test_webcfgutil.c ../src/webcfg_util.c )
+set(SOURCES test_rdkb.c ../src/rdkb/impl.c )
 
-add_executable(test_webcfgutil ${SOURCES})
+add_executable(test_rdkb ${SOURCES})
 
-target_link_libraries (test_webcfgutil -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus -lrbus-core)
+target_link_libraries (test_rdkb -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus -lrbus-core)
 
-target_link_libraries (test_webcfgutil gcov -Wl,--no-as-needed )
+target_link_libraries (test_rdkb gcov -Wl,--no-as-needed )
 
+else()
+
+#-------------------------------------------------------------------------------
+#   test_pods
+#-------------------------------------------------------------------------------
+add_test(NAME test_pods COMMAND ${MEMORY_CHECK} ./test_pods)
+
+set(SOURCES test_pods.c ../src/pods/impl.c )
+
+add_executable(test_pods ${SOURCES})
+
+target_link_libraries (test_pods -lcunit)
+
+target_link_libraries (test_pods gcov -Wl,--no-as-needed )
+
+endif(WEBCONFIG_BIN_SUPPORT)
 
 # Code coverage
 
