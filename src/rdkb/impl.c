@@ -89,18 +89,17 @@ void macIDToLower(char macValue[],char macConverted[])
 	int j;
 	char *token[32];
 	char tmp[32];
-	cpeabStrncpy(tmp, macValue,sizeof(tmp));
+	cpeabStrncpy(tmp, macValue, sizeof(tmp));
 	token[i] = strtok(tmp, ":");
 	if(token[i]!=NULL)
 	{
-	    strncpy(macConverted, token[i],31);
-	    macConverted[31]='\0';
+	    cpeabStrncpy(macConverted, token[i], 32);
 	    i++;
 	}
 	while ((token[i] = strtok(NULL, ":")) != NULL)
 	{
-	    strncat(macConverted, token[i],31);
-	    macConverted[31]='\0';
+	    strncat(macConverted, token[i], 31);
+            macConverted[31]='\0';
 	    i++;
 	}
 	macConverted[31]='\0';
@@ -123,7 +122,7 @@ char* get_deviceMAC()
 	macID = getParamValue(DEVICE_MAC);
 	if (macID != NULL)
 	{
-	    strncpy(deviceMACValue, macID, strlen(macID)+1);
+	    cpeabStrncpy(deviceMACValue, macID, strlen(macID)+1);
 	    macIDToLower(deviceMACValue, deviceMAC);
 	    WebcfgDebug("deviceMAC: %s\n",deviceMAC);
 	    CPEABS_FREE(macID);
@@ -244,7 +243,7 @@ int Get_Webconfig_URL( char *pString)
                 {
 			if(tempUrl !=NULL)
 			{
-				strcpy(pString , tempUrl);
+				cpeabStrncpy(pString, tempUrl, strlen(tempUrl)+1);
 			}
 			WebcfgInfo("Inside cpeabs lib file\n");
 			WebcfgDebug("Get_Webconfig_URL. pString %s\n", pString);
@@ -298,7 +297,7 @@ int Get_Supplementary_URL( char *name, char *pString)
 				WebcfgDebug("Get_Supplementary_URL. retPsmGet %d tempUrl %s\n", retPsmGet, tempUrl);
 				if(tempUrl !=NULL)
 				{
-					strcpy(pString , tempUrl);
+					cpeabStrncpy(pString, tempUrl, strlen(tempUrl)+1);
 				}
 				WebcfgDebug("Get_Supplementary_URL. pString %s\n", pString);
 				CPEABS_FREE(tempParam);
@@ -367,7 +366,7 @@ char * getParamValue(char *paramName)
 
 		if (ret == WDMP_SUCCESS )
 		{
-			strncpy(paramValue, parametervalArr[0]->value,64);
+			cpeabStrncpy(paramValue, parametervalArr[0]->value,64);
 			CPEABS_FREE(parametervalArr[0]->name);
 			CPEABS_FREE(parametervalArr[0]->value);
 			CPEABS_FREE(parametervalArr[0]);
@@ -397,14 +396,14 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
 	rbusError_t errorcode = RBUS_ERROR_INVALID_INPUT;
 	rbus_error_t err = RTMESSAGE_BUS_SUCCESS;
 
-	strcpy(recordName, paramName);
+	cpeabStrncpy(recordName, paramName, strlen(paramName)+1);
 	WebcfgDebug("rbus_StoreValueIntoDB recordName is %s\n", recordName);
 
 	val[0].paramName  = recordName;
 	val[0].paramValue = value;
 	val[0].type = 0;
 
-	sprintf(psmName, "%s%s", "eRT.", DEST_COMP_ID_PSM);
+	snprintf(psmName, MAX_BUFF_SIZE, "%s%s", "eRT.", DEST_COMP_ID_PSM);
 	WebcfgDebug("rbus_StoreValueIntoDB psmName is %s\n", psmName);
 
 	rbusMessage request, response;
@@ -464,12 +463,12 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 	rbus_error_t err = RTMESSAGE_BUS_SUCCESS;
 	*paramValue = NULL;
 
-	strcpy(recordName, paramName);
+	cpeabStrncpy(recordName, paramName, strlen(paramName)+1);
 	WebcfgDebug("rbus_GetValueFromDB recordName is %s\n", recordName);
 
 	parameterNames[0] = (char*)recordName;
 
-	sprintf(psmName, "%s%s", "eRT.", DEST_COMP_ID_PSM);
+	snprintf(psmName, MAX_BUFF_SIZE, "%s%s", "eRT.", DEST_COMP_ID_PSM);
 	WebcfgDebug("rbus_GetValueFromDB psmName is %s\n", psmName);
 
 	rbusMessage request, response;

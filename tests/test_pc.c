@@ -46,7 +46,7 @@
 void test_do_something()
 {
     char * testget = getParamValue("test");
-    printf("%s\n", testget);
+    printf("testget is %s\n", testget);
 }
 
 

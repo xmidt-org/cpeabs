@@ -46,7 +46,7 @@
 char * getParamValue(char *paramName)
 {
 	UNUSED(paramName);
-	return "NULL";
+	return NULL;
 }
 
 /**
