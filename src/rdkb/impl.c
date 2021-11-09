@@ -127,7 +127,6 @@ char* get_deviceMAC()
 	    WebcfgDebug("deviceMAC: %s\n",deviceMAC);
 	    CPEABS_FREE(macID);
 	}
-	WebcfgInfo("Inside cpeabs lib file\n");
 	WebcfgDebug("deviceMAC returned from lib is %s\n", deviceMAC);
 	return deviceMAC;
 }
@@ -245,7 +244,6 @@ int Get_Webconfig_URL( char *pString)
 			{
 				cpeabStrncpy(pString, tempUrl, strlen(tempUrl)+1);
 			}
-			WebcfgInfo("Inside cpeabs lib file\n");
 			WebcfgDebug("Get_Webconfig_URL. pString %s\n", pString);
 		}
 		else
@@ -272,7 +270,6 @@ int Set_Webconfig_URL( char *pString)
         }
         else
         {
-		WebcfgInfo("Inside cpeabs lib file\n");
 		WebcfgDebug("psm_set success ret %d for parameter %s and value %s\n", retPsmSet, WEBCFG_URL_PARAM, pString);
         }
     }
@@ -293,7 +290,6 @@ int Get_Supplementary_URL( char *name, char *pString)
 			retPsmGet = rbus_GetValueFromDB( tempParam, &tempUrl);
 			if (retPsmGet == RBUS_ERROR_SUCCESS)
 			{
-				WebcfgInfo("Inside cpeabs lib file\n");
 				WebcfgDebug("Get_Supplementary_URL. retPsmGet %d tempUrl %s\n", retPsmGet, tempUrl);
 				if(tempUrl !=NULL)
 				{
@@ -333,7 +329,6 @@ int Set_Supplementary_URL( char *name, char *pString)
 			}
 			else
 			{
-				WebcfgInfo("Inside cpeabs lib file\n");
 				WebcfgDebug("psm_set success ret %d for parameter %s%s and value %s\n",retPsmSet, WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name, pString);
 			}
 		}
