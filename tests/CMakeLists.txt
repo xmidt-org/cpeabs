@@ -27,9 +27,9 @@ if (BUILD_YOCTO)
 add_definitions(-DBUILD_YOCTO)
 endif (BUILD_YOCTO)
 
-if (DEVICE_GATEWAY)
+if (PLATFORM STREQUAL "DEVICE_GATEWAY")
 add_definitions(-DDEVICE_GATEWAY)
-elseif (DEVICE_EXTENDER)
+elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
 add_definitions(-DDEVICE_EXTENDER)
 endif ()
 
