@@ -18,19 +18,25 @@ if (BUILD_YOCTO)
 add_definitions(-DBUILD_YOCTO)
 endif (BUILD_YOCTO)
 
-if (WEBCONFIG_BIN_SUPPORT)
-add_definitions(-DWEBCONFIG_BIN_SUPPORT)
-endif (WEBCONFIG_BIN_SUPPORT)
+#if (PLATFORM STREQUAL "DEVICE_GATEWAY")
+if (DEVICE_GATEWAY)
+add_definitions(-DDEVICE_GATEWAY)
+#elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
+elseif (DEVICE_EXTENDER)
+add_definitions(-DDEVICE_EXTENDER)
+endif ()
 
 set(HEADERS ../include/cpeabs.h)
 
-if (WEBCONFIG_BIN_SUPPORT)
+if (DEVICE_GATEWAY)
 set(SOURCES rdkb/impl.c)
-else()
+elseif (DEVICE_EXTENDER)
 set(SOURCES pods/impl.c)
-endif (WEBCONFIG_BIN_SUPPORT)
+else ()
+set(SOURCES pc/impl.c)
+endif ()
 
-#Support webcfg lib for backward compatibility
+#Support cpeabs lib for backward compatibility
 add_library(${PROJ_CPEABS} STATIC ${HEADERS} ${SOURCES})
 add_library(${PROJ_CPEABS}.shared SHARED ${HEADERS} ${SOURCES})
 set_target_properties(${PROJ_CPEABS}.shared PROPERTIES OUTPUT_NAME ${PROJ_CPEABS})

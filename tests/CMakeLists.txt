@@ -27,11 +27,14 @@ if (BUILD_YOCTO)
 add_definitions(-DBUILD_YOCTO)
 endif (BUILD_YOCTO)
 
-if (WEBCONFIG_BIN_SUPPORT)
-add_definitions(-DWEBCONFIG_BIN_SUPPORT)
-endif (WEBCONFIG_BIN_SUPPORT)
+if (DEVICE_GATEWAY)
+add_definitions(-DDEVICE_GATEWAY)
+elseif (DEVICE_EXTENDER)
+add_definitions(-DDEVICE_EXTENDER)
+endif ()
 
-if(WEBCONFIG_BIN_SUPPORT)
+if (PLATFORM STREQUAL "DEVICE_GATEWAY")
+
 #-------------------------------------------------------------------------------
 #   test_rdkb
 #-------------------------------------------------------------------------------
@@ -45,7 +48,8 @@ target_link_libraries (test_rdkb -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -
 
 target_link_libraries (test_rdkb gcov -Wl,--no-as-needed )
 
-else()
+
+elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
 
 #-------------------------------------------------------------------------------
 #   test_pods
@@ -60,7 +64,22 @@ target_link_libraries (test_pods -lcunit)
 
 target_link_libraries (test_pods gcov -Wl,--no-as-needed )
 
-endif(WEBCONFIG_BIN_SUPPORT)
+else()
+
+#-------------------------------------------------------------------------------
+#   test_pc
+#-------------------------------------------------------------------------------
+add_test(NAME test_pc COMMAND ${MEMORY_CHECK} ./test_pc)
+
+set(SOURCES test_pc.c ../src/pc/impl.c )
+
+add_executable(test_pc ${SOURCES})
+
+target_link_libraries (test_pc -lcunit)
+
+target_link_libraries (test_pc gcov -Wl,--no-as-needed )
+
+endif()
 
 # Code coverage
 

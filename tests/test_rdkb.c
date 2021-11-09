@@ -1,5 +1,5 @@
  /**
-  * Copyright 2019 Comcast Cable Communications Management, LLC
+  * Copyright 2021 Comcast Cable Communications Management, LLC
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "../include/cpeabs.h"
+#include "cpeabs.h"
 
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */

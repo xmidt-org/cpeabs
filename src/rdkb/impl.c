@@ -23,10 +23,11 @@
 #include <rbus/rbus_value.h>
 #include <rbus-core/rbus_core.h>
 #include <rbus-core/rbus_session_mgr.h>
-#include "../../include/cpeabs.h"
+#include "cpeabs.h"
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
+#define DEST_COMP_ID_PSM                        "com.cisco.spvtg.ccsp.psm"
 #define SERIAL_NUMBER				"Device.DeviceInfo.SerialNumber"
 #define FIRMWARE_VERSION			"Device.DeviceInfo.X_CISCO_COM_FirmwareName"
 #define DEVICE_BOOT_TIME			"Device.DeviceInfo.X_RDKCENTRAL-COM_BootTime"
@@ -72,11 +73,11 @@ char deviceMAC[32]={'\0'};
 void __attribute__((weak)) getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus);
 static bool isRbusEnabled();
 void macIDToLower(char macValue[],char macConverted[]);
-void webStrncpy(char *destStr, const char *srcStr, size_t destSize);
+void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize);
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
-void webStrncpy(char *destStr, const char *srcStr, size_t destSize)
+void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
 {
     strncpy(destStr, srcStr, destSize-1);
     destStr[destSize-1] = '\0';
@@ -88,7 +89,7 @@ void macIDToLower(char macValue[],char macConverted[])
 	int j;
 	char *token[32];
 	char tmp[32];
-	webStrncpy(tmp, macValue,sizeof(tmp));
+	cpeabStrncpy(tmp, macValue,sizeof(tmp));
 	token[i] = strtok(tmp, ":");
 	if(token[i]!=NULL)
 	{
@@ -125,7 +126,7 @@ char* get_deviceMAC()
 	    strncpy(deviceMACValue, macID, strlen(macID)+1);
 	    macIDToLower(deviceMACValue, deviceMAC);
 	    WebcfgDebug("deviceMAC: %s\n",deviceMAC);
-	    WEB_FREE(macID);
+	    CPEABS_FREE(macID);
 	}
 	WebcfgInfo("Inside cpeabs lib file\n");
 	WebcfgDebug("deviceMAC returned from lib is %s\n", deviceMAC);
@@ -300,12 +301,12 @@ int Get_Supplementary_URL( char *name, char *pString)
 					strcpy(pString , tempUrl);
 				}
 				WebcfgDebug("Get_Supplementary_URL. pString %s\n", pString);
-				WEB_FREE(tempParam);
+				CPEABS_FREE(tempParam);
 			}
 			else
 			{
 				WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, tempParam);
-				WEB_FREE(tempParam);
+				CPEABS_FREE(tempParam);
 			}
 		}
 	}
@@ -328,7 +329,7 @@ int Set_Supplementary_URL( char *name, char *pString)
 			if (retPsmSet != RBUS_ERROR_SUCCESS)
 			{
 				WebcfgError("psm_set failed ret %d for parameter %s%s and value %s\n", retPsmSet, WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name, pString);
-				WEB_FREE(tempParam);
+				CPEABS_FREE(tempParam);
 				return 0;
 			}
 			else
@@ -341,7 +342,7 @@ int Set_Supplementary_URL( char *name, char *pString)
 		{
 			WebcfgError("Invalid supplementary doc name\n");
 		}
-		WEB_FREE(tempParam);
+		CPEABS_FREE(tempParam);
 	}
     }
     return retPsmSet;
@@ -367,16 +368,16 @@ char * getParamValue(char *paramName)
 		if (ret == WDMP_SUCCESS )
 		{
 			strncpy(paramValue, parametervalArr[0]->value,64);
-			WEB_FREE(parametervalArr[0]->name);
-			WEB_FREE(parametervalArr[0]->value);
-			WEB_FREE(parametervalArr[0]);
+			CPEABS_FREE(parametervalArr[0]->name);
+			CPEABS_FREE(parametervalArr[0]->value);
+			CPEABS_FREE(parametervalArr[0]);
 		}
 		else
 		{
 			WebcfgError("Failed to GetValue for %s\n", getParamList[0]);
-			WEB_FREE(paramValue);
+			CPEABS_FREE(paramValue);
 		}
-		WEB_FREE(parametervalArr);
+		CPEABS_FREE(parametervalArr);
 		WebcfgDebug("getParamValue : paramValue is %s\n", paramValue);
 		return paramValue;
 	}

@@ -1,4 +1,4 @@
-#   Copyright 2020
+#   Copyright 2021
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -37,8 +37,6 @@ set(COMMON_LIBRARY_DIR ${INSTALL_DIR}/lib/${CMAKE_LIBRARY_ARCHITECTURE})
 set(TEST_RESULTS_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_results)
 file(MAKE_DIRECTORY ${TEST_RESULTS_DIR})
 
-if (WEBCONFIG_BIN_SUPPORT)
-
 include_directories(${INCLUDE_DIR}
                     ${INCLUDE_DIR}/cjson
                     ${INCLUDE_DIR}/msgpack
@@ -48,6 +46,10 @@ include_directories(${INCLUDE_DIR}
 		    ${INCLUDE_DIR}/wdmp-c
 		    ${INCLUDE_DIR}/cimplog
                     )
+
+include_directories(
+                     include/
+		   )
 
 if (NOT BUILD_YOCTO)
 
@@ -141,8 +143,6 @@ add_library(librbus STATIC SHARED IMPORTED)
 add_dependencies(librbus rbus)
 
 endif ()
-
-endif (WEBCONFIG_BIN_SUPPORT)
 
 link_directories ( ${LIBRARY_DIR} ${COMMON_LIBRARY_DIR} ${LIBRARY_DIR64} )
 

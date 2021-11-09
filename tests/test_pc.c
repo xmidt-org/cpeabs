@@ -57,7 +57,7 @@ void test_do_something()
 void add_suites(CU_pSuite *suite)
 {
     *suite = CU_add_suite("common encoding tests", NULL, NULL);
-    CU_add_test(*suite, "Test do_something", test_do_something);
+    CU_add_test(*suite, "Test do_something in test_pc", test_do_something);
 }
 
 int main(void)
