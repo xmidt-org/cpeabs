@@ -40,7 +40,7 @@ if (PLATFORM STREQUAL "DEVICE_GATEWAY")
 #-------------------------------------------------------------------------------
 add_test(NAME test_rdkb COMMAND ${MEMORY_CHECK} ./test_rdkb)
 
-set(SOURCES test_rdkb.c ../src/rdkb/impl.c )
+set(SOURCES test_rdkb.c ${PROJECT_SOURCE_DIR}/src/rdkb/impl.c )
 
 add_executable(test_rdkb ${SOURCES})
 
@@ -56,7 +56,7 @@ elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
 #-------------------------------------------------------------------------------
 add_test(NAME test_pods COMMAND ${MEMORY_CHECK} ./test_pods)
 
-set(SOURCES test_pods.c ../src/pods/impl.c )
+set(SOURCES test_pods.c ${PROJECT_SOURCE_DIR}/src/pods/impl.c )
 
 add_executable(test_pods ${SOURCES})
 
@@ -71,7 +71,7 @@ else()
 #-------------------------------------------------------------------------------
 add_test(NAME test_pc COMMAND ${MEMORY_CHECK} ./test_pc)
 
-set(SOURCES test_pc.c ../src/pc/impl.c )
+set(SOURCES test_pc.c ${PROJECT_SOURCE_DIR}/src/pc/impl.c )
 
 add_executable(test_pc ${SOURCES})
 

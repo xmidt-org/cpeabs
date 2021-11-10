@@ -24,7 +24,7 @@ elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
 add_definitions(-DDEVICE_EXTENDER)
 endif ()
 
-set(HEADERS ../include/cpeabs.h)
+set(HEADERS ${PROJECT_SOURCE_DIR}/include/cpeabs.h)
 
 if (PLATFORM STREQUAL "DEVICE_GATEWAY")
 set(SOURCES rdkb/impl.c)

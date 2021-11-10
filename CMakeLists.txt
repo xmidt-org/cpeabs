@@ -48,7 +48,7 @@ include_directories(${INCLUDE_DIR}
                     )
 
 include_directories(
-                     include/
+                     ${PROJECT_SOURCE_DIR}/include/
 		   )
 
 if (NOT BUILD_YOCTO)
