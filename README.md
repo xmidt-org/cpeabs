@@ -18,8 +18,13 @@ An abstraction layer for consumer preference equipment systems.
 # Building and Testing Instructions
 
 ```
-meson build
+Use CFLAG -DPLATFORM=DEVICE_GATEWAY to build for RDKB platform
+Use CFLAG -DPLATFORM=DEVICE_EXTENDER to build for POD platform
+
+mkdir build
 cd build
-ninja all test coverage
-firefox meson-logs/coveragereport/index.html
+cmake ..
+make
+make test
 ```
+
