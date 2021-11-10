@@ -18,6 +18,9 @@ An abstraction layer for consumer preference equipment systems.
 # Building and Testing Instructions
 
 ```
+Use CFLAG -DPLATFORM=DEVICE_GATEWAY to build for RDKB platform
+Use CFLAG -DPLATFORM=DEVICE_EXTENDER to build for POD platform
+
 mkdir build
 cd build
 cmake ..
@@ -25,5 +28,3 @@ make
 make test
 ```
 
-The `workaround.sh` script makes it so we don't need to add the rbus stuff to the
-upstream wrapdb.
