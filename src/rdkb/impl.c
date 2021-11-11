@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <unistd.h>
 #include <ctype.h>
 #include <rbus/rbus.h>
 #include <rbus/rbus_object.h>
@@ -51,7 +52,7 @@
 
 #define WEBCFG_URL_PARAM "Device.X_RDK_WebConfig.URL"
 #define WEBCFG_PARAM_SUPPLEMENTARY_SERVICE   "Device.X_RDK_WebConfig.SupplementaryServiceUrls."
-
+#define SYSTEM_READY_PARM "Device.CR.SystemReady"
 /*----------------------------------------------------------------------------*/
 /*                               Data Structures                              */
 /*----------------------------------------------------------------------------*/
@@ -74,6 +75,10 @@ static bool isRbusEnabled();
 void macIDToLower(char macValue[],char macConverted[]);
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize);
 rbusHandle_t  __attribute__((weak)) get_global_rbus_handle(void);
+static void systemReadyEventHandler(rbusHandle_t handle, rbusEvent_t const* event, rbusEventSubscription_t* subscription);
+static void subscribeSystemReadyEvent();
+static int rbus_checkIfSystemReady();
+static int webcfgRbusRegisterWithCR();
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
@@ -498,3 +503,183 @@ rbusHandle_t get_global_rbus_handle(void)
 	return 0;
 }
 
+int rbus_waitUntilSystemReady()
+{
+	int ret = 0;
+	if(rbus_checkIfSystemReady())
+	{
+		WebcfgInfo("Checked CR - System is ready, proceed with webconfig startup\n");
+		system("touch /var/tmp/webcfgcacheready");
+	}
+	else
+	{
+		webcfgRbusRegisterWithCR();
+		subscribeSystemReadyEvent();
+
+		FILE *file;
+		int wait_time = 0;
+		int total_wait_time = 0;
+
+		//Wait till Call back touches the indicator to proceed further
+		while((file = fopen("/var/tmp/webcfgcacheready", "r")) == NULL)
+		{
+			WebcfgInfo("Waiting for system ready signal\n");
+			//After waiting for 24 * 5 = 120s (2mins) send message to CR to query for system ready
+			if(wait_time == 24)
+			{
+				wait_time = 0;
+				if(rbus_checkIfSystemReady())
+				{
+				    WebcfgInfo("Checked CR - System is ready\n");
+				    system("touch /var/tmp/webcfgcacheready");
+				    break;
+				}
+				else
+				{
+				    WebcfgInfo("Queried CR for system ready after waiting for 2 mins, it is still not ready\n");
+				    if(total_wait_time >= 84)
+				    {
+					    WebcfgInfo("Queried CR for system ready after waiting for 7 mins, it is still not ready. Proceeding ...\n");
+                                            ret = 1;
+					    break;
+				    }
+				}
+			}
+			sleep(5);
+			wait_time++;
+			total_wait_time++;
+		};
+		// In case of WebConfig restart, we should be having cacheready already touched.
+		if(file != NULL)
+		{
+			WebcfgInfo("/var/tmp/webcfgcacheready file exists, proceed with webconfig start up\n");
+			fclose(file);
+		}
+	}
+        return ret;
+}
+
+static void subscribeSystemReadyEvent()
+{
+	int rc = RBUS_ERROR_SUCCESS;
+	rbusHandle_t rbus_handle;
+
+	rbus_handle = get_global_rbus_handle();
+	if(!rbus_handle)
+	{
+		WebcfgError("subscribeSystemReadyEvent failed as rbus_handle is empty\n");
+		return;
+	}
+
+	rc = rbusEvent_Subscribe(rbus_handle,SYSTEM_READY_PARM,systemReadyEventHandler,"webconfig",0);
+	if(rc != RBUS_ERROR_SUCCESS)
+		WebcfgError("systemready rbusEvent_Subscribe failed: %d, %s\n", rc, rbusError_ToString(rc));
+	else
+		WebcfgInfo("systemready rbusEvent_Subscribe was successful\n");
+}
+
+static void systemReadyEventHandler(rbusHandle_t handle, rbusEvent_t const* event, rbusEventSubscription_t* subscription)
+{
+	(void)handle;
+	(void)subscription;
+	int eventValue = 0;
+	rbusValue_t value = NULL;
+
+	value = rbusObject_GetValue(event->data, "value");
+	eventValue = (int) rbusValue_GetBoolean(value);
+	WebcfgDebug("eventValue is %d\n", eventValue);
+	if(eventValue)
+	{
+		system("touch /var/tmp/webcfgcacheready");
+		WebcfgInfo("Received system ready signal, created /var/tmp/webcfgcacheready file\n");
+	}
+}
+
+/**
+ * rbus_checkIfSystemReady Function to query CR and check if system is ready.
+ * This is just in case webconfig registers for the systemReadySignal event late.
+ * If SystemReadySignal is already sent then this will return 1 indicating system is ready.
+ */
+static int rbus_checkIfSystemReady()
+{
+	int rc = -1;
+	rbusHandle_t rbus_handle;
+	int sysVal = 0;
+
+	rbus_handle = get_global_rbus_handle();
+	if(!rbus_handle)
+	{
+		WebcfgError("rbus_checkIfSystemReady failed as rbus_handle is empty\n");
+		return rc;
+	}
+
+	rbusValue_t value;
+	rc = rbus_get(rbus_handle, SYSTEM_READY_PARM, &value);
+	if(rc != RBUS_ERROR_SUCCESS)
+        {
+		WebcfgError("rbus_checkIfSystemReady failed with err %d: %s\n", rc, rbusError_ToString(rc));
+		return rc;
+	}
+	else
+	{
+		WebcfgDebug("rbus_checkIfSystemReady returns %d\n", rbusValue_GetBoolean(value));
+		sysVal = (int) rbusValue_GetBoolean(value);
+		WebcfgDebug("sysVal is %d\n", sysVal);
+        }
+	rbusValue_Release(value);
+	if(sysVal)
+	{
+		WebcfgDebug("SystemReady returns 1\n");
+		return 1;
+	}
+	else
+	{
+		WebcfgDebug("SystemReady returns 0\n");
+	}
+	return rc;
+}
+
+/**
+ * To register webconfig component with component Registery CR.
+ */
+static int webcfgRbusRegisterWithCR()
+{
+	rbusHandle_t rbus_handle;
+	rbusObject_t inParams;
+	rbusObject_t outParams;
+	rbusValue_t value;
+	int rc = RBUS_ERROR_SUCCESS;
+
+	rbus_handle = get_global_rbus_handle();
+	if(!rbus_handle)
+	{
+		WebcfgError("webcfgRbusRegisterWithCR failed as rbus_handle is empty\n");
+		return 1;
+	}
+
+	rbusObject_Init(&inParams, NULL);
+
+	rbusValue_Init(&value);
+	rbusValue_SetString(value, "webconfig");
+	rbusObject_SetValue(inParams, "name", value);
+	rbusValue_Release(value);
+
+	rbusValue_Init(&value);
+	rbusValue_SetInt32(value, 1);
+	rbusObject_SetValue(inParams, "version", value);
+	rbusValue_Release(value);
+
+	rc = rbusMethod_Invoke(rbus_handle, "Device.CR.RegisterComponent()", inParams, &outParams);
+	rbusObject_Release(inParams);
+	if(rc != RBUS_ERROR_SUCCESS)
+	{
+		WebcfgError("Device.CR.RegisterComponent failed with err %d: %s\n", rc, rbusError_ToString(rc));
+	}
+	else
+	{
+		WebcfgInfo("Device.CR.RegisterComponent is success\n");
+		rbusObject_Release(outParams);
+		return 0;
+	}
+	return 1;
+}
