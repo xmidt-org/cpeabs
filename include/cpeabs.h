@@ -18,7 +18,11 @@
 
 #include <stdint.h>
 #include <wdmp-c.h>
+
+#if ! defined(DEVICE_EXTENDER)
 #include <cimplog.h>
+#endif
+
 #include <rbus/rbus.h>
 #include <rbus/rbus_object.h>
 #include <rbus/rbus_property.h>
