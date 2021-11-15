@@ -18,6 +18,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <rbus/rbus.h>
 #include <rbus/rbus_object.h>
 #include <rbus/rbus_property.h>
@@ -506,10 +508,19 @@ rbusHandle_t get_global_rbus_handle(void)
 int rbus_waitUntilSystemReady()
 {
 	int ret = 0;
+	int fd;
+
 	if(rbus_checkIfSystemReady())
 	{
 		WebcfgInfo("Checked CR - System is ready, proceed with webconfig startup\n");
-		system("touch /var/tmp/webcfgcacheready");
+		if((fd = creat("/var/tmp/webcfgcacheready", S_IRUSR | S_IWUSR)) == -1)
+		{
+			WebcfgError("/var/tmp/webcfgcacheready file creation failed with error:%d\n", errno);
+		}
+		else
+		{
+			close(fd);
+		}
 	}
 	else
 	{
@@ -531,7 +542,14 @@ int rbus_waitUntilSystemReady()
 				if(rbus_checkIfSystemReady())
 				{
 				    WebcfgInfo("Checked CR - System is ready\n");
-				    system("touch /var/tmp/webcfgcacheready");
+				    if((fd = creat("/var/tmp/webcfgcacheready", S_IRUSR | S_IWUSR)) == -1)
+				    {
+				       WebcfgError("/var/tmp/webcfgcacheready file creation failed, error:%d\n", errno);
+				    }
+				    else
+				    {
+				       close(fd);
+				    }
 				    break;
 				}
 				else
@@ -584,13 +602,21 @@ static void systemReadyEventHandler(rbusHandle_t handle, rbusEvent_t const* even
 	(void)subscription;
 	int eventValue = 0;
 	rbusValue_t value = NULL;
+	int fd;
 
 	value = rbusObject_GetValue(event->data, "value");
 	eventValue = (int) rbusValue_GetBoolean(value);
 	WebcfgDebug("eventValue is %d\n", eventValue);
 	if(eventValue)
 	{
-		system("touch /var/tmp/webcfgcacheready");
+		if((fd = creat("/var/tmp/webcfgcacheready", S_IRUSR | S_IWUSR)) == -1)
+		{
+			WebcfgError("Failed to create /var/tmp/webcfgcacheready file, error:%d\n", errno);
+		}
+		else
+		{
+			close(fd);
+		}
 		WebcfgInfo("Received system ready signal, created /var/tmp/webcfgcacheready file\n");
 	}
 }
