@@ -70,6 +70,6 @@ char * getParamValue(char *paramName);
 void getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus);
 int rbus_GetValueFromDB( char* paramName, char** paramValue);
 int rbus_StoreValueIntoDB(char *paramName, char *value);
-
+int rbus_waitUntilSystemReady();
 #endif
 
