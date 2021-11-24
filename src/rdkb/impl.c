@@ -35,7 +35,7 @@
 #define DEVICE_BOOT_TIME			"Device.DeviceInfo.X_RDKCENTRAL-COM_BootTime"
 #define MODEL_NAME				"Device.DeviceInfo.ModelName"
 #define PRODUCT_CLASS				"Device.DeviceInfo.ProductClass"
-#define CONN_CLIENT_PARAM			"Device.NotifyComponent.X_RDKCENTRAL-COM_Connected-Client"
+#define CONN_CLIENT_PARAM			"Device.X_RDK_Webpa.ConnectedClientNotify"
 #define LAST_REBOOT_REASON			"Device.DeviceInfo.X_RDKCENTRAL-COM_LastRebootReason"
 #define PARTNER_ID				"Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.PartnerId"
 #define ACCOUNT_ID				"Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.AccountInfo.AccountID"
