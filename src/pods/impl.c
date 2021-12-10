@@ -48,7 +48,7 @@
 #define RETURN_ERR -1
 
 /*----------------------------------------------------------------------------*/
-char deviceMAC[BFR_SIZE_64] = {'\0'};
+char deviceMAC[BFR_SIZE_32];
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
 /*----------------------------------------------------------------------------*/
@@ -129,23 +129,23 @@ void macIDToLower(char macValue[],char macConverted[])
 {
         int i = 0;
         int j;
-        char *token[BFR_SIZE_64];
-        char tmp[BFR_SIZE_64];
+        char *token[BFR_SIZE_32];
+        char tmp[BFR_SIZE_32];
 
         cpeabStrncpy(tmp, macValue,sizeof(tmp));
         token[i] = strtok(tmp, ":");
         if(token[i]!=NULL)
         {
-                cpeabStrncpy(macConverted, token[i],BFR_SIZE_64);
+                cpeabStrncpy(macConverted, token[i],BFR_SIZE_32);
                 i++;
         }
         while ((token[i] = strtok(NULL, ":")) != NULL)
         { 
-                strncat(macConverted, token[i], 63);
-                macConverted[63]='\0';
+                strncat(macConverted, token[i], 31);
+                macConverted[31]='\0';
                 i++;
         }
-        macConverted[63]='\0';
+        macConverted[31]='\0';
         for(j = 0; macConverted[j]; j++)
         {
                 macConverted[j] = tolower(macConverted[j]);
@@ -163,7 +163,7 @@ char* get_deviceMAC()
         json_t *where = json_array();
         char *table = "Wifi_Inet_State";
         char *colv[] = {"hwaddr"};
-        char buff[BFR_SIZE_64];
+        char buff[BFR_SIZE_32];
         char *where_str = "if_name==eth0";
 
         if (!ovsdb_parse_where(where,where_str, false))
