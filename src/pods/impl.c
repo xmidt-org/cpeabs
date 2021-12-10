@@ -48,7 +48,7 @@
 #define RETURN_ERR -1
 
 /*----------------------------------------------------------------------------*/
-char deviceMAC[BFR_SIZE_64] = {'\0'};
+char deviceMAC[BFR_SIZE_64];
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
 /*----------------------------------------------------------------------------*/
@@ -170,7 +170,7 @@ char* get_deviceMAC()
         {
                 WebcfgError("Error parsing WHERE statement: %s",where_str);
         }
-       // memset(deviceMAC,0,sizeof(deviceMAC));
+        memset(deviceMAC,0,sizeof(deviceMAC));
         memset(buff,0,sizeof(buff));
         WebcfgDebug("Reaching after memset of buff inside get devicemac\n");
         if (ovsdb_string_value_get(table,where,1,colv,buff,sizeof(buff)))
