@@ -48,7 +48,7 @@
 #define RETURN_ERR -1
 
 /*----------------------------------------------------------------------------*/
-char deviceMAC[BFR_SIZE_64];
+char deviceMAC[BFR_SIZE_64] = {'\0'};
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
 /*----------------------------------------------------------------------------*/
@@ -137,7 +137,6 @@ void macIDToLower(char macValue[],char macConverted[])
         if(token[i]!=NULL)
         {
                 cpeabStrncpy(macConverted, token[i],BFR_SIZE_64);
-                macConverted[63]='\0';
                 i++;
         }
         while ((token[i] = strtok(NULL, ":")) != NULL)
