@@ -3,8 +3,13 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdio.h>
-
+#include <cpeabs.h>
+//#include "../../subprojects/wdmp/src/wdmp-c.h"
+#include <rbus/rbus.h>
+#include <rbus/rbus_value.h>
+#include <rtMessageHeader.h>
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
@@ -23,8 +28,7 @@
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
 /*----------------------------------------------------------------------------*/
-/* none */
-
+void do_something();
 /*----------------------------------------------------------------------------*/
 /*                             Internal functions                             */
 /*----------------------------------------------------------------------------*/
@@ -33,6 +37,21 @@
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
+int main()
+{
+  /* req_struct *req = NULL;
+   req = (req_struct *) malloc (sizeof(req_struct)); 
+   do_something();*/
+   //wdmp_parse_generic_request("Hi", WDMP_TR181, &req);
+   rtMessageHeader* testrt = NULL;
+   testrt = (rtMessageHeader*)malloc(sizeof(rtMessageHeader));
+   
+   rtMessageHeader_Init(testrt);
+   
+   do_something();
+   return 0;
+}
+
 void do_something()
 {
     printf("I do something well.\n");

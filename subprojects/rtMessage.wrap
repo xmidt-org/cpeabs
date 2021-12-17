@@ -1,0 +1,9 @@
+[wrap-git]
+directory = rtMessage
+
+url = https://github.com/guruchandru/rdk-rtmessage.git
+revision = rdk-next
+patch_filename = rtMessage.tar.gz
+
+[provide]
+librtMessage = librtMessage_dep

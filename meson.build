@@ -5,6 +5,7 @@
 
 project('cpeabs', 'c',
         version: '0.0.0',
+        meson_version: '>=0.53',
         license: ['Apache-2.0'],
         default_options: ['c_std=c99',
                           'b_coverage=true'])
@@ -15,11 +16,49 @@ if not meson.is_subproject()
     werror = true
 endif
 
+script = join_paths(meson.source_root(), 'workaround.sh')
+
+r = run_command('/bin/sh', script)
+if r.returncode() != 0
+  message('script failed')
+endif
+
+output = r.stdout().strip()
+errortxt = r.stderr().strip()
+
+prefix = get_option('prefix')
+
+################################################################################
+# Dependencies
+################################################################################
+
+if meson.version().version_compare('>=0.54.0')
+libcjson_dep     = dependency('libcjson',      version: '>=1.7.14', fallback: ['cjson'])
+libcimplog_dep   = dependency('libcimplog')
+libwdmp_dep      = dependency('libwdmp') 
+librtMessage_dep = dependency('librtMessage')
+librbuscore_dep  = dependency('librbuscore')
+librbus_dep      = dependency('librbus')
+else
+warning('You are running an older version of meson.')
+warning('In order for dependency management to be supported you need a newer version of meson (0.54+)')
+# For older versions of meson, you need to have the upstream dependencies installed
+# in the correct locations.
+libcjson_dep     = dependency('libcjson')
+libcimplog_dep   = dependency('libcimplog')
+libwdmp_dep      = dependency('libwdmp') 
+librtMessage_dep = dependency('librtMessage')
+librbuscore_dep  = dependency('librbuscore')
+librbus_dep      = dependency('librbus')
+endif
+
+all_dep = [libcjson_dep, librtMessage_dep, librbuscore_dep, librbus_dep, libcimplog_dep, libwdmp_dep]
+
 ################################################################################
 # Common variable definitions
 ################################################################################
 
-inc_base = 'include/'+meson.project_name()
+inc_base = ['include/'+meson.project_name()]
 
 ################################################################################
 # Generate the version header file
@@ -27,20 +66,30 @@ inc_base = 'include/'+meson.project_name()
 
 subdir('include/'+meson.project_name())
 
-install_headers([headers, ver_h], subdir: meson.project_name())
+install_headers(['include/'+meson.project_name()+'/cpeabs.h', ver_h], subdir: meson.project_name())
 
 ################################################################################
 # Define the libraries
 ################################################################################
 
-inc = include_directories(inc_base)
+inc = include_directories([inc_base])
 
+src_args = ['-lcjson', '-lpthread']
 sources = ['src/common.c']
 
 libcpeabs = library(meson.project_name(),
                     sources,
                     include_directories: inc,
-                    install: true)
+                    dependencies: all_dep,
+                    install: true,
+                    link_args: src_args)
+
+executable(meson.project_name(),
+                    sources,
+                    include_directories: inc,
+                    dependencies: all_dep,
+                    install: true,
+                    link_args: src_args)
 
 ################################################################################
 # Define the tests

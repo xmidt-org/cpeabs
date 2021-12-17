@@ -1,0 +1,9 @@
+[wrap-git]
+directory = cimplog
+
+url = https://github.com/Comcast/cimplog.git
+revision = 8a5fb3c2f182241d17f5342bea5b7688c28cd1fd
+patch_filename = cimplog.tar.gz
+
+[provide]
+libcimplog = libcimplog_dep

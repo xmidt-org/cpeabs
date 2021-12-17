@@ -6,5 +6,10 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <rbus/rbus.h>
+#include <rbus/rbus_object.h>
+#include <rbus/rbus_property.h>
+#include <rbus/rbus_value.h>
+#include <rbus-core/rbus_core.h>
 
 #endif
