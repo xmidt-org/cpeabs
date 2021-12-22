@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 project('rtMessage', 'c',
         version: '0.0.1',
         meson_version: '>=0.54.0',

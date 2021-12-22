@@ -2,6 +2,10 @@
 # the builddir space.
 #
 # See https://github.com/mesonbuild/meson/issues/2546 for where the technique comes from
+#
+# SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 foreach h: headers
   configure_file(copy: true,
                  input: h,
