@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <cpeabs.h>
-//#include "../../subprojects/wdmp/src/wdmp-c.h"
 #include <rbus/rbus.h>
 #include <rbus/rbus_value.h>
 #include <rtMessageHeader.h>

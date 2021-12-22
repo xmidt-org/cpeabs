@@ -44,7 +44,7 @@ set(SOURCES test_rdkb.c ${PROJECT_SOURCE_DIR}/src/rdkb/impl.c )
 
 add_executable(test_rdkb ${SOURCES})
 
-target_link_libraries (test_rdkb -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus -lrbus-core)
+target_link_libraries (test_rdkb -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus )
 
 target_link_libraries (test_rdkb gcov -Wl,--no-as-needed )
 

@@ -48,8 +48,14 @@ include_directories(${INCLUDE_DIR}
                     )
 
 include_directories(
-                     ${PROJECT_SOURCE_DIR}/include/
+                     ${PROJECT_SOURCE_DIR}/include/cpeabs/
 		   )
+
+if (PLATFORM STREQUAL "DEVICE_EXTENDER")
+include_directories(
+                     ${PROJECT_SOURCE_DIR}/src/pods/include/
+		   )
+endif ()
 
 if (NOT BUILD_YOCTO)
 
