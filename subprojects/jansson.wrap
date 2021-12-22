@@ -1,0 +1,9 @@
+[wrap-git]
+directory = jansson
+
+url = https://github.com/akheron/jansson.git
+revision = addeeef408cf9e4711a234e04fc2c4bd7357561b
+patch_filename = jansson.tar.gz
+
+[provide]
+libjansson = libjansson_dep

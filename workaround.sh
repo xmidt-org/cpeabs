@@ -19,4 +19,7 @@ mv -f cimplog.tar.gz ../subprojects/packagefiles/.
 tar -czf wdmp.tar.gz wdmp
 mv -f wdmp.tar.gz ../subprojects/packagefiles/.
 
+tar -czf jansson.tar.gz jansson
+mv -f jansson.tar.gz ../subprojects/packagefiles/.
+
 popd

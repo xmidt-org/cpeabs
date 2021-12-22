@@ -148,6 +148,21 @@ ExternalProject_Add(rbus
 add_library(librbus STATIC SHARED IMPORTED)
 add_dependencies(librbus rbus)
 
+if (PLATFORM STREQUAL "DEVICE_EXTENDER")
+
+# jansson external dependency
+#-------------------------------------------------------------------------------
+ExternalProject_Add(jansson
+     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/_prefix/rbus
+     GIT_REPOSITORY https://github.com/akheron/jansson.git
+     GIT_TAG master
+     CMAKE_ARGS += -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
+)
+
+add_library(libjansson STATIC SHARED IMPORTED)
+add_dependencies(libjansson jansson)
+endif ()
+
 endif ()
 
 link_directories ( ${LIBRARY_DIR} ${COMMON_LIBRARY_DIR} ${LIBRARY_DIR64} )

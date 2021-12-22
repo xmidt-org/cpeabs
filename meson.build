@@ -39,6 +39,7 @@ libwdmp_dep      = dependency('libwdmp')
 librtMessage_dep = dependency('librtMessage')
 librbuscore_dep  = dependency('librbuscore')
 librbus_dep      = dependency('librbus')
+libjansson_dep = dependency('libjansson')
 else
 warning('You are running an older version of meson.')
 warning('In order for dependency management to be supported you need a newer version of meson (0.54+)')
@@ -50,9 +51,10 @@ libwdmp_dep      = dependency('libwdmp')
 librtMessage_dep = dependency('librtMessage')
 librbuscore_dep  = dependency('librbuscore')
 librbus_dep      = dependency('librbus')
+libjansson_dep = dependency('libjansson')
 endif
 
-all_dep = [libcjson_dep, librtMessage_dep, librbuscore_dep, librbus_dep, libcimplog_dep, libwdmp_dep]
+all_dep = [libcjson_dep, librtMessage_dep, librbuscore_dep, librbus_dep, libcimplog_dep, libwdmp_dep, libjansson_dep]
 
 ################################################################################
 # Common variable definitions

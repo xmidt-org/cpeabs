@@ -56,11 +56,11 @@ elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
 #-------------------------------------------------------------------------------
 add_test(NAME test_pods COMMAND ${MEMORY_CHECK} ./test_pods)
 
-set(SOURCES test_pods.c ${PROJECT_SOURCE_DIR}/src/pods/impl.c )
+set(SOURCES test_pods.c ${PROJECT_SOURCE_DIR}/src/pods/impl.c ${PROJECT_SOURCE_DIR}/src/pods/cpeabs_ovsdb_utils.c )
 
 add_executable(test_pods ${SOURCES})
 
-target_link_libraries (test_pods -lcunit)
+target_link_libraries (test_pods -lcunit -ljansson)
 
 target_link_libraries (test_pods gcov -Wl,--no-as-needed )
 

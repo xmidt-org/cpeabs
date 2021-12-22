@@ -567,7 +567,7 @@ int Set_Webconfig_URL( char *pString)
          return ret;
 }
 
-int Get_Supplementary_URL( char *name, char *pString)
+int Get_Supplementary_URL(char *pString)
 {
         char url[128];
         int ret = RETURN_ERR;
@@ -586,7 +586,7 @@ int Get_Supplementary_URL( char *name, char *pString)
         return ret;
 }
 
-int Set_Supplementary_URL( char *name, char *pString)
+int Set_Supplementary_URL(char *pString)
 {
         int ret = RETURN_ERR;
 
@@ -634,7 +634,7 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
         }
         else if (strncmp(paramName,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
         {
-                if (Set_Supplementary_URL(NULL,value) == RETURN_OK)
+                if (Set_Supplementary_URL(value) == RETURN_OK)
                 {
                         WebcfgDebug("%s : Successfully stored [%s] = [%s]. \n",__func__,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,value);
                         ret = RETURN_OK;
@@ -684,7 +684,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
         }
         else if (strncmp(paramName,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
         {
-                if (Get_Supplementary_URL(NULL,value_str) == RETURN_OK)
+                if (Get_Supplementary_URL(value_str) == RETURN_OK)
                 {
                         *paramValue = strdup(value_str);
                         WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,*paramValue);

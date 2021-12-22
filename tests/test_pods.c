@@ -19,7 +19,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "cpeabs.h"
-
+#include "cpeabs_ovsdb_utils.h"
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
@@ -45,8 +45,7 @@
 /*----------------------------------------------------------------------------*/
 void test_do_something()
 {
-    char * testget = getParamValue("test");
-    printf("testget is %s\n", testget);
+     printf("SUCCESS\n");
 }
 
 
