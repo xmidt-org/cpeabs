@@ -16,6 +16,7 @@
 
 #include "cpeabs_ovsdb_utils.h"
 #include "cpeabs.h"
+#include "cpeabs_pod.h"
 
 static int  g_ovsdb_handle = -1;
 static char ovsdb_opt_db[32] = "Open_vSwitch";

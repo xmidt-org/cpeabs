@@ -9,6 +9,7 @@
 #include <sys/sysinfo.h>
 #include "cpeabs.h"
 #include "cpeabs_ovsdb_utils.h"
+#include "cpeabs_pod.h"
 
 #define BFR_SIZE_16  16
 #define BFR_SIZE_32  32

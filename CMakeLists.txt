@@ -40,7 +40,11 @@ include_directories(
                      ${PROJECT_SOURCE_DIR}/include/cpeabs/
 		   )
 
-if (PLATFORM STREQUAL "DEVICE_EXTENDER")
+if (PLATFORM STREQUAL "DEVICE_GATEWAY")
+include_directories(
+                     ${PROJECT_SOURCE_DIR}/src/rdkb/include/
+		   )
+elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
 include_directories(
                      ${PROJECT_SOURCE_DIR}/src/pods/include/
 		   )

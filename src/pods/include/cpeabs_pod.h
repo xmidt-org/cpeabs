@@ -1,15 +1,25 @@
 /* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#ifndef __CPEABS_H__
-#define __CPEABS_H__
+#ifndef __CPEABS_POD_H__
+#define __CPEABS_POD_H__
 
 #include <stdint.h>
-#include <wdmp-c.h>
-
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
+#define UNUSED(x) (void )(x)
+#define MAX_BUFF_SIZE 256
+
+/**
+ * @brief Enables or disables debug logs.
+ */
+
+#define WebConfigLog(...)       printf(__VA_ARGS__)
+
+#define WebcfgError(...)	printf(__VA_ARGS__)
+#define WebcfgInfo(...)		printf(__VA_ARGS__)
+#define WebcfgDebug(...)	printf(__VA_ARGS__)
 
 /*----------------------------------------------------------------------------*/
 /*                               Data Structures                              */
@@ -18,12 +28,6 @@
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
-
-char * getParamValue(char *paramName);
-void getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus);
-int rbus_GetValueFromDB( char* paramName, char** paramValue);
-int rbus_StoreValueIntoDB(char *paramName, char *value);
-int rbus_waitUntilSystemReady();
-void cpeabs_free(void *ptr);
+/* none */
 #endif
 
