@@ -1,16 +1,5 @@
-#   Copyright 2021 Comcast Cable Communications Management, LLC
-#
-#   Licensed under the Apache License, Version 2.0 (the "License");
-#   you may not use this file except in compliance with the License.
-#   You may obtain a copy of the License at
-#
-#       http://www.apache.org/licenses/LICENSE-2.0
-#
-#   Unless required by applicable law or agreed to in writing, software
-#   distributed under the License is distributed on an "AS IS" BASIS,
-#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#   See the License for the specific language governing permissions and
-#   limitations under the License.
+# SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC
+# SPDX-License-Identifier: Apache-2.0
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -W -g -fprofile-arcs -ftest-coverage -O0")
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DTEST ")
@@ -40,11 +29,11 @@ if (PLATFORM STREQUAL "DEVICE_GATEWAY")
 #-------------------------------------------------------------------------------
 add_test(NAME test_rdkb COMMAND ${MEMORY_CHECK} ./test_rdkb)
 
-set(SOURCES test_rdkb.c ${PROJECT_SOURCE_DIR}/src/rdkb/impl.c )
+set(SOURCES test_rdkb.c ${PROJECT_SOURCE_DIR}/src/rdkb/impl.c ${PROJECT_SOURCE_DIR}/src/common.c)
 
 add_executable(test_rdkb ${SOURCES})
 
-target_link_libraries (test_rdkb -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus -lrbus-core)
+target_link_libraries (test_rdkb -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus )
 
 target_link_libraries (test_rdkb gcov -Wl,--no-as-needed )
 
@@ -56,11 +45,11 @@ elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
 #-------------------------------------------------------------------------------
 add_test(NAME test_pods COMMAND ${MEMORY_CHECK} ./test_pods)
 
-set(SOURCES test_pods.c ${PROJECT_SOURCE_DIR}/src/pods/impl.c )
+set(SOURCES test_pods.c ${PROJECT_SOURCE_DIR}/src/pods/impl.c ${PROJECT_SOURCE_DIR}/src/pods/cpeabs_ovsdb_utils.c ${PROJECT_SOURCE_DIR}/src/common.c)
 
 add_executable(test_pods ${SOURCES})
 
-target_link_libraries (test_pods -lcunit)
+target_link_libraries (test_pods -lcunit -ljansson)
 
 target_link_libraries (test_pods gcov -Wl,--no-as-needed )
 

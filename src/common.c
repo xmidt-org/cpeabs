@@ -1,12 +1,11 @@
 /* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <CUnit/Basic.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdio.h>
-#include "cpeabs.h"
-
+#include <cpeabs.h>
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
@@ -25,50 +24,37 @@
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
 /*----------------------------------------------------------------------------*/
+void do_something();
+/*----------------------------------------------------------------------------*/
+/*                             Internal functions                             */
+/*----------------------------------------------------------------------------*/
 /* none */
 
 /*----------------------------------------------------------------------------*/
-/*                                   Tests                                    */
+/*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
-void test_do_something()
+//For test purpose
+void do_something()
 {
-    char * testget = getParamValue("test");
-    printf("testget is %s\n", testget);
+    printf("I do something well.\n");
 }
 
-
-/*----------------------------------------------------------------------------*/
-/*                             Testing Framework                              */
-/*----------------------------------------------------------------------------*/
-
-void add_suites(CU_pSuite *suite)
+//For meson build stub function
+int main()
 {
-    *suite = CU_add_suite("common encoding tests", NULL, NULL);
-    CU_add_test(*suite, "Test do_something in test_pc", test_do_something);
-}
-
-int main(void)
-{
-    unsigned rv = 1;
-    CU_pSuite suite = NULL;
-
-    if (CUE_SUCCESS == CU_initialize_registry()) {
-        add_suites(&suite);
-
-        if (NULL != suite) {
-            CU_basic_set_mode(CU_BRM_VERBOSE);
-            CU_basic_run_tests();
-            printf("\n");
-            CU_basic_show_failures(CU_get_failure_list());
-            printf("\n\n");
-            rv = CU_get_number_of_tests_failed();
-        }
-
-        CU_cleanup_registry();
-    }
-
-    if (0 != rv) {
-        return 1;
-    }
     return 0;
+}
+
+//User-defined function to free pointer
+void cpeabs_free(void *ptr)
+{
+	if(ptr != NULL)
+	{
+		free((void*)(ptr));
+		ptr = NULL;
+	}
+	else
+	{
+		printf("Trying to free null pointer\n");
+	}
 }

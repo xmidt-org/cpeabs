@@ -1,16 +1,5 @@
-#   Copyright 2021 Comcast Cable Communications Management, LLC
-#
-#   Licensed under the Apache License, Version 2.0 (the "License");
-#   you may not use this file except in compliance with the License.
-#   You may obtain a copy of the License at
-#
-#       http://www.apache.org/licenses/LICENSE-2.0
-#
-#   Unless required by applicable law or agreed to in writing, software
-#   distributed under the License is distributed on an "AS IS" BASIS,
-#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#   See the License for the specific language governing permissions and
-#   limitations under the License.
+# SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC
+# SPDX-License-Identifier: Apache-2.0
 
 set(PROJ_CPEABS cpeabs)
 
@@ -25,14 +14,14 @@ add_definitions(-DDEVICE_EXTENDER)
 endif ()
 
 if (PLATFORM STREQUAL "DEVICE_GATEWAY")
-set(SOURCES rdkb/impl.c)
-set(HEADERS ${PROJECT_SOURCE_DIR}/include/cpeabs.h)
+set(SOURCES rdkb/impl.c common.c)
+set(HEADERS ${PROJECT_SOURCE_DIR}/include/cpeabs/cpeabs.h ${PROJECT_SOURCE_DIR}/src/rdkb/include/cpeabs_rdkb.h)
 elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
-set(SOURCES pods/impl.c pods/cpeabs_ovsdb_utils.c)
-set(HEADERS ${PROJECT_SOURCE_DIR}/include/cpeabs_ovsdb_utils.h ${PROJECT_SOURCE_DIR}/include/cpeabs.h)
+set(SOURCES pods/impl.c pods/cpeabs_ovsdb_utils.c common.c)
+set(HEADERS ${PROJECT_SOURCE_DIR}/include/cpeabs/cpeabs.h ${PROJECT_SOURCE_DIR}/src/pods/include/cpeabs_ovsdb_utils.h ${PROJECT_SOURCE_DIR}/src/pods/include/cpeabs_pod.h)
 add_definitions(-DPS_FILE_PATH=${PS_FILE_PATH})
 else ()
-set(SOURCES pc/impl.c)
+set(SOURCES pc/impl.c common.c)
 endif ()
 
 #Support cpeabs lib for backward compatibility

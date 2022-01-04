@@ -1,18 +1,6 @@
-/*
- * Copyright 2021 Comcast Cable Communications Management, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
+/* SPDX-License-Identifier: Apache-2.0 */
+
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
@@ -21,6 +9,7 @@
 #include <sys/sysinfo.h>
 #include "cpeabs.h"
 #include "cpeabs_ovsdb_utils.h"
+#include "cpeabs_pod.h"
 
 #define BFR_SIZE_16  16
 #define BFR_SIZE_32  32
@@ -567,7 +556,7 @@ int Set_Webconfig_URL( char *pString)
          return ret;
 }
 
-int Get_Supplementary_URL( char *name, char *pString)
+int Get_Supplementary_URL(char *pString)
 {
         char url[128];
         int ret = RETURN_ERR;
@@ -586,7 +575,7 @@ int Get_Supplementary_URL( char *name, char *pString)
         return ret;
 }
 
-int Set_Supplementary_URL( char *name, char *pString)
+int Set_Supplementary_URL(char *pString)
 {
         int ret = RETURN_ERR;
 
@@ -634,7 +623,7 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
         }
         else if (strncmp(paramName,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
         {
-                if (Set_Supplementary_URL(NULL,value) == RETURN_OK)
+                if (Set_Supplementary_URL(value) == RETURN_OK)
                 {
                         WebcfgDebug("%s : Successfully stored [%s] = [%s]. \n",__func__,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,value);
                         ret = RETURN_OK;
@@ -684,7 +673,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
         }
         else if (strncmp(paramName,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
         {
-                if (Get_Supplementary_URL(NULL,value_str) == RETURN_OK)
+                if (Get_Supplementary_URL(value_str) == RETURN_OK)
                 {
                         *paramValue = strdup(value_str);
                         WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,*paramValue);

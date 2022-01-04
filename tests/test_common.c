@@ -5,7 +5,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "cpeabs.h"
 
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
@@ -25,15 +24,14 @@
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
 /*----------------------------------------------------------------------------*/
-/* none */
+extern void do_something();
 
 /*----------------------------------------------------------------------------*/
 /*                                   Tests                                    */
 /*----------------------------------------------------------------------------*/
 void test_do_something()
 {
-    char * testget = getParamValue("test");
-    printf("testget is %s\n", testget);
+    do_something();
 }
 
 
@@ -44,7 +42,7 @@ void test_do_something()
 void add_suites(CU_pSuite *suite)
 {
     *suite = CU_add_suite("common encoding tests", NULL, NULL);
-    CU_add_test(*suite, "Test do_something in test_pc", test_do_something);
+    CU_add_test(*suite, "Test do_something", test_do_something);
 }
 
 int main(void)

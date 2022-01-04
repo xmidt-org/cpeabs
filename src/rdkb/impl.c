@@ -1,18 +1,6 @@
-/*
- * Copyright 2021 Comcast Cable Communications Management, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
+/* SPDX-License-Identifier: Apache-2.0 */
+
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
@@ -27,6 +15,7 @@
 #include <rbus-core/rbus_core.h>
 #include <rbus-core/rbus_session_mgr.h>
 #include "cpeabs.h"
+#include "cpeabs_rdkb.h"
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
@@ -57,6 +46,9 @@
 #define WEBCFG_URL_PARAM "Device.X_RDK_WebConfig.URL"
 #define WEBCFG_PARAM_SUPPLEMENTARY_SERVICE   "Device.X_RDK_WebConfig.SupplementaryServiceUrls."
 #define SYSTEM_READY_PARM "Device.CR.SystemReady"
+
+#define UNUSED(x) (void )(x)
+#define MAX_BUFF_SIZE 256
 /*----------------------------------------------------------------------------*/
 /*                               Data Structures                              */
 /*----------------------------------------------------------------------------*/
@@ -86,6 +78,7 @@ static int webcfgRbusRegisterWithCR();
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
+
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
 {
     strncpy(destStr, srcStr, destSize-1);
@@ -134,7 +127,7 @@ char* get_deviceMAC()
 	    cpeabStrncpy(deviceMACValue, macID, strlen(macID)+1);
 	    macIDToLower(deviceMACValue, deviceMAC);
 	    WebcfgDebug("deviceMAC: %s\n",deviceMAC);
-	    CPEABS_FREE(macID);
+	    cpeabs_free(macID);
 	}
 	WebcfgDebug("deviceMAC returned from lib is %s\n", deviceMAC);
 	return deviceMAC;
@@ -305,12 +298,12 @@ int Get_Supplementary_URL( char *name, char *pString)
 					cpeabStrncpy(pString, tempUrl, strlen(tempUrl)+1);
 				}
 				WebcfgDebug("Get_Supplementary_URL. pString %s\n", pString);
-				CPEABS_FREE(tempParam);
+				cpeabs_free(tempParam);
 			}
 			else
 			{
 				WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, tempParam);
-				CPEABS_FREE(tempParam);
+				cpeabs_free(tempParam);
 			}
 		}
 	}
@@ -333,7 +326,7 @@ int Set_Supplementary_URL( char *name, char *pString)
 			if (retPsmSet != RBUS_ERROR_SUCCESS)
 			{
 				WebcfgError("psm_set failed ret %d for parameter %s%s and value %s\n", retPsmSet, WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name, pString);
-				CPEABS_FREE(tempParam);
+				cpeabs_free(tempParam);
 				return 0;
 			}
 			else
@@ -345,7 +338,7 @@ int Set_Supplementary_URL( char *name, char *pString)
 		{
 			WebcfgError("Invalid supplementary doc name\n");
 		}
-		CPEABS_FREE(tempParam);
+		cpeabs_free(tempParam);
 	}
     }
     return retPsmSet;
@@ -371,16 +364,16 @@ char * getParamValue(char *paramName)
 		if (ret == WDMP_SUCCESS )
 		{
 			cpeabStrncpy(paramValue, parametervalArr[0]->value,64);
-			CPEABS_FREE(parametervalArr[0]->name);
-			CPEABS_FREE(parametervalArr[0]->value);
-			CPEABS_FREE(parametervalArr[0]);
+			cpeabs_free(parametervalArr[0]->name);
+			cpeabs_free(parametervalArr[0]->value);
+			cpeabs_free(parametervalArr[0]);
 		}
 		else
 		{
 			WebcfgError("Failed to GetValue for %s\n", getParamList[0]);
-			CPEABS_FREE(paramValue);
+			cpeabs_free(paramValue);
 		}
-		CPEABS_FREE(parametervalArr);
+		cpeabs_free(parametervalArr);
 		WebcfgDebug("getParamValue : paramValue is %s\n", paramValue);
 		return paramValue;
 	}
@@ -481,7 +474,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 		if(str_value !=NULL)
 		{
 			*paramValue = strdup(str_value);
-			CPEABS_FREE(str_value);
+			cpeabs_free(str_value);
 			WebcfgDebug("Requested param DB value [%s]\n", *paramValue);
 		}
 		rbusObject_Release(outParams);
