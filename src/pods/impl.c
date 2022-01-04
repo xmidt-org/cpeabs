@@ -202,6 +202,7 @@ char * getSerialNumber()
         else
         {
                 WebcfgError("Failed to GetValue for serialNum\n");
+                cpeabs_free(serialNum);
                 return NULL;
         }
 }
@@ -232,6 +233,7 @@ char * getDeviceBootTime()
         else
         {
                 WebcfgError("Failed to GetValue for bootTime\n");
+                cpeabs_free(bootTime);
                 return NULL;
         }
 }
@@ -275,7 +277,8 @@ char * getModelName()
         else
         {
                 WebcfgError("Failed to GetValue for modelName\n");
-                return NULL;
+                cpeabs_free(modelName);
+		return NULL;
         }
 }
 
@@ -305,7 +308,8 @@ char * getFirmwareVersion()
         else
         {
                 WebcfgError("Failed to GetValue for firmwareVersion\n");
-                return NULL;
+                cpeabs_free(firmware_version);
+		return NULL;
         }
 }
 
@@ -337,6 +341,7 @@ char * getRebootReason()
         if ((rebptr = fopen(OSP_PSTORE_REBOOT, "r")) == NULL) 
         {
                 WebcfgError("Error! File %s cannot be opened.\n", OSP_PSTORE_REBOOT);
+                cpeabs_free(reboot_reason);
                 return NULL;
         }
         if( fgets(reboot_fileresp, sizeof(reboot_fileresp), rebptr) != NULL )
@@ -346,7 +351,8 @@ char * getRebootReason()
         else
         {
                 WebcfgError("Error! Output from file %s couldnt be parsed.", OSP_PSTORE_REBOOT);
-                return NULL;
+                cpeabs_free(reboot_reason);
+		return NULL;
         }
         cpeabStrncpy(reboot_reason,reboot_type,BFR_SIZE_64*sizeof(char));
         if (strlen(reboot_reason) > 0)
@@ -357,7 +363,8 @@ char * getRebootReason()
         else
         {
                 WebcfgError("Failed to GetValue for reboot_reason\n");
-                return NULL;
+                cpeabs_free(reboot_reason);
+		return NULL;
         }
 }
 
@@ -378,20 +385,27 @@ char * cutting_delimiters(char *pstore_content, char * PATTERN1, char *PATTERN2)
         return target;
 }
 
-int get_id_pstore(int id_chk, char *id_type)
+char * get_id_pstore(int id_chk, char *id_type)
 {
         char pstore_content[BFR_SIZE_256];
         char acc_id[BFR_SIZE_64];
         char partner_id[BFR_SIZE_64];
         char *acc_id_ret = NULL;
         char *partner_id_ret = NULL;
-        int ret = RETURN_ERR;
-
         FILE *fptr = NULL;
-        if ((fptr = fopen(OSP_PSTORE_ACCOUNT, "r")) == NULL)
+        
+        id_type = malloc(BFR_SIZE_64*sizeof(char));
+
+        if (!id_type)
+        {
+                WebcfgError("%s : id_type couldnt be assigned with memory\n",__func__);
+                return NULL;
+        }
+	if ((fptr = fopen(OSP_PSTORE_ACCOUNT, "r")) == NULL)
         {
                 WebcfgError("Error! File %s cannot be opened.",OSP_PSTORE_ACCOUNT);
-                return ret;
+                cpeabs_free(id_type);
+                return NULL;
         }
         memset(pstore_content,0,sizeof(pstore_content));
         fscanf(fptr, "%[^\n]", pstore_content);
@@ -415,50 +429,36 @@ int get_id_pstore(int id_chk, char *id_type)
         else
         {
                 WebcfgError("Error!The file is present but is empty!\n");
-                return ret;
+                cpeabs_free(id_type);
+                return NULL;
         }
         if ((id_chk == 1) && (strlen(partner_id) > 0))
         {
                 cpeabStrncpy(id_type,partner_id_ret,BFR_SIZE_64*sizeof(char));
-                ret = RETURN_OK;
-                return ret;
-        }
-        else
-        {
-                WebcfgError("Partner ID couldnt be parsed\n");
-                return ret;
+                return id_type;
         }
 
         if ((id_chk == 0) && (strlen(acc_id) > 0))
         {
                 cpeabStrncpy(id_type,acc_id_ret,BFR_SIZE_64*sizeof(char));
-                ret = RETURN_OK;
-                return ret;
-        }
-        else
-        {
-                WebcfgError("Account ID couldnt be parsed\n");
-                return ret;
+                return id_type;
         }
 
+        WebcfgError("Error! Partnerid or/and Accountid couldnt be parsed");
+        cpeabs_free(id_type);
+        return NULL;
 }
 char * getPartnerID()
 {
         int partner_id_chk = 1;
         char *partner_id = NULL;
-        int ret_val;
+        char *ret_partner_id = NULL;
 
-  	partner_id = malloc(BFR_SIZE_64*sizeof(char));
-        if (!partner_id)
+        ret_partner_id = get_id_pstore(partner_id_chk,partner_id);
+        if (ret_partner_id != NULL)
         {
-                WebcfgError("%s : partner_id couldnt be assigned with memory\n",__func__);
-                return NULL;
-        }
-        ret_val = get_id_pstore(partner_id_chk,partner_id);
-        if (ret_val != RETURN_ERR)
-        {
-                WebcfgDebug("PartnerID returned from lib is %s\n", partner_id);
-                return partner_id;
+                WebcfgDebug("PartnerID returned from lib is %s\n", ret_partner_id);
+                return ret_partner_id;
         }
         else
         {
@@ -471,19 +471,13 @@ char * getAccountID()
 {
         int acc_id_chk = 0;
         char *account_id = NULL;
-        int ret_val;
+        char *ret_account_id = NULL;
 
-        account_id = malloc(BFR_SIZE_64*sizeof(char));
-        if (!account_id)
+        ret_account_id = get_id_pstore(acc_id_chk,account_id);
+        if (ret_account_id != NULL)
         {
-                WebcfgError("%s : account_id couldnt be assigned with memory\n",__func__);
-                return NULL;
-        }
-        ret_val = get_id_pstore(acc_id_chk,account_id);
-        if (ret_val != RETURN_ERR)
-        {
-                 WebcfgDebug("AccountID returned from lib is %s\n", account_id);
-                 return account_id;
+                 WebcfgDebug("AccountID returned from lib is %s\n", ret_account_id);
+                 return ret_account_id;
         }
         else
         {
