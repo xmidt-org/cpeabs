@@ -1,60 +1,71 @@
 /* SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC */
 /* SPDX-License-Identifier: Apache-2.0 */
 
-#include <stddef.h>
-#include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <cpeabs.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <rbus/rbus.h>
+#include <rbus/rbus_object.h>
+#include <rbus/rbus_property.h>
+#include <rbus/rbus_value.h>
+#include <rbus-core/rbus_core.h>
+#include <rbus-core/rbus_session_mgr.h>
+#include "cpeabs.h"
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
-/* none */
-
+#define UNUSED(x) (void )(x)
 /*----------------------------------------------------------------------------*/
 /*                               Data Structures                              */
 /*----------------------------------------------------------------------------*/
 /* none */
-
 /*----------------------------------------------------------------------------*/
 /*                            File Scoped Variables                           */
 /*----------------------------------------------------------------------------*/
 /* none */
-
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
 /*----------------------------------------------------------------------------*/
-void do_something();
-/*----------------------------------------------------------------------------*/
-/*                             Internal functions                             */
-/*----------------------------------------------------------------------------*/
 /* none */
-
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
-//For test purpose
-void do_something()
+char * getParamValue(char *paramName)
 {
-    printf("I do something well.\n");
+	UNUSED(paramName);
+	return NULL;
 }
 
-//For meson build stub function
-int main()
+/**
+ * To persist TR181 parameter values in DB.
+ */
+int rbus_StoreValueIntoDB(char *paramName, char *value)
 {
-    return 0;
+	UNUSED(paramName);
+	UNUSED(value);
+	return 1;
 }
 
-//User-defined function to free pointer
-void cpeabs_free(void *ptr)
+/**
+ * To fetch TR181 parameter values from DB.
+ */
+int rbus_GetValueFromDB( char* paramName, char** paramValue)
 {
-	if(ptr != NULL)
-	{
-		free((void*)(ptr));
-		ptr = NULL;
-	}
-	else
-	{
-		printf("Trying to free null pointer\n");
-	}
+	UNUSED(paramName);
+	UNUSED(paramValue);
+	return 1;
 }
+
+void getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus)
+{
+	UNUSED(paramName);
+	UNUSED(paramCount);
+	UNUSED(index);
+	UNUSED(timeSpan);
+	UNUSED(paramArr);
+	UNUSED(retValCount);
+	UNUSED(retStatus);
+	return;
+}
+
