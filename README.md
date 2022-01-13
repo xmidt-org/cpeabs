@@ -18,7 +18,7 @@ An abstraction layer for consumer preference equipment systems.
 # Building and Testing Instructions
 
 ```
-meson build
+meson setup --warnlevel 3 --werror build
 cd build
 ninja all test coverage
 firefox meson-logs/coveragereport/index.html

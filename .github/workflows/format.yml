@@ -1,7 +1,7 @@
-# SPDX-FileCopyrightText: 2021 Comcast Cable Communications Management, LLC
+# SPDX-FileCopyrightText: 2022 Comcast Cable Communications Management, LLC
 # SPDX-License-Identifier: Apache-2.0
 
-name: CI
+name: Code Format Check
 
 on:
   pull_request:
@@ -21,6 +21,4 @@ on:
 
 jobs:
   test:
-    uses: xmidt-org/.github/.github/workflows/meson-unit-test.yml@main
-    secrets:
-      sonar_login: ${{ secrets.SONAR_TOKEN }}
+    uses: xmidt-org/.github/.github/workflows/c-code-format.yml@main

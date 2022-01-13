@@ -47,7 +47,7 @@ void add_suites(CU_pSuite *suite)
 
 int main(void)
 {
-    unsigned rv = 1;
+    unsigned rv     = 1;
     CU_pSuite suite = NULL;
 
     if (CUE_SUCCESS == CU_initialize_registry()) {
