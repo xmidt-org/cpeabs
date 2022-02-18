@@ -34,6 +34,9 @@
 #define FIRMWARE_VERSION			"Device.DeviceInfo.X_CISCO_COM_FirmwareName"
 #define DEVICE_BOOT_TIME			"Device.DeviceInfo.X_RDKCENTRAL-COM_BootTime"
 #define MODEL_NAME				"Device.DeviceInfo.ModelName"
+#ifdef WAN_FAILOVER_SUPPORTED
+#define INTERFACE_NAME                          "Device.X_RDK_WanManager.CurrentActiveInterface"
+#endif
 #define PRODUCT_CLASS				"Device.DeviceInfo.ProductClass"
 #define CONN_CLIENT_PARAM			"Device.X_RDK_Webpa.ConnectedClientNotify"
 #define LAST_REBOOT_REASON			"Device.DeviceInfo.X_RDKCENTRAL-COM_LastRebootReason"
@@ -171,6 +174,16 @@ char * getModelName()
 	WebcfgDebug("modelName returned from lib is %s\n", modelName);
 	return modelName;
 }
+
+#ifdef WAN_FAILOVER_SUPPORTED
+char * getInterfaceName()
+{
+        char *interfaceName = NULL;
+        interfaceName = getParamValue(INTERFACE_NAME);
+        WebcfgDebug("interfaceName returned from lib is %s\n", interfaceName);
+        return interfaceName;
+}
+#endif
 
 char * getFirmwareVersion()
 {
