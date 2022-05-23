@@ -39,7 +39,7 @@
 /**
  * @brief Enables or disables debug logs.
  */
-#if defined DEVICE_GATEWAY && defined BUILD_YOCTO
+#if defined DEVICE_GATEWAY && defined BUILD_YOCTO && defined DEVICE_VIDEO
 
 #define WEBCFG_LOG_MODULE                     "WEBCONFIG"
 #define WEBCFG_RDK_LOG_MODULE                 "LOG.RDK.WEBCONFIG"
