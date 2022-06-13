@@ -254,27 +254,53 @@ bool isRbusEnabled()
 
 int Get_Webconfig_URL( char *pString)
 {
-	char *tempUrl = NULL;
-	int retPsmGet = 0;
-	if(isRbusEnabled())
-	{
-		retPsmGet = rbus_GetValueFromDB( WEBCFG_URL_PARAM, &tempUrl);
-		WebcfgDebug("Get_Webconfig_URL. retPsmGet %d tempUrl %s\n", retPsmGet, tempUrl);
-		if (retPsmGet == RBUS_ERROR_SUCCESS)
-                {
-			if(tempUrl !=NULL)
-			{
-				cpeabStrncpy(pString, tempUrl, strlen(tempUrl)+1);
-			}
-			WebcfgDebug("Get_Webconfig_URL. pString %s\n", pString);
-		}
-		else
-                {
-                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, WEBCFG_URL_PARAM);
-                }
-	}
-	WebcfgDebug("Get_Webconfig_URL strong fn from lib\n");
-	return retPsmGet;
+    errno_t rc = -1;
+    HOSTIF_MsgData_t stRfcData = {0};
+
+    rc = strcpy_s(stRfcData.paramName, strlen("Device.X_RDK_WebConfig.URL")+1, "Device.X_RDK_WebConfig.URL");
+    if(rc != EOK)
+    {
+        WebcfgDebug("[%s:%d]webcfg: Failed to copy.\n", __FUNCTION__, __LINE__);
+	ERR_CHK(rc);
+        return rc;
+    }
+
+    m_bsStore = XBSStore::getInstance();
+    if (fcNoFault != m_bsStore->getValue(&stRfcData) ) {
+        WebcfgDebug("[%s:%d]webcfg: Failed to get RFC Value.\n", __FUNCTION__, __LINE__);
+        return rc;
+    }
+
+    if(stRfcData.paramValue[0] == '\0') {
+        strcpy_s(pString,strlen(BLE_DETECTION_WEBCFG_ENDPOINT)+1,BLE_DETECTION_WEBCFG_ENDPOINT);
+        WebcfgDebug("[%s:%d]webcfg: Empty [%s] Value, so using default URL [%s]\n", __FUNCTION__, __LINE__,stRfcData.paramName, pString );
+        return -1;
+    }
+
+    WebcfgDebug("[%s:%d]webcfg: The URL Value is \"%s\".\n", __FUNCTION__, __LINE__, stRfcData.paramValue);
+
+    const char* url = stRfcData.paramValue;
+
+    rc = strcpy_s(pString, strlen(url) + 1, url);
+    if(rc!=EOK) {
+	ERR_CHK(rc);
+        return -1;
+    }
+    else {
+        strncat(pString,(const char *)BLE_DETECTION_WEBCFG_SUFIX, strlen(BLE_DETECTION_WEBCFG_SUFIX)+1);
+    }
+
+    if(strlen(pString) == 0) {
+        rc=strcpy_s(pString,strlen(BLE_DETECTION_WEBCFG_ENDPOINT)+1,BLE_DETECTION_WEBCFG_ENDPOINT);
+    }
+
+    if(rc!=EOK) {
+        ERR_CHK(rc);
+    }
+
+    WebcfgDebug("[%s:%d] The \"Device.X_RDK_WebConfig.URL\" is [%s] \n", __FUNCTION__,__LINE__, pString);
+
+    return 0;
 }
 
 int Set_Webconfig_URL( char *pString)
