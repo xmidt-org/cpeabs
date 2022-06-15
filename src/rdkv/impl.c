@@ -300,6 +300,27 @@ int Get_Webconfig_URL(char *pString)
     return 0;
 }
 
+int Set_Webconfig_URL( char *pString)
+{
+    int retPsmSet = 0;
+    if(isRbusEnabled())
+    {
+    	retPsmSet = rbus_StoreValueIntoDB( WEBCFG_URL_PARAM, pString );
+	WebcfgDebug("Set_Webconfig_URL. retPsmSet %d pString %s\n", retPsmSet, pString);
+
+	if (retPsmSet != RBUS_ERROR_SUCCESS)
+        {
+		WebcfgError("psm_set failed ret %d for parameter %s and value %s\n", retPsmSet, WEBCFG_URL_PARAM, pString);
+                return 0;
+        }
+        else
+        {
+		WebcfgDebug("psm_set success ret %d for parameter %s and value %s\n", retPsmSet, WEBCFG_URL_PARAM, pString);
+        }
+    }
+    return retPsmSet;
+}
+
 int Get_Supplementary_URL( char *name, char *pString)
 {
 	char *tempUrl = NULL;
