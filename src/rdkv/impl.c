@@ -26,6 +26,9 @@
 #include <rbus/rbus_value.h>
 #include <rbus-core/rbus_core.h>
 #include <rbus-core/rbus_session_mgr.h>
+#include <stdio.h>
+#include <sys/sysinfo.h>
+#include <json/json.h>
 #include "cpeabs.h"
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
