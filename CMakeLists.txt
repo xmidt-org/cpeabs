@@ -39,6 +39,7 @@ file(MAKE_DIRECTORY ${TEST_RESULTS_DIR})
 
 include_directories(${INCLUDE_DIR}
                     ${INCLUDE_DIR}/cjson
+		    ${INCLUDE_DIR}/jansson
                     ${INCLUDE_DIR}/msgpack
                     ${INCLUDE_DIR}/rbus
 		    ${INCLUDE_DIR}/rbus-core
@@ -88,6 +89,21 @@ ExternalProject_Add(cJSON
 )
 add_library(libcJSON STATIC IMPORTED)
 add_dependencies(libcJSON cJSON)
+
+# Jansson external dependency
+#-------------------------------------------------------------------------------
+set(JANSSON_REPO "https://github.com/akheron/jansson.git" CACHE STRING "Jansson Git repository")
+set(JANSSON_TAG "v2.13" CACHE STRING "Jansson Git tag")
+
+ExternalProject_Add(jansson
+  PREFIX ${PREFIX_DIR}/jansson
+  GIT_REPOSITORY ${JANSSON_REPO}
+  GIT_TAG ${JANSSON_TAG}
+  GIT_SHALLOW TRUE
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_C_FLAGS=-fPIC -DJANSSON_BUILD_DOCS=OFF
+)
+add_library(libjansson STATIC IMPORTED)
+add_dependencies(libjansson jansson)
 
 # wdmp-c external dependency
 #-------------------------------------------------------------------------------
