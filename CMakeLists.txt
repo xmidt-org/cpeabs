@@ -37,7 +37,7 @@ set(COMMON_LIBRARY_DIR ${INSTALL_DIR}/lib/${CMAKE_LIBRARY_ARCHITECTURE})
 set(TEST_RESULTS_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_results)
 file(MAKE_DIRECTORY ${TEST_RESULTS_DIR})
 
-find_package(jannson)
+find_package(jansson)
 
 include_directories(${INCLUDE_DIR}
                     ${INCLUDE_DIR}/cjson
