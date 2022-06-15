@@ -289,21 +289,12 @@ bool isRbusEnabled()
 int Get_Webconfig_URL(char *pString)
 {
     char *webcfg_url = readWebcfgURL();
-    errno_t rc = -1;
 
     if(webcfg_url) {
-        rc=strcpy_s(pString,(strlen(webcfg_url)+1),webcfg_url);
-        if(rc!=EOK)
-        {
-                printf("safeclib error at rc - %d %s %s:%d", rc,  __FILE__, __FUNCTION__, __LINE__);
-        }
+        strcpy(pString,webcfg_url);
         free(webcfg_url);
     } else {
-        rc=strcpy_s(pString,sizeof(BLE_DETECTION_WEBCFG_ENDPOINT) ,BLE_DETECTION_WEBCFG_ENDPOINT);
-        if(rc!=EOK)
-        {
-                printf("safeclib error at rc - %d %s %s:%d", rc,  __FILE__, __FUNCTION__, __LINE__);
-        }
+        strcpy(pString,BLE_DETECTION_WEBCFG_ENDPOINT);
     }
     WebcfgInfo("webcfg: [%s] %d %s \n", __FUNCTION__, __LINE__, pString);
     return 0;
