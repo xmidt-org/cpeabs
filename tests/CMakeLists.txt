@@ -29,7 +29,7 @@ endif (BUILD_YOCTO)
 
 if (PLATFORM STREQUAL "DEVICE_GATEWAY")
 add_definitions(-DDEVICE_GATEWAY)
-if (PLATFORM STREQUAL "DEVICE_VIDEO")
+elseif (PLATFORM STREQUAL "DEVICE_VIDEO")
 add_definitions(-DDEVICE_VIDEO)
 elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
 add_definitions(-DDEVICE_EXTENDER)
@@ -50,7 +50,7 @@ target_link_libraries (test_rdkb -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -
 
 target_link_libraries (test_rdkb gcov -Wl,--no-as-needed )
 
-if (PLATFORM STREQUAL "DEVICE_VIDEO")
+elseif (PLATFORM STREQUAL "DEVICE_VIDEO")
 
 #-------------------------------------------------------------------------------
 #   test_rdkv
