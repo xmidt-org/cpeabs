@@ -60,13 +60,26 @@
 #define DEVICE_MAC                   "Device.X_CISCO_COM_CableModem.MACAddress"
 #endif
 
-#define BLE_DETECTION_WEBCFG_ENDPOINT "https://cpe-config.xdp.comcast.net/api/v1/device/{mac}/config?group_id=ble"
-#define WEBCFG_URL_FILE  "/etc/partners_defaults_webcfg_video.json"
+//#define BLE_DETECTION_WEBCFG_ENDPOINT "https://cpe-config.xdp.comcast.net/api/v1/device/{mac}/config?group_id=ble"
+//#define WEBCFG_URL_FILE  "/etc/partners_defaults_webcfg_video.json"
 
 #define WEBCFG_URL_PARAM "Device.X_RDK_WebConfig.URL"
 #define WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM  "Device.X_RDK_WebConfig.SupplementaryServiceUrls.Telemetry"
 #define WEBCFG_PARAM_SUPPLEMENTARY_SERVICE   "Device.X_RDK_WebConfig.SupplementaryServiceUrls."
 #define SYSTEM_READY_PARM "Device.CR.SystemReady"
+
+#define WEBCFG_CFG_FILE "partners_defaults_webcfg_video.json"
+
+#define MAKE_STR(x) _MAKE_STR(x)
+#define _MAKE_STR(x) #x
+
+#define WEBCONFIG_CONFIG_PS_FILE MAKE_STR(PS_FILE_PATH) WEBCFG_CFG_FILE
+
+#define WEBCFG_URL_PARAM "Device.X_RDK_WebConfig.URL"
+#define WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM  "Device.X_RDK_WebConfig.SupplementaryServiceUrls.Telemetry"
+
+#define RETURN_OK 0
+#define RETURN_ERR -1
 
 /*----------------------------------------------------------------------------*/
 /*                               Data Structures                              */
@@ -89,7 +102,9 @@ void __attribute__((weak)) getValues_rbus(const char *paramName[], const unsigne
 static bool isRbusEnabled();
 void macIDToLower(char macValue[],char macConverted[]);
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize);
-char *readWebcfgURL();
+//char *readWebcfgURL();
+bool json_string_value_get(char *key, char* value_str, size_t len);
+bool json_string_value_set(char *key, char* value_str);
 rbusHandle_t  __attribute__((weak)) get_global_rbus_handle(void);
 static void systemReadyEventHandler(rbusHandle_t handle, rbusEvent_t const* event, rbusEventSubscription_t* subscription);
 static void subscribeSystemReadyEvent();
@@ -104,7 +119,71 @@ void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
     destStr[destSize-1] = '\0';
 }
 
-char *readWebcfgURL()
+bool json_string_value_get(char *key, char* value_str, size_t len);
+
+{
+        json_t *json;
+        json_error_t error;
+        json_t *value;
+        bool ret = false;
+
+        json = json_load_file(WEBCONFIG_CONFIG_PS_FILE, 0, &error);
+        if(!json) 
+        {
+                WebcfgError("Failed to load %s",WEBCONFIG_CONFIG_PS_FILE);
+                return ret;
+        }
+
+        value = json_object_get(json, key);
+        if (value)
+        {
+                cpeabStrncpy(value_str,json_string_value(value),len);
+                WebcfgInfo("%s : Fetched [%s] = [%s]. \n",__func__,key,value_str);
+                ret = true;
+        }
+        else
+        {
+                WebcfgError("Json value is Null.\n");
+        }
+        json_decref(json);
+        return ret;
+}
+
+bool json_string_value_set(char *key, char* value_str)
+{
+        json_t *json;
+        json_error_t error;
+        json_t *value_json;
+        bool ret = false;
+
+        json = json_load_file(WEBCONFIG_CONFIG_PS_FILE, 0, &error);
+        if(!json)
+	{
+                WebcfgError("Failed to load %s",WEBCONFIG_CONFIG_PS_FILE);
+                return ret;
+        }
+
+        value_json = json_string(value_str);
+
+        if (json_object_set(json, key, value_json) == RETURN_OK)
+        {
+                WebcfgInfo("%s : Successfully set : [%s] = [%s] \n",__func__,key,value_str);
+                if (json_dump_file(json,WEBCONFIG_CONFIG_PS_FILE,0) == RETURN_OK )
+                {
+                        WebcfgInfo("Successfully Written to file. \n");
+                        ret = true;
+                }
+        }
+        else
+        {
+                WebcfgError("Json value is Null.\n");
+        }
+        json_decref(value_json);
+        json_decref(json);
+        return ret;
+}
+
+/*char *readWebcfgURL()
 {
     FILE *fp = NULL;
     char *val = NULL;
@@ -128,7 +207,7 @@ char *readWebcfgURL()
         fclose(fp);
     }
     return val;
-}
+}*/
 
 void macIDToLower(char macValue[],char macConverted[])
 {
@@ -287,7 +366,7 @@ bool isRbusEnabled()
 	return isRbus;
 }
 
-int Get_Webconfig_URL(char *pString)
+/*int Get_Webconfig_URL(char *pString)
 {
     char *webcfg_url = readWebcfgURL();
 
@@ -386,6 +465,74 @@ int Set_Supplementary_URL( char *name, char *pString)
 	}
     }
     return retPsmSet;
+}*/
+
+int Get_Webconfig_URL( char *pString)
+{
+        char url[128];
+        int ret = RETURN_ERR;
+
+        memset(url,0,sizeof(url));
+
+        if (json_string_value_get(WEBCFG_URL_PARAM,url, sizeof(url)))
+        {
+                 cpeabStrncpy(pString,url,sizeof(url));
+                 WebcfgDebug("Successfully fetched Webconfig URL : [%s]. \n", url);
+                 ret = RETURN_OK;
+        }
+        else{
+                 WebcfgError("Error! Failed to fetch Webconfig URL\n");
+        } 
+        return ret;
+}
+
+int Set_Webconfig_URL( char *pString)
+{
+        int ret = RETURN_ERR;
+
+         if (json_string_value_set(WEBCFG_URL_PARAM, pString) == true)
+         {
+                 WebcfgDebug("Successfully set Webconfig URL \n");
+                 ret = RETURN_OK;
+         }
+         else{
+                 WebcfgError("Error! Failed to set Webconfig URL\n");
+         }
+         return ret;
+}
+
+int Get_Supplementary_URL( char *name, char *pString)
+{
+        char url[128];
+        int ret = RETURN_ERR;
+
+        memset(url,0,sizeof(url));
+
+        if (json_string_value_get(WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,url, sizeof(url)))
+        {
+                WebcfgDebug("Successfully fetched Webconfig Supp URL : [%s] \n", url);
+                cpeabStrncpy(pString,url,sizeof(url));
+                ret = RETURN_OK;
+        }
+        else{
+                WebcfgError("Error! Failed to fetch Webconfig Supp URL\n");
+        }
+        return ret;
+}
+
+int Set_Supplementary_URL( char *name, char *pString)
+{
+        int ret = RETURN_ERR;
+
+        if (json_string_value_set(WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM, pString) == true)
+        {
+                WebcfgDebug("Successfully set Webconfig URL \n");
+                ret = RETURN_OK;
+        }
+        else{
+                WebcfgError("Error! Failed to set Webconfig Supp URL\n");
+        }
+        return ret;
 }
 
 char * getParamValue(char *paramName)
