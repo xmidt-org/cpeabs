@@ -89,6 +89,29 @@ ExternalProject_Add(cJSON
 add_library(libcJSON STATIC IMPORTED)
 add_dependencies(libcJSON cJSON)
 
+# Jansson external dependency
+#-------------------------------------------------------------------------------
+set(JANSSON_REPO "https://github.com/akheron/jansson.git" CACHE STRING "Jansson Git repository")
+set(JANSSON_TAG "v2.13" CACHE STRING "Jansson Git tag")
+
+ExternalProject_Add(jansson
+  PREFIX ${PREFIX_DIR}/jansson
+  GIT_REPOSITORY ${JANSSON_REPO}
+  GIT_TAG ${JANSSON_TAG}
+  GIT_SHALLOW TRUE
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_C_FLAGS=-fPIC -DJANSSON_BUILD_DOCS=OFF
+)
+
+set(JANSSON_FOUND TRUE CACHE INTERNAL "")
+set(JANSSON_STATIC_FOUND TRUE CACHE INTERNAL "")
+set(JANSSON_INCLUDE_DIR ${INSTALL_DIR}/include CACHE INTERNAL "")
+set(JANSSON_STATIC_LIBRARIES ${INSTALL_DIR}/lib/libjansson.a CACHE INTERNAL "")
+set(JANSSON_LIBRARIES ${JANSSON_STATIC_LIBRARIES} CACHE INTERNAL "")
+
+add_library(libjansson STATIC IMPORTED)
+add_dependencies(libjansson jansson)
+include_directories(${JANSSON_INCLUDE_DIR})
+
 # wdmp-c external dependency
 #-------------------------------------------------------------------------------
 ExternalProject_Add(wdmp-c
