@@ -28,7 +28,7 @@
 #include <rbus-core/rbus_session_mgr.h>
 #include <stdio.h>
 #include <sys/sysinfo.h>
-#include <jansson.h>
+#include "jansson.h"
 #include "cpeabs.h"
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
