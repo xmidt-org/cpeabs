@@ -22,6 +22,8 @@ include(CTest)
 add_definitions(-std=c99)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -ljansson -Werror -Wall -D_GNU_SOURCE=1")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c99 -g -ljansson -Werror -Wall -D_GNU_SOURCE=1")
+set(CMAKE_CXX_STANDARD_LIBRARIES -ljansson)
+
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 set(CMAKE_MACOSX_RPATH 1)
@@ -49,7 +51,7 @@ include_directories(${INCLUDE_DIR}
 
 include_directories(
                      ${PROJECT_SOURCE_DIR}/include/
-		   )
+		   )		    
 
 if (NOT BUILD_YOCTO)
 
@@ -104,13 +106,16 @@ ExternalProject_Add(jansson
 
 set(JANSSON_FOUND TRUE CACHE INTERNAL "")
 set(JANSSON_STATIC_FOUND TRUE CACHE INTERNAL "")
-set(JANSSON_INCLUDE_DIR ${INSTALL_DIR}/include CACHE INTERNAL "")
-set(JANSSON_STATIC_LIBRARIES ${INSTALL_DIR}/lib/libjansson.a CACHE INTERNAL "")
-set(JANSSON_LIBRARIES ${JANSSON_STATIC_LIBRARIES} CACHE INTERNAL "")
+set(JANSSON_INCLUDE_DIR ${INCLUDE_DIR} CACHE INTERNAL "")
+set(JANSSON_STATIC_LIBRARIES ${LIBRARY_DIR}/libjansson.a CACHE INTERNAL "")
+set(JANSSON_LIBRARIES ${LIBRARY_DIR} CACHE INTERNAL "")
 
 add_library(libjansson STATIC IMPORTED)
 add_dependencies(libjansson jansson)
+
 include_directories(${JANSSON_INCLUDE_DIR})
+find_library(JANSSON_LIBRARIES NAMES jansson)
+find_path(JANSSON_INCLUDE_DIR NAMES jansson.h PATH_SUFFIXES jansson)
 
 # wdmp-c external dependency
 #-------------------------------------------------------------------------------
