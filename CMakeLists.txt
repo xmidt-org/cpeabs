@@ -115,7 +115,7 @@ add_dependencies(libjansson jansson)
 
 include_directories(${JANSSON_INCLUDE_DIR})
 find_library(JANSSON_LIBRARIES NAMES jansson)
-find_path(JANSSON_INCLUDE_DIR NAMES jansson.h PATH_SUFFIXES jansson)
+#find_path(JANSSON_INCLUDE_DIR NAMES jansson.h PATH_SUFFIXES jansson)
 
 # wdmp-c external dependency
 #-------------------------------------------------------------------------------
