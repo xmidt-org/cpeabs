@@ -22,8 +22,6 @@ include(CTest)
 add_definitions(-std=c99)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -ljansson -Werror -Wall -D_GNU_SOURCE=1")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c99 -g -ljansson -Werror -Wall -D_GNU_SOURCE=1")
-set(CMAKE_CXX_STANDARD_LIBRARIES -ljansson)
-
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 set(CMAKE_MACOSX_RPATH 1)
@@ -90,32 +88,6 @@ ExternalProject_Add(cJSON
 )
 add_library(libcJSON STATIC IMPORTED)
 add_dependencies(libcJSON cJSON)
-
-# Jansson external dependency
-#-------------------------------------------------------------------------------
-set(JANSSON_REPO "https://github.com/akheron/jansson.git" CACHE STRING "Jansson Git repository")
-set(JANSSON_TAG "v2.13" CACHE STRING "Jansson Git tag")
-
-ExternalProject_Add(jansson
-  PREFIX ${PREFIX_DIR}/jansson
-  GIT_REPOSITORY ${JANSSON_REPO}
-  GIT_TAG ${JANSSON_TAG}
-  GIT_SHALLOW TRUE
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_C_FLAGS=-fPIC -DJANSSON_BUILD_DOCS=OFF
-)
-
-set(JANSSON_FOUND TRUE CACHE INTERNAL "")
-set(JANSSON_STATIC_FOUND TRUE CACHE INTERNAL "")
-set(JANSSON_INCLUDE_DIR ${INCLUDE_DIR} CACHE INTERNAL "")
-set(JANSSON_STATIC_LIBRARIES ${LIBRARY_DIR}/libjansson.a CACHE INTERNAL "")
-set(JANSSON_LIBRARIES ${LIBRARY_DIR} CACHE INTERNAL "")
-
-add_library(libjansson STATIC IMPORTED)
-add_dependencies(libjansson jansson)
-
-include_directories(${JANSSON_INCLUDE_DIR})
-find_library(JANSSON_LIBRARIES NAMES jansson)
-#find_path(JANSSON_INCLUDE_DIR NAMES jansson.h PATH_SUFFIXES jansson)
 
 # wdmp-c external dependency
 #-------------------------------------------------------------------------------
