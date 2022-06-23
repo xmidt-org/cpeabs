@@ -60,9 +60,6 @@
 #define DEVICE_MAC                   "Device.X_CISCO_COM_CableModem.MACAddress"
 #endif
 
-//#define BLE_DETECTION_WEBCFG_ENDPOINT "https://cpe-config.xdp.comcast.net/api/v1/device/{mac}/config?group_id=ble"
-//#define WEBCFG_URL_FILE  "/etc/partners_defaults_webcfg_video.json"
-
 #define WEBCFG_URL_PARAM "Device.X_RDK_WebConfig.URL"
 #define WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM  "Device.X_RDK_WebConfig.SupplementaryServiceUrls.Telemetry"
 #define WEBCFG_PARAM_SUPPLEMENTARY_SERVICE   "Device.X_RDK_WebConfig.SupplementaryServiceUrls."
@@ -119,8 +116,7 @@ void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
     destStr[destSize-1] = '\0';
 }
 
-bool json_string_value_get(char *key, char* value_str, size_t len);
-
+bool json_string_value_get(char *key, char* value_str, size_t len)
 {
         json_t *json;
         json_error_t error;
@@ -182,32 +178,6 @@ bool json_string_value_set(char *key, char* value_str)
         json_decref(json);
         return ret;
 }
-
-/*char *readWebcfgURL()
-{
-    FILE *fp = NULL;
-    char *val = NULL;
-    long int bytes = 0;
-
-    fp = fopen(WEBCFG_URL_FILE,"r");
-    if(fp) {
-        fseek(fp, 0, SEEK_END);
-        bytes = ftell(fp);
-        fseek(fp, 0, SEEK_SET);
-        if(bytes) {
-            val = (char *)malloc(sizeof(char) *(bytes + 1));
-            memset(val,0, sizeof(char) *(bytes + 1));
-            if(!fread(val,bytes,1,fp))  //CID:160850
-            {
-                fclose(fp);
-                free(val);
-                return NULL;
-            }
-        }
-        fclose(fp);
-    }
-    return val;
-}*/
 
 void macIDToLower(char macValue[],char macConverted[])
 {
