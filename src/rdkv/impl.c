@@ -65,6 +65,8 @@
 #define WEBCFG_PARAM_SUPPLEMENTARY_SERVICE   "Device.X_RDK_WebConfig.SupplementaryServiceUrls."
 #define SYSTEM_READY_PARM "Device.CR.SystemReady"
 
+#define WEBCFG_MAX_PARAM_LEN 128
+
 #define WEBCFG_CFG_FILE "partners_defaults_webcfg_video.json"
 
 #define MAKE_STR(x) _MAKE_STR(x)
@@ -542,10 +544,69 @@ char * getParamValue(char *paramName)
 	return NULL;
 }
 
+int rbus_StoreValueIntoDB(char *paramName, char *value)
+{
+        int ret = RETURN_ERR;
+
+        if (strncmp(paramName,WEBCFG_URL_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+        {
+                if (Set_Webconfig_URL(value) == RETURN_OK)
+                {
+                        WebcfgDebug("%s : Successfully stored [%s] = [%s]. \n",__func__,WEBCFG_URL_PARAM,value);
+                        ret = RETURN_OK;
+                }
+        }
+        else if (strncmp(paramName,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+        {
+                if (Set_Supplementary_URL(NULL,value) == RETURN_OK)
+                {
+                        WebcfgDebug("%s : Successfully stored [%s] = [%s]. \n",__func__,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,value);
+                        ret = RETURN_OK;
+                }
+        }
+        else {
+                WebcfgError("Invalid Param Name \n");
+        }
+        return ret;
+}
+
+int rbus_GetValueFromDB( char* paramName, char** paramValue)
+{
+        char value_str[256];
+        int ret = RETURN_ERR;
+
+        memset(value_str,0,sizeof(value_str));
+
+        if (strncmp(paramName,WEBCFG_URL_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+        {
+                if (Get_Webconfig_URL(value_str) == RETURN_OK)
+                {
+                        *paramValue = strdup(value_str);
+                        WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,WEBCFG_URL_PARAM,*paramValue);
+                        ret = RETURN_OK;
+                }
+        }
+        else if (strncmp(paramName,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+        {
+                if (Get_Supplementary_URL(NULL,value_str) == RETURN_OK)
+                {
+                        *paramValue = strdup(value_str);
+                        WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM,*paramValue);
+                        ret = RETURN_OK;
+                }
+        }
+        else
+        {
+                WebcfgError("Invalid Param Name \n");
+        }
+        return ret;
+}
+
+
 /**
  * To persist TR181 parameter values in PSM DB.
  */
-int rbus_StoreValueIntoDB(char *paramName, char *value)
+/*int rbus_StoreValueIntoDB(char *paramName, char *value)
 {
 	rbusHandle_t rbus_handle;
 	rbusObject_t inParams;
@@ -580,11 +641,12 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
 	}
 	return 1;
 }
+*/
 
 /**
  * To fetch TR181 parameter values from PSM DB.
  */
-int rbus_GetValueFromDB( char* paramName, char** paramValue)
+/*int rbus_GetValueFromDB( char* paramName, char** paramValue)
 {
 	rbusHandle_t rbus_handle;
 	rbusObject_t inParams;
@@ -643,6 +705,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 	}
 	return 1;
 }
+*/
 
 void getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus)
 {
