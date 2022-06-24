@@ -565,7 +565,7 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
                 }
         }
         else {
-                WebcfgError("Invalid Param Name \n");
+                WebcfgError("Invalid Param Name (set)= %s\n",paramName);
         }
         return ret;
 }
@@ -597,7 +597,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
         }
         else
         {
-                WebcfgError("Invalid Param Name \n");
+                WebcfgError("Invalid Param Name (get)= %s\n",paramName);
         }
         return ret;
 }
