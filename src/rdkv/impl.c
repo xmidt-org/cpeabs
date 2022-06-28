@@ -60,6 +60,8 @@
 #define DEVICE_MAC                   "Device.X_CISCO_COM_CableModem.MACAddress"
 #endif
 
+#define WEBCFG_RFC_PARAM "Device.X_RDK_WebConfig.RfcEnable"
+#define PARAM_RFC_ENABLE "eRT.com.cisco.spvtg.ccsp.webpa.WebConfigRfcEnable"
 #define WEBCFG_URL_PARAM "Device.X_RDK_WebConfig.URL"
 #define WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM  "Device.X_RDK_WebConfig.SupplementaryServiceUrls.Telemetry"
 #define WEBCFG_PARAM_SUPPLEMENTARY_SERVICE   "Device.X_RDK_WebConfig.SupplementaryServiceUrls."
@@ -495,10 +497,24 @@ char * getParamValue(char *paramName)
 int rbus_StoreValueIntoDB(char *paramName, char *value)
 {
         int ret = RETURN_ERR;
-    //    char *partnerId = NULL;
 
-    //    partnerId=getPartnerID();
-        if (strncmp(paramName,WEBCFG_URL_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+        if (strncmp(paramName,WEBCFG_RFC_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+        {
+                if (json_string_value_set(WEBCFG_RFC_PARAM,value) == RETURN_OK)
+                {
+                        WebcfgDebug("%s : Successfully stored [%s] = [%s]. \n",__func__,WEBCFG_RFC_PARAM,value);
+                        ret = RETURN_OK;
+                }
+        }
+        else if (strncmp(paramName,PARAM_RFC_ENABLE,WEBCFG_MAX_PARAM_LEN) == 0)
+        {
+                if (json_string_value_set(PARAM_RFC_ENABLE,value) == RETURN_OK)
+                {
+                        WebcfgDebug("%s : Successfully stored [%s] = [%s]. \n",__func__,PARAM_RFC_ENABLE,value);
+                        ret = RETURN_OK;
+                }
+        }
+        else if (strncmp(paramName,WEBCFG_URL_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
         {
                 if (Set_Webconfig_URL(value) == RETURN_OK)
                 {
@@ -524,16 +540,29 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 {
         char value_str[256];
         int ret = RETURN_ERR;
-      /*  char *partnerId = NULL;
-        cJSON *parser,*parsed_item;
-
-        partnerId=getPartnerID();
-        parser=parse_json_file();
-        parsed_item=read_json_file(parser); */
 
         memset(value_str,0,sizeof(value_str));
 
-        if (strncmp(paramName,WEBCFG_URL_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+        if (strncmp(paramName,WEBCFG_RFC_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+        {
+                if (json_string_value_get(WEBCFG_RFC_PARAM,value_str, sizeof(value_str)))
+                {
+                        *paramValue = strdup(value_str);
+                        WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,WEBCFG_RFC_PARAM,*paramValue);
+                        ret = RETURN_OK;
+                }
+        }
+        else if (strncmp(paramName,PARAM_RFC_ENABLE,WEBCFG_MAX_PARAM_LEN) == 0)
+        {
+                if (json_string_value_get(PARAM_RFC_ENABLE,value_str, sizeof(value_str)))
+                {
+                        *paramValue = strdup(value_str);
+                        WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,PARAM_RFC_ENABLE,*paramValue);
+                        ret = RETURN_OK;
+                }
+        }
+        else if (strncmp(paramName,WEBCFG_URL_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+
         {
                 if (Get_Webconfig_URL(value_str) == RETURN_OK)
                 {
@@ -557,111 +586,6 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
         }
         return ret;
 }
-
-
-/**
- * To persist TR181 parameter values in PSM DB.
- */
-/*int rbus_StoreValueIntoDB(char *paramName, char *value)
-{
-	rbusHandle_t rbus_handle;
-	rbusObject_t inParams;
-	rbusObject_t outParams;
-	rbusValue_t setvalue;
-	int rc = RBUS_ERROR_SUCCESS;
-
-	rbus_handle = get_global_rbus_handle();
-	if(!rbus_handle)
-	{
-		WebcfgError("rbus_StoreValueIntoDB failed as rbus_handle is empty\n");
-		return 1;
-	}
-
-	rbusObject_Init(&inParams, NULL);
-	rbusValue_Init(&setvalue);
-	rbusValue_SetString(setvalue, value);
-	rbusObject_SetValue(inParams, paramName, setvalue);
-	rbusValue_Release(setvalue);
-
-	rc = rbusMethod_Invoke(rbus_handle, "SetPSMRecordValue()", inParams, &outParams);
-	rbusObject_Release(inParams);
-	if(rc != RBUS_ERROR_SUCCESS)
-	{
-		WebcfgError("SetPSMRecordValue failed with err %d: %s\n", rc, rbusError_ToString(rc));
-	}
-	else
-	{
-		WebcfgDebug("SetPSMRecordValue is success\n");
-		rbusObject_Release(outParams);
-		return 0;
-	}
-	return 1;
-}
-*/
-
-/**
- * To fetch TR181 parameter values from PSM DB.
- */
-/*int rbus_GetValueFromDB( char* paramName, char** paramValue)
-{
-	rbusHandle_t rbus_handle;
-	rbusObject_t inParams;
-	rbusObject_t outParams;
-	rbusValue_t setvalue;
-	int rc = RBUS_ERROR_SUCCESS;
-
-	rbus_handle = get_global_rbus_handle();
-	if(!rbus_handle)
-	{
-		WebcfgError("rbus_GetValueFromDB failed as rbus_handle is empty\n");
-		return 1;
-	}
-
-	rbusObject_Init(&inParams, NULL);
-	rbusValue_Init(&setvalue);
-	rbusValue_SetString(setvalue, "value");
-	rbusObject_SetValue(inParams, paramName, setvalue);
-	rbusValue_Release(setvalue);
-
-	rc = rbusMethod_Invoke(rbus_handle, "GetPSMRecordValue()", inParams, &outParams);
-	rbusObject_Release(inParams);
-	if(rc != RBUS_ERROR_SUCCESS)
-	{
-		WebcfgError("GetPSMRecordValue failed with err %d: %s\n", rc, rbusError_ToString(rc));
-	}
-	else
-	{
-		WebcfgDebug("GetPSMRecordValue is success\n");
-		rbusProperty_t prop = NULL;
-		rbusValue_t value = NULL;
-		char *str_value = NULL;
-		prop = rbusObject_GetProperties(outParams);
-		while(prop)
-		{
-			value = rbusProperty_GetValue(prop);
-			if(value)
-			{
-				str_value = rbusValue_ToString(value,NULL,0);
-				if(str_value)
-				{
-					WebcfgDebug("Parameter Name : %s\n", rbusProperty_GetName(prop));
-					WebcfgDebug("Parameter Value fetched: %s\n", str_value);
-				}
-			}
-			prop = rbusProperty_GetNext(prop);
-		}
-		if(str_value !=NULL)
-		{
-			*paramValue = strdup(str_value);
-			CPEABS_FREE(str_value);
-			WebcfgDebug("Requested param DB value [%s]\n", *paramValue);
-		}
-		rbusObject_Release(outParams);
-		return 0;
-	}
-	return 1;
-}
-*/
 
 void getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus)
 {
