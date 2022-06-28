@@ -69,10 +69,10 @@
 
 #define WEBCFG_CFG_FILE "/etc/partners_defaults_webcfg_video.json"
 
-//#define MAKE_STR(x) _MAKE_STR(x)
-//#define _MAKE_STR(x) #x
+#define MAKE_STR(x) _MAKE_STR(x)
+#define _MAKE_STR(x) #x
 
-//#define WEBCONFIG_CONFIG_PS_FILE MAKE_STR(PS_FILE_PATH) WEBCFG_CFG_FILE
+#define WEBCONFIG_CONFIG_PS_FILE MAKE_STR(PS_FILE_PATH) WEBCFG_CFG_FILE
 
 #define WEBCFG_URL_FILE "/opt/webcfg_url"
 #define SUPL_URL_FILE "/opt/supplement_url"
