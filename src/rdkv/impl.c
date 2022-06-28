@@ -67,15 +67,15 @@
 
 #define WEBCFG_MAX_PARAM_LEN 128
 
-#define WEBCFG_CFG_FILE "partners_defaults_webcfg_video.json"
+#define WEBCFG_CFG_FILE "/etc/partners_defaults_webcfg_video.json"
 
-#define MAKE_STR(x) _MAKE_STR(x)
-#define _MAKE_STR(x) #x
+//#define MAKE_STR(x) _MAKE_STR(x)
+//#define _MAKE_STR(x) #x
 
-#define WEBCONFIG_CONFIG_PS_FILE MAKE_STR(PS_FILE_PATH) WEBCFG_CFG_FILE
+//#define WEBCONFIG_CONFIG_PS_FILE MAKE_STR(PS_FILE_PATH) WEBCFG_CFG_FILE
 
-#define WEBCFG_URL_PARAM "Device.X_RDK_WebConfig.URL"
-#define WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM  "Device.X_RDK_WebConfig.SupplementaryServiceUrls.Telemetry"
+#define WEBCFG_URL_FILE "/opt/webcfg_url"
+#define SUPL_URL_FILE "/opt/supplement_url"
 
 #define RETURN_OK 0
 #define RETURN_ERR -1
@@ -101,7 +101,6 @@ void __attribute__((weak)) getValues_rbus(const char *paramName[], const unsigne
 static bool isRbusEnabled();
 void macIDToLower(char macValue[],char macConverted[]);
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize);
-//char *readWebcfgURL();
 bool json_string_value_get(char *key, char* value_str, size_t len);
 bool json_string_value_set(char *key, char* value_str);
 rbusHandle_t  __attribute__((weak)) get_global_rbus_handle(void);
@@ -118,6 +117,56 @@ void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
     destStr[destSize-1] = '\0';
 }
 
+/*
+cJSON* parse_json_file()
+{
+    long len = 0;
+    int temp;
+    cJSON *json;
+    char *JSON_content;
+
+    printf("test cjson read\n");
+    FILE* fp = fopen(WEBCFG_CFG_FILE, "rb+");
+    if(!fp)
+    {
+        printf("open file %s failed.\n", WEBCFG_CFG_FILE);
+        return NULL;
+    }
+
+    fseek(fp, 0, SEEK_END);
+    len = ftell(fp);
+    if(0 == len)
+    {
+        return NULL;
+    }
+
+    fseek(fp, 0, SEEK_SET);
+    JSON_content = (char*) malloc(sizeof(char) * len);
+    temp = fread(JSON_content, 1, len, fp);
+    
+    json = cJSON_Parse(JSON_content);
+    if (json == NULL)
+    {
+        printf("json parse null\n");
+        return NULL;
+    }
+
+    fclose(fp);
+    return json;
+}
+
+cJSON* read_json_file(cJSON *parser,char *partnerId)
+{
+    cJSON *json=parser;
+    char *part_id=partnerId;
+    cJSON *item = NULL;
+
+    item=cJSON_GetObjectItem(json,part_id);
+    cJSON_Delete(json);
+    return item;
+}
+*/
+
 bool json_string_value_get(char *key, char* value_str, size_t len)
 {
         json_t *json;
@@ -125,7 +174,7 @@ bool json_string_value_get(char *key, char* value_str, size_t len)
         json_t *value;
         bool ret = false;
 
-        json = json_load_file(WEBCONFIG_CONFIG_PS_FILE, 0, &error);
+        json = json_load_file(WEBCFG_CFG_FILE, 0, &error);
         if(!json) 
         {
                 WebcfgError("Failed to load %s",WEBCONFIG_CONFIG_PS_FILE);
@@ -338,107 +387,6 @@ bool isRbusEnabled()
 	return isRbus;
 }
 
-/*int Get_Webconfig_URL(char *pString)
-{
-    char *webcfg_url = readWebcfgURL();
-
-    if(webcfg_url) {
-        strcpy(pString,webcfg_url);
-        free(webcfg_url);
-    } else {
-        strcpy(pString,BLE_DETECTION_WEBCFG_ENDPOINT);
-    }
-    WebcfgInfo("webcfg: [%s] %d %s \n", __FUNCTION__, __LINE__, pString);
-    return 0;
-}
-
-int Set_Webconfig_URL( char *pString)
-{
-    int retPsmSet = 0;
-    if(isRbusEnabled())
-    {
-    	retPsmSet = rbus_StoreValueIntoDB( WEBCFG_URL_PARAM, pString );
-	WebcfgDebug("Set_Webconfig_URL. retPsmSet %d pString %s\n", retPsmSet, pString);
-
-	if (retPsmSet != RBUS_ERROR_SUCCESS)
-        {
-		WebcfgError("psm_set failed ret %d for parameter %s and value %s\n", retPsmSet, WEBCFG_URL_PARAM, pString);
-                return 0;
-        }
-        else
-        {
-		WebcfgDebug("psm_set success ret %d for parameter %s and value %s\n", retPsmSet, WEBCFG_URL_PARAM, pString);
-        }
-    }
-    return retPsmSet;
-}
-
-int Get_Supplementary_URL( char *name, char *pString)
-{
-	char *tempUrl = NULL;
-	int retPsmGet = 0;
-	if(isRbusEnabled())
-	{
-		char *tempParam = (char *) malloc (sizeof(char)*MAX_BUFF_SIZE);
-		if(tempParam !=NULL)
-		{
-			snprintf(tempParam, MAX_BUFF_SIZE, "%s%s", WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name);
-			WebcfgDebug("tempParam is %s\n", tempParam);
-			retPsmGet = rbus_GetValueFromDB( tempParam, &tempUrl);
-			if (retPsmGet == RBUS_ERROR_SUCCESS)
-			{
-				WebcfgDebug("Get_Supplementary_URL. retPsmGet %d tempUrl %s\n", retPsmGet, tempUrl);
-				if(tempUrl !=NULL)
-				{
-					cpeabStrncpy(pString, tempUrl, strlen(tempUrl)+1);
-				}
-				WebcfgDebug("Get_Supplementary_URL. pString %s\n", pString);
-				CPEABS_FREE(tempParam);
-			}
-			else
-			{
-				WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, tempParam);
-				CPEABS_FREE(tempParam);
-			}
-		}
-	}
-	return retPsmGet;
-}
-
-int Set_Supplementary_URL( char *name, char *pString)
-{
-    int retPsmSet = 0;
-    if(isRbusEnabled())
-    {
-	char *tempParam = (char *) malloc (sizeof(char)*MAX_BUFF_SIZE);
-	if(tempParam !=NULL)
-	{
-		if ((name != NULL) && (strncmp(name, "Telemetry",strlen(name)+1)) == 0)
-		{
-			snprintf(tempParam, MAX_BUFF_SIZE, "%s%s", WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name);
-			WebcfgDebug("tempParam is %s\n", tempParam);
-			retPsmSet = rbus_StoreValueIntoDB( tempParam, pString );
-			if (retPsmSet != RBUS_ERROR_SUCCESS)
-			{
-				WebcfgError("psm_set failed ret %d for parameter %s%s and value %s\n", retPsmSet, WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name, pString);
-				CPEABS_FREE(tempParam);
-				return 0;
-			}
-			else
-			{
-				WebcfgDebug("psm_set success ret %d for parameter %s%s and value %s\n",retPsmSet, WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name, pString);
-			}
-		}
-		else
-		{
-			WebcfgError("Invalid supplementary doc name\n");
-		}
-		CPEABS_FREE(tempParam);
-	}
-    }
-    return retPsmSet;
-}*/
-
 int Get_Webconfig_URL( char *pString)
 {
         char url[128];
@@ -547,7 +495,9 @@ char * getParamValue(char *paramName)
 int rbus_StoreValueIntoDB(char *paramName, char *value)
 {
         int ret = RETURN_ERR;
+    //    char *partnerId = NULL;
 
+    //    partnerId=getPartnerID();
         if (strncmp(paramName,WEBCFG_URL_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
         {
                 if (Set_Webconfig_URL(value) == RETURN_OK)
@@ -574,6 +524,12 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 {
         char value_str[256];
         int ret = RETURN_ERR;
+      /*  char *partnerId = NULL;
+        cJSON *parser,*parsed_item;
+
+        partnerId=getPartnerID();
+        parser=parse_json_file();
+        parsed_item=read_json_file(parser); */
 
         memset(value_str,0,sizeof(value_str));
 
