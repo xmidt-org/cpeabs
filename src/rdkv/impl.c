@@ -28,6 +28,7 @@
 #include <rbus-core/rbus_session_mgr.h>
 #include <stdio.h>
 #include <sys/sysinfo.h>
+#include <cjson/cJSON.h>
 #include <jansson.h>
 #include "cpeabs.h"
 /*----------------------------------------------------------------------------*/
@@ -69,15 +70,14 @@
 
 #define WEBCFG_MAX_PARAM_LEN 128
 
-#define WEBCFG_CFG_FILE "/etc/partners_defaults_webcfg_video.json"
+#define WEBCFG_CJSON_FILE "/etc/partners_defaults_webcfg_video.json"
 
 #define MAKE_STR(x) _MAKE_STR(x)
 #define _MAKE_STR(x) #x
 
-#define WEBCONFIG_CONFIG_PS_FILE MAKE_STR(PS_FILE_PATH) WEBCFG_CFG_FILE
+#define WEBCONFIG_CONFIG_PS_FILE MAKE_STR(PS_FILE_PATH) WEBCFG_CJSON_FILE
 
 #define WEBCFG_URL_FILE "/opt/webcfg_url"
-#define SUPL_URL_FILE "/opt/supplement_url"
 
 #define RETURN_OK 0
 #define RETURN_ERR -1
@@ -119,7 +119,6 @@ void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
     destStr[destSize-1] = '\0';
 }
 
-/*
 cJSON* parse_json_file()
 {
     long len = 0;
@@ -127,11 +126,10 @@ cJSON* parse_json_file()
     cJSON *json;
     char *JSON_content;
 
-    printf("test cjson read\n");
-    FILE* fp = fopen(WEBCFG_CFG_FILE, "rb+");
+    FILE* fp = fopen(WEBCFG_CJSON_FILE, "rb");
     if(!fp)
     {
-        printf("open file %s failed.\n", WEBCFG_CFG_FILE);
+        printf("open file %s failed.\n", WEBCFG_CJSON_FILE);
         return NULL;
     }
 
@@ -149,7 +147,7 @@ cJSON* parse_json_file()
     json = cJSON_Parse(JSON_content);
     if (json == NULL)
     {
-        printf("json parse null\n");
+        printf("jsoni file - parse null\n");
         return NULL;
     }
 
@@ -167,7 +165,6 @@ cJSON* read_json_file(cJSON *parser,char *partnerId)
     cJSON_Delete(json);
     return item;
 }
-*/
 
 bool json_string_value_get(char *key, char* value_str, size_t len)
 {
@@ -176,10 +173,10 @@ bool json_string_value_get(char *key, char* value_str, size_t len)
         json_t *value;
         bool ret = false;
 
-        json = json_load_file(WEBCFG_CFG_FILE, 0, &error);
+        json = json_load_file(WEBCFG_URL_FILE, 0, &error)
         if(!json) 
         {
-                WebcfgError("Failed to load %s",WEBCONFIG_CONFIG_PS_FILE);
+                WebcfgError("Failed to load %s",WEBCFG_URL_FILE);
                 return ret;
         }
 
@@ -205,10 +202,10 @@ bool json_string_value_set(char *key, char* value_str)
         json_t *value_json;
         bool ret = false;
 
-        json = json_load_file(WEBCONFIG_CONFIG_PS_FILE, 0, &error);
+        json = json_load_file(WEBCFG_URL_FILE, 0, &error);
         if(!json)
 	{
-                WebcfgError("Failed to load %s",WEBCONFIG_CONFIG_PS_FILE);
+                WebcfgError("Failed to load %s",WEBCFG_URL_FILE);
                 return ret;
         }
 
@@ -217,7 +214,7 @@ bool json_string_value_set(char *key, char* value_str)
         if (json_object_set(json, key, value_json) == RETURN_OK)
         {
                 WebcfgInfo("%s : Successfully set : [%s] = [%s] \n",__func__,key,value_str);
-                if (json_dump_file(json,WEBCONFIG_CONFIG_PS_FILE,0) == RETURN_OK )
+                if (json_dump_file(json,WEBCFG_URL_FILE,0) == RETURN_OK )
                 {
                         WebcfgInfo("Successfully Written to file. \n");
                         ret = true;
@@ -389,13 +386,46 @@ bool isRbusEnabled()
 	return isRbus;
 }
 
+int opt_file_cpy()
+{
+	char *partner_id = NULL;
+        partner_id=getPartnerID();
+
+	cJSON *parser=parse_json_file();
+        cJSON *item=read_json_file(parser,partner_id);
+
+        FILE* fpw = fopen(WEBCFG_URL_FILE, "w");
+        if (fpw == NULL) {
+            printf("Failed to open file- %s",WEBCFG_URL_FILE);
+            return -1;
+        }
+        //write the value to opt file
+        char *cjValue = cJSON_Print(item);
+        int wret = fwrite(cjValue, sizeof(char), strlen(cjValue), fpw);
+        if (wret == 0) {
+            printf("Failed to write in file- %s",WEBCFG_URL_FILE);
+            return -1;
+         }
+         fclose(fpw);
+         free(cjValue);
+	return 0;
+}
+
 int Get_Webconfig_URL( char *pString)
 {
         char url[128];
         int ret = RETURN_ERR;
 
         memset(url,0,sizeof(url));
-
+	
+        FILE *file;
+        if((file = fopen(WEBCFG_URL_FILE,"r"))==NULL)
+        {
+        //opt file doesn't exist, so fetch data from json file
+		int f_ret=opt_file_cpy();
+		if(f_ret !=0 )
+			return ret;
+	}
         if (json_string_value_get(WEBCFG_URL_PARAM,url, sizeof(url)))
         {
                  cpeabStrncpy(pString,url,sizeof(url));
@@ -411,6 +441,15 @@ int Get_Webconfig_URL( char *pString)
 int Set_Webconfig_URL( char *pString)
 {
         int ret = RETURN_ERR;
+	
+        FILE *file;
+        if((file = fopen(WEBCFG_URL_FILE,"r"))==NULL)
+        {
+        //opt file doesn't exist, so fetch data from json file
+		int f_ret=opt_file_cpy();
+		if(f_ret !=0 )
+			return ret;
+	}
 
          if (json_string_value_set(WEBCFG_URL_PARAM, pString) == true)
          {
