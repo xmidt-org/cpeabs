@@ -122,6 +122,7 @@ void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
 cJSON* parse_json_file()
 {
     long len = 0;
+    int temp;
     cJSON *json;
     char *JSON_content;
 
