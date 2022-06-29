@@ -122,7 +122,6 @@ void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
 cJSON* parse_json_file()
 {
     long len = 0;
-    int temp;
     cJSON *json;
     char *JSON_content;
 
@@ -142,7 +141,7 @@ cJSON* parse_json_file()
 
     fseek(fp, 0, SEEK_SET);
     JSON_content = (char*) malloc(sizeof(char) * len);
-    temp = fread(JSON_content, 1, len, fp);
+    fread(JSON_content, 1, len, fp);
     
     json = cJSON_Parse(JSON_content);
     if (json == NULL)
