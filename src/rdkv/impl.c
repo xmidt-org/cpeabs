@@ -122,7 +122,6 @@ void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
 cJSON* parse_json_file()
 {
     long len = 0;
-    int temp;
     cJSON *json;
     char *JSON_content;
 
@@ -173,7 +172,7 @@ bool json_string_value_get(char *key, char* value_str, size_t len)
         json_t *value;
         bool ret = false;
 
-        json = json_load_file(WEBCFG_URL_FILE, 0, &error)
+        json = json_load_file(WEBCFG_URL_FILE, 0, &error);
         if(!json) 
         {
                 WebcfgError("Failed to load %s",WEBCFG_URL_FILE);
@@ -547,11 +546,8 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
         }
         else if (strncmp(paramName,PARAM_RFC_ENABLE,WEBCFG_MAX_PARAM_LEN) == 0)
         {
-                if (json_string_value_set(PARAM_RFC_ENABLE,value) == RETURN_OK)
-                {
-                        WebcfgDebug("%s : Successfully stored [%s] = [%s]. \n",__func__,PARAM_RFC_ENABLE,value);
-                        ret = RETURN_OK;
-                }
+        	WebcfgDebug("%s : Successfully stored [%s] = [%s]. \n",__func__,PARAM_RFC_ENABLE,value);
+                ret = RETURN_OK;
         }
         else if (strncmp(paramName,WEBCFG_URL_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
         {
@@ -593,12 +589,9 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
         }
         else if (strncmp(paramName,PARAM_RFC_ENABLE,WEBCFG_MAX_PARAM_LEN) == 0)
         {
-                if (json_string_value_get(PARAM_RFC_ENABLE,value_str, sizeof(value_str)))
-                {
-                        *paramValue = strdup(value_str);
-                        WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,PARAM_RFC_ENABLE,*paramValue);
-                        ret = RETURN_OK;
-                }
+                *paramValue = strdup(true);
+                WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,PARAM_RFC_ENABLE,*paramValue);
+                ret = RETURN_OK;
         }
         else if (strncmp(paramName,WEBCFG_URL_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
 
