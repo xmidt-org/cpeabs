@@ -77,7 +77,7 @@
 
 #define WEBCONFIG_CONFIG_PS_FILE MAKE_STR(PS_FILE_PATH) WEBCFG_CJSON_FILE
 
-#define WEBCFG_URL_FILE "/opt/webcfg_url.json"
+#define WEBCFG_URL_FILE "/opt/webcfg_url"
 
 #define RETURN_OK 0
 #define RETURN_ERR -1
@@ -152,22 +152,6 @@ cJSON* parse_json_file()
 
     fclose(fp);
     return json;
-}
-
-cJSON* read_json_file(cJSON *parser,char *partnerId)
-{
-    cJSON *json=parser;
-    char *part_id=partnerId;
-    cJSON *item = NULL;
-
-    item=cJSON_GetObjectItem(json,part_id);
-    if(item!=NULL){
-        printf("print items of partner id\n");
-        char *str=cJSON_Print(item);
-        printf("Data in partner id =%s\n",str);
-    }
-    cJSON_Delete(json);
-    return item;
 }
 
 bool json_string_value_get(char *key, char* value_str, size_t len)
@@ -394,9 +378,14 @@ int opt_file_cpy()
 {
 	char *partner_id = NULL;
         partner_id=getPartnerID();
-
+	
 	cJSON *parser=parse_json_file();
-        cJSON *item=read_json_file(parser,partner_id);
+	cJSON *item = cJSON_GetObjectItem(parser,partner_id);
+        if(item!=NULL){
+          printf(" %s print items of partner id\n",__func__);
+          char *str=cJSON_Print(item);
+          printf("Data in partner id =%s\n",str);
+        }
 
         FILE* fpw = fopen(WEBCFG_URL_FILE, "wb");
         if (fpw == NULL) {
