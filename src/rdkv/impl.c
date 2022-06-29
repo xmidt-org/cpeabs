@@ -589,7 +589,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
         }
         else if (strncmp(paramName,PARAM_RFC_ENABLE,WEBCFG_MAX_PARAM_LEN) == 0)
         {
-                *paramValue = strdup(true);
+                *paramValue = strdup("true");
                 WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,PARAM_RFC_ENABLE,*paramValue);
                 ret = RETURN_OK;
         }
