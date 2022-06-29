@@ -398,7 +398,7 @@ int opt_file_cpy()
 	cJSON *parser=parse_json_file();
         cJSON *item=read_json_file(parser,partner_id);
 
-        FILE* fpw = fopen(WEBCFG_URL_FILE, "w");
+        FILE* fpw = fopen(WEBCFG_URL_FILE, "wb");
         if (fpw == NULL) {
             printf("Failed to open file- %s",WEBCFG_URL_FILE);
             return -1;
