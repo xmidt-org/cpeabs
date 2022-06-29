@@ -77,7 +77,7 @@
 
 #define WEBCONFIG_CONFIG_PS_FILE MAKE_STR(PS_FILE_PATH) WEBCFG_CJSON_FILE
 
-#define WEBCFG_URL_FILE "/opt/webcfg_url"
+#define WEBCFG_URL_FILE "/opt/webcfg_url.json"
 
 #define RETURN_OK 0
 #define RETURN_ERR -1
@@ -161,6 +161,11 @@ cJSON* read_json_file(cJSON *parser,char *partnerId)
     cJSON *item = NULL;
 
     item=cJSON_GetObjectItem(json,part_id);
+    if(item!=NULL){
+        printf("print items of partner id\n");
+        char *str=cJSON_Print(item);
+        printf("Data in partner id =%s\n",str);
+    }
     cJSON_Delete(json);
     return item;
 }
