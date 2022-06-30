@@ -21,8 +21,8 @@ include(ExternalProject)
 include(CTest)
 
 add_definitions(-std=c99)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -ljansson -Werror -Wall -D_GNU_SOURCE=1")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c99 -g -ljansson -Werror -Wall -D_GNU_SOURCE=1")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Werror -Wall -D_GNU_SOURCE=1")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c99 -g -Werror -Wall -D_GNU_SOURCE=1")
 SET (CMAKE_C_COMPILER_WORKS 1)
 SET (CMAKE_CXX_COMPILER_WORKS 1)
 
