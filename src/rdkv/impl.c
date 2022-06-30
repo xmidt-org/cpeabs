@@ -89,8 +89,6 @@ webCfgValue_t webCfgPersist;
 /*----------------------------------------------------------------------------*/
 void macIDToLower(char macValue[],char macConverted[]);
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize);
-bool json_string_value_get(char *key, char* value_str, size_t len);
-bool json_string_value_set(char *key, char* value_str);
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
