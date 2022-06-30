@@ -14,7 +14,6 @@
 
 cmake_minimum_required(VERSION 2.8.7)
 
-set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 project(cpeabs)
 
 include(ExternalProject)
