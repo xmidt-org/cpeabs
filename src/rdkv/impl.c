@@ -43,8 +43,6 @@
 #define PARTNER_ID          "Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.PartnerId"
 #define ACCOUNT_ID          "Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.AccountInfo.AccountID"
 
-
-
 #define WEBCFG_MAX_PARAM_LEN 128
 #define WEBCFG_RFC_PARAM "Device.X_RDK_WebConfig.RfcEnable"
 #define WEBCFG_URL_PARAM "Device.X_RDK_WebConfig.URL"
@@ -232,6 +230,11 @@ char * getFirmwareVersion()
     return firmware;
 }
 
+char * getConnClientParamName()
+{
+    return NULL;
+}
+
 char * getRebootReason()
 {
     char *reboot_reason = NULL;
@@ -254,6 +257,16 @@ char * getAccountID()
     accountId = getParamValue(ACCOUNT_ID);
     WebcfgDebug("accountId returned from lib is %s\n", accountId);
     return accountId;
+}
+
+char * getFirmwareUpgradeStartTime()
+{
+	return NULL;
+}
+
+char * getFirmwareUpgradeEndTime()
+{
+	return NULL;
 }
 
 char * getParamValue(char *paramName)
