@@ -87,6 +87,7 @@ webCfgValue_t webCfgPersist;
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
 /*----------------------------------------------------------------------------*/
+void __attribute__((weak)) getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus);
 void macIDToLower(char macValue[],char macConverted[]);
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize);
 /*----------------------------------------------------------------------------*/
@@ -436,6 +437,18 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
         WebcfgError("Invalid Param Name (get)= %s\n",paramName);
     }
     return ret;
+}
+
+void getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus)
+{
+	UNUSED(paramName);
+	UNUSED(paramCount);
+	UNUSED(index);
+	UNUSED(timeSpan);
+	UNUSED(paramArr);
+	UNUSED(retValCount);
+	UNUSED(retStatus);
+	return;
 }
 
 int rbus_waitUntilSystemReady()
