@@ -301,8 +301,10 @@ void writeToFile(char* pText)
     if (wret == 0) {
         printf("Failed to write in file- %s", WEBCFG_DB_STORE);
         return;
-     }
-     fclose(fpw);
+    }
+
+    fwrite("\n", 1, strlen("\n"), fpw);
+    fclose(fpw);
 }
 
 void populatePersistenceData()
