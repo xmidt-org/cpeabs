@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <sys/sysinfo.h>
 #include <cjson/cJSON.h>
-#include <jansson.h>
+//#include <jansson.h>
 #include "cpeabs.h"
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
