@@ -29,7 +29,6 @@
 #include <stdio.h>
 #include <sys/sysinfo.h>
 #include <cjson/cJSON.h>
-//#include <jansson.h>
 #include "cpeabs.h"
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
@@ -301,10 +300,28 @@ void writeToFile(char* pText)
         printf("Failed to write in file- %s", WEBCFG_DB_STORE);
         return;
     }
-
     fwrite("\n", 1, strlen("\n"), fpw);
     fclose(fpw);
 }
+
+
+cJSON * convertWebCfgDataToJson()
+{
+    cJSON *pWebCfg = cJSON_CreateObject();
+    if (pWebCfg)
+    {
+        cJSON *pRfc = cJSON_CreateString(webCfgPersist.m_rfcStatus);
+        cJSON *pUrl= cJSON_CreateString(webCfgPersist.m_url);
+        cJSON *pTeleSuplUrl = cJSON_CreateString(webCfgPersist.m_teleSuplUrl);
+
+        cJSON_AddItemToObject(pWebCfg, WEBCFG_URL_PARAM, pUrl);
+        cJSON_AddItemToObject(pWebCfg, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM, pTeleSuplUrl);
+        cJSON_AddItemToObject(pWebCfg, WEBCFG_RFC_PARAM, pRfc);
+        return pWebCfg;
+    }
+    return NULL;
+}
+
 
 void populatePersistenceData()
 {
@@ -342,6 +359,59 @@ void populatePersistenceData()
     }
 }
 
+int Get_Webconfig_URL( char *pString)
+{
+    if (!isInited)
+    {
+        populatePersistenceData();
+        isInited = true;
+    }
+    snprintf (pString, 1024, webCfgPersist.m_url);
+    return RETURN_OK;
+}
+
+int Set_Webconfig_URL( char *pString)
+{
+    snprintf(webCfgPersist.m_url, 1024, pString);
+    cJSON * pWebCfg = convertWebCfgDataToJson();
+    if (pWebCfg)
+    {
+            char* pString = cJSON_Print(pWebCfg);
+            writeToFile(pString);
+            cJSON_Delete(pWebCfg);
+    }
+
+    return RETURN_OK;
+}
+
+int Get_Supplementary_URL( char *name, char *pString)
+{
+    if (!isInited)
+    {
+        populatePersistenceData();
+        isInited = true;
+    }
+    (void) name;
+    snprintf (pString, 1024, webCfgPersist.m_teleSuplUrl);
+    return RETURN_OK;
+}
+
+
+int Set_Supplementary_URL( char *name, char *pString)
+{
+    (void) name;
+    snprintf(webCfgPersist.m_teleSuplUrl, 1024, pString);
+    cJSON * pWebCfg = convertWebCfgDataToJson();
+    if (pWebCfg)
+    {
+            char* pString = cJSON_Print(pWebCfg);
+            writeToFile(pString);
+            cJSON_Delete(pWebCfg);
+    }
+    return RETURN_OK;
+}
+
+
 int rbus_StoreValueIntoDB(char *paramName, char *value)
 {
     int ret = RETURN_ERR;
@@ -376,22 +446,15 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
         goto error2;
     }
 
+    cJSON * pWebCfg = convertWebCfgDataToJson();
+    if (pWebCfg)
     {
-        cJSON *pWebCfg = cJSON_CreateObject();
-        if (pWebCfg)
-        {
-            cJSON *pRfc = cJSON_CreateString(webCfgPersist.m_rfcStatus);
-            cJSON *pUrl= cJSON_CreateString(webCfgPersist.m_url);
-            cJSON *pTeleSuplUrl = cJSON_CreateString(webCfgPersist.m_teleSuplUrl);
-
-            cJSON_AddItemToObject(pWebCfg, WEBCFG_URL_PARAM, pUrl);
-            cJSON_AddItemToObject(pWebCfg, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM, pTeleSuplUrl);
-            cJSON_AddItemToObject(pWebCfg, WEBCFG_RFC_PARAM, pRfc);
             char* pString = cJSON_Print(pWebCfg);
             writeToFile(pString);
             cJSON_Delete(pWebCfg);
-        }
     }
+
+
 error2:
     return ret;
 }
