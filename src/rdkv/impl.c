@@ -341,13 +341,13 @@ void populatePersistenceData()
     if (access(WEBCFG_DB_STORE, F_OK) == 0)
     {
         cJSON *pParser = load_partner_json_file(WEBCFG_DB_STORE);
-        cJSON *pUrl = cJSON_GetObjectItemCaseSensitive(pParser, WEBCFG_URL_PARAM);
-        cJSON *pTeleSuplUrl = cJSON_GetObjectItemCaseSensitive(pParser, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM);
-        cJSON *pRfc = cJSON_GetObjectItemCaseSensitive(pParser, WEBCFG_RFC_PARAM);
+        cJSON *pUrl = cJSON_GetObjectItem(pParser, WEBCFG_URL_PARAM);
+        cJSON *pTeleSuplUrl = cJSON_GetObjectItem(pParser, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM);
+        cJSON *pRfc = cJSON_GetObjectItem(pParser, WEBCFG_RFC_PARAM);
 
-        snprintf(webCfgPersist.m_url, 1024, cJSON_Print(pUrl));
-        snprintf(webCfgPersist.m_teleSuplUrl, 1024, cJSON_Print(pTeleSuplUrl));
-        snprintf(webCfgPersist.m_rfcStatus, 16, cJSON_Print(pRfc));
+        snprintf(webCfgPersist.m_url, 1024, cJSON_GetStringValue(pUrl));
+        snprintf(webCfgPersist.m_teleSuplUrl, 1024, cJSON_GetStringValue(pTeleSuplUrl));
+        snprintf(webCfgPersist.m_rfcStatus, 16, cJSON_GetStringValue(pRfc));
     }
     else
     {
@@ -365,8 +365,8 @@ void populatePersistenceData()
             cJSON *pTeleSuplUrl = cJSON_GetObjectItemCaseSensitive(pItem, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM);
 
             snprintf(webCfgPersist.m_rfcStatus, 16, "true");
-            snprintf(webCfgPersist.m_url, 1024, cJSON_Print(pUrl));
-            snprintf(webCfgPersist.m_teleSuplUrl, 1024, cJSON_Print(pTeleSuplUrl));
+            snprintf(webCfgPersist.m_url, 1024, cJSON_GetStringValue(pUrl));
+            snprintf(webCfgPersist.m_teleSuplUrl, 1024, cJSON_GetStringValue(pTeleSuplUrl));
         }
         writeToFile(pValue2);
     }
@@ -493,7 +493,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
     else if (strncmp(paramName,PARAM_RFC_ENABLE,WEBCFG_MAX_PARAM_LEN) == 0)
     {
         *paramValue = strdup(webCfgPersist.m_rfcStatus);
-        WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,WEBCFG_RFC_PARAM,*paramValue);
+        WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__, PARAM_RFC_ENABLE, *paramValue);
         ret = RETURN_OK;
     }
     else if (strncmp(paramName,WEBCFG_URL_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
