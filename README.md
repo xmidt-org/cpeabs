@@ -19,6 +19,7 @@ An abstraction layer for consumer preference equipment systems.
 
 ```
 Use CFLAG -DPLATFORM=DEVICE_GATEWAY to build for RDKB platform
+Use CFLAG -DPLATFORM=DEVICE_VIDEO to build for RDKV platform
 Use CFLAG -DPLATFORM=DEVICE_EXTENDER to build for POD platform
 
 mkdir build

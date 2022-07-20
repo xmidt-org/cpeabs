@@ -29,6 +29,8 @@ endif (BUILD_YOCTO)
 
 if (PLATFORM STREQUAL "DEVICE_GATEWAY")
 add_definitions(-DDEVICE_GATEWAY)
+elseif (PLATFORM STREQUAL "DEVICE_VIDEO")
+add_definitions(-DDEVICE_VIDEO)
 elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
 add_definitions(-DDEVICE_EXTENDER)
 endif ()
@@ -47,6 +49,21 @@ add_executable(test_rdkb ${SOURCES})
 target_link_libraries (test_rdkb -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus -lrbus-core)
 
 target_link_libraries (test_rdkb gcov -Wl,--no-as-needed )
+
+elseif (PLATFORM STREQUAL "DEVICE_VIDEO")
+
+#-------------------------------------------------------------------------------
+#   test_rdkv
+#-------------------------------------------------------------------------------
+add_test(NAME test_rdkv COMMAND ${MEMORY_CHECK} ./test_rdkv)
+
+set(SOURCES test_rdkv.c ${PROJECT_SOURCE_DIR}/src/rdkv/impl.c )
+
+add_executable(test_rdkv ${SOURCES})
+
+target_link_libraries (test_rdkv -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus -lrbus-core)
+
+target_link_libraries (test_rdkv gcov -Wl,--no-as-needed )
 
 
 elseif (PLATFORM STREQUAL "DEVICE_EXTENDER")
