@@ -43,7 +43,7 @@
 #define PARTNER_ID				"Device.DeviceInfo.X_RDKCENTRAL-COM_Syndication.PartnerId"
 #define ACCOUNT_ID				"Device.DeviceInfo.X_RDKCENTRAL-COM_RFC.Feature.AccountInfo.AccountID"
 #define FIRMW_START_TIME			"Device.DeviceInfo.X_RDKCENTRAL-COM_MaintenanceWindow.FirmwareUpgradeStartTime"
-#define FIRMW_END_TIME			"Device.DeviceInfo.X_RDKCENTRAL-COM_MaintenanceWindow.FirmwareUpgradeEndTime" 
+#define FIRMW_END_TIME			        "Device.DeviceInfo.X_RDKCENTRAL-COM_MaintenanceWindow.FirmwareUpgradeEndTime" 
 
 #if defined(_COSA_BCM_MIPS_)
 #define DEVICE_MAC                   "Device.DPoE.Mac_address"
@@ -52,6 +52,8 @@
 #elif defined(RDKB_EMU)
 #define DEVICE_MAC                   "Device.DeviceInfo.X_COMCAST-COM_WAN_MAC"
 #elif defined(_HUB4_PRODUCT_REQ_)
+#define DEVICE_MAC                   "Device.DeviceInfo.X_COMCAST-COM_WAN_MAC"
+#elif defined(_WNXL11BWL_PRODUCT_REQ_)
 #define DEVICE_MAC                   "Device.DeviceInfo.X_COMCAST-COM_WAN_MAC"
 #else
 #define DEVICE_MAC                   "Device.X_CISCO_COM_CableModem.MACAddress"
