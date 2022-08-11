@@ -341,8 +341,14 @@ void populatePersistenceData()
     {
         cJSON *pParser = load_partner_json_file(WEBCFG_DB_STORE);
         cJSON *pUrl = cJSON_GetObjectItem(pParser, WEBCFG_URL_PARAM);
+        if(!pUrl)
+            pUrl = "\"https://cpe-config.xdp.comcast.net/api/v1/device/{mac}/config\"";
         cJSON *pTeleSuplUrl = cJSON_GetObjectItem(pParser, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM);
+        if(!pTeleSuplUrl)
+            pTeleSuplUrl = "\"https://cpe-config.xdp.comcast.net/api/v1/device/{mac}/config\"";
         cJSON *pRfc = cJSON_GetObjectItem(pParser, WEBCFG_RFC_PARAM);
+        if(!pRfc)
+            pRfc="true";
 
         snprintf(webCfgPersist.m_url, 1024, "%s",cJSON_GetStringValue(pUrl));
         snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", cJSON_GetStringValue(pTeleSuplUrl));
@@ -352,6 +358,8 @@ void populatePersistenceData()
     {
         char *pPartnerId = NULL;
         pPartnerId = getPartnerID();
+        if(!pPartnerId)
+            pPartnerId="default";
         cJSON *pParser = load_partner_json_file(WEBCFG_PARTNER_JSON_FILE);
         cJSON *pItem = cJSON_GetObjectItem(pParser, pPartnerId);
         cJSON *name = cJSON_CreateString("true");
