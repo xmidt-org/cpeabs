@@ -51,7 +51,7 @@
 #define PARAM_RFC_ENABLE "eRT.com.cisco.spvtg.ccsp.webpa.WebConfigRfcEnable"
 
 #define WEBCFG_PARTNER_JSON_FILE "/etc/partners_defaults_webcfg_video.json"
-#define WEBCFG_DB_STORE          "/opt/.webcfg.json"
+#define WEBCFG_DB_STORE          "/opt/.webconfig.json"
 
 #define RETURN_OK 0
 #define RETURN_ERR -1
