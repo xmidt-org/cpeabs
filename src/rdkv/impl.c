@@ -444,9 +444,14 @@ void load_def_values()
         snprintf(webCfgPersist.m_rfcStatus, 16, "%s", "true");
         snprintf(webCfgPersist.m_url, 1024, "%s", DEF_WEB_URL);
         snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", DEF_SUPL_URL);
-
-        WebcfgInfo("Writing default values to db file.\n");
-        writeToFile(pValue2);
+        cJSON *pWebCfg = convertWebCfgDataToJson();
+        if (pWebCfg)
+        {
+            char* pString = cJSON_Print(pWebCfg);
+            WebcfgInfo("Writing default values to db file.\n");
+            writeToFile(pString);
+            cJSON_Delete(pWebCfg);
+        }
     }
 }
 
