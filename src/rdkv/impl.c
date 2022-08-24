@@ -434,24 +434,16 @@ void load_partnerid_params()
 
 void load_def_values()
 {
-    WebcfgInfo("Load default values to db json\n");
-    cJSON *pItem=NULL;
-    cJSON *name = cJSON_CreateString("true");
-    cJSON_AddItemToObject(pItem, WEBCFG_RFC_PARAM, name);
-    char *pValue2 = cJSON_Print(pItem);
-    if((pValue2) && (strlen(pValue2)))
+    snprintf(webCfgPersist.m_rfcStatus, 16, "%s", "true");
+    snprintf(webCfgPersist.m_url, 1024, "%s", DEF_WEB_URL);
+    snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", DEF_SUPL_URL);
+    cJSON *pWebCfg = convertWebCfgDataToJson();
+    if (pWebCfg)
     {
-        snprintf(webCfgPersist.m_rfcStatus, 16, "%s", "true");
-        snprintf(webCfgPersist.m_url, 1024, "%s", DEF_WEB_URL);
-        snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", DEF_SUPL_URL);
-        cJSON *pWebCfg = convertWebCfgDataToJson();
-        if (pWebCfg)
-        {
-            char* pString = cJSON_Print(pWebCfg);
-            WebcfgInfo("Writing default values to db file.\n");
-            writeToFile(pString);
-            cJSON_Delete(pWebCfg);
-        }
+        char* pString = cJSON_Print(pWebCfg);
+        WebcfgInfo("Writing default values to db file.\n");
+        writeToFile(pString);
+        cJSON_Delete(pWebCfg);
     }
 }
 
