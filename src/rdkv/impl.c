@@ -53,9 +53,6 @@
 #define WEBCFG_PARTNER_JSON_FILE "/etc/partners_defaults_webcfg_video.json"
 #define WEBCFG_DB_STORE          "/opt/.webconfig.json"
 
-#define DEF_WEB_URL "https://cpe-config.xdp.comcast.net/api/v1/device/{mac}/config"
-#define DEF_SUPL_URL "https://cpe-profile.xdp.comcast.net/api/v1/device/{mac}/config"
-
 #define RETURN_OK 0
 #define RETURN_ERR -1
 
@@ -91,7 +88,6 @@ void __attribute__((weak)) getValues_rbus(const char *paramName[], const unsigne
 void macIDToLower(char macValue[],char macConverted[]);
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize);
 void load_partnerid_params();
-void load_def_values();
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
@@ -345,8 +341,9 @@ void populatePersistenceData()
             cJSON *pUrl = cJSON_GetObjectItem(pParser, WEBCFG_URL_PARAM);
             if(!pUrl)
             {
-                WebcfgInfo("WebUrl empty in db json file. Set default value\n");
-                snprintf(webCfgPersist.m_url, 1024, "%s", DEF_WEB_URL);
+                WebcfgInfo("WebUrl empty in db json file. Load value\n");
+                load_partnerid_params();
+                return;
             }
             else
             {
@@ -357,8 +354,9 @@ void populatePersistenceData()
             cJSON *pTeleSuplUrl = cJSON_GetObjectItem(pParser, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM);
             if(!pTeleSuplUrl)
             {
-                WebcfgInfo("Supl_url empty in db json file. Set default value\n");
-                snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", DEF_SUPL_URL);
+                WebcfgInfo("Supl_url empty in db json file. Load value\n");
+                load_partnerid_params();
+                return;
             }
             else
             {
@@ -369,8 +367,9 @@ void populatePersistenceData()
             cJSON *pRfc = cJSON_GetObjectItem(pParser, WEBCFG_RFC_PARAM);
             if(!pRfc)
             {
-                WebcfgInfo("Rfc empty in db json file. Set default value\n");
-                snprintf(webCfgPersist.m_rfcStatus, 16, "%s", "true");
+                WebcfgInfo("Rfc empty in db json file. Load value\n");
+                load_partnerid_params();
+                return;
             }
             else
             {
@@ -399,8 +398,7 @@ void load_partnerid_params()
     cJSON *pParser = load_partner_json_file(WEBCFG_PARTNER_JSON_FILE);
     if(!pParser)
     {
-        WebcfgInfo("Parsing from main json file is empty. Load default values\n");
-        load_def_values();
+        WebcfgError("Parsing from main json file is empty.\n");
         return;
     }
     cJSON *pItem = cJSON_GetObjectItem(pParser, pPartnerId);
@@ -425,26 +423,10 @@ void load_partnerid_params()
     }
     else
     {
-        WebcfgInfo("pItem/get item from parser is empty. Load default values\n");
-        load_def_values();
+        WebcfgError("pItem/get item from parser is empty.\n");
         return;
     }
 
-}
-
-void load_def_values()
-{
-    snprintf(webCfgPersist.m_rfcStatus, 16, "%s", "true");
-    snprintf(webCfgPersist.m_url, 1024, "%s", DEF_WEB_URL);
-    snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", DEF_SUPL_URL);
-    cJSON *pWebCfg = convertWebCfgDataToJson();
-    if (pWebCfg)
-    {
-        char* pString = cJSON_Print(pWebCfg);
-        WebcfgInfo("Writing default values to db file.\n");
-        writeToFile(pString);
-        cJSON_Delete(pWebCfg);
-    }
 }
 
 int Get_Webconfig_URL( char *pString)
