@@ -20,9 +20,7 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <rbus/rbus_object.h>
-#include <rbus/rbus_property.h>
-#include <rbus/rbus_value.h>
+#include <rbus/rbus.h>
 #include <stdio.h>
 #include <sys/sysinfo.h>
 #include <cjson/cJSON.h>

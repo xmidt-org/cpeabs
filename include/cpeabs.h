@@ -21,6 +21,7 @@
 
 #if ! defined(DEVICE_EXTENDER)
 #include <cimplog.h>
+#include <rbus/rbus.h>
 #endif
 
 /*----------------------------------------------------------------------------*/
