@@ -43,7 +43,6 @@ include_directories(${INCLUDE_DIR}
                     ${INCLUDE_DIR}/cjson
                     ${INCLUDE_DIR}/msgpack
                     ${INCLUDE_DIR}/rbus
-		    ${INCLUDE_DIR}/rbus-core
 		    ${INCLUDE_DIR}/rtmessage
 		    ${INCLUDE_DIR}/wdmp-c
 		    ${INCLUDE_DIR}/cimplog
@@ -103,43 +102,19 @@ ExternalProject_Add(wdmp-c
 add_library(libwdmp-c STATIC SHARED IMPORTED)
 add_dependencies(libwdmp-c wdmp-c)
 
-# rtMessage external dependency
-#-------------------------------------------------------------------------------
-ExternalProject_Add(rtMessage
-     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/_prefix/rtMessage
-     GIT_REPOSITORY https://github.com/rdkcmf/rdk-rtmessage.git
-     GIT_TAG rdk-next
-     CMAKE_ARGS += -DBUILD_RTMESSAGE_LIB=ON
-                   -DBUILD_RTMESSAGE_SAMPLE_APP=ON
-                   -DBUILD_FOR_DESKTOP=ON
-                   -DBUILD_DATAPROVIDER_LIB=ON
-                   -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_TESTING=OFF
-)
-add_library(librtMessage STATIC SHARED IMPORTED)
-add_dependencies(librtMessage rtMessage)
-
-# rbus-core external dependency	
-#-------------------------------------------------------------------------------
-ExternalProject_Add(rbus-core
-     DEPENDS rtMessage
-     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/_prefix/rbus-core
-     GIT_REPOSITORY https://github.com/rdkcmf/rbuscore.git
-     GIT_TAG rdk-next
-     CMAKE_ARGS += DBUILD_FOR_DESKTOP=ON -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
-                   -DBUILD_TESTING=OFF
-)
-add_library(librbus-core STATIC SHARED IMPORTED)
-add_dependencies(librbus-core rbus-core)
-
 # rbus external dependency
 #-------------------------------------------------------------------------------
 ExternalProject_Add(rbus
-     DEPENDS rtMessage rbus-core
      PREFIX ${CMAKE_CURRENT_BINARY_DIR}/_prefix/rbus
-     GIT_REPOSITORY https://github.com/rdkcmf/rbus.git
-     GIT_TAG rdk-next
+     GIT_REPOSITORY https://github.com/rdkcentral/rbus.git
+     GIT_TAG main
      CMAKE_ARGS += -DBUILD_FOR_DESKTOP=ON -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_TESTING=OFF
 )
+add_library(librbuscore STATIC SHARED IMPORTED)
+add_dependencies(librbuscore rbuscore)
+
+add_library(librtMessage STATIC SHARED IMPORTED)
+add_dependencies(librtMessage rtMessage)
 
 add_library(librbus STATIC SHARED IMPORTED)
 add_dependencies(librbus rbus)
