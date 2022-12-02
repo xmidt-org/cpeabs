@@ -62,6 +62,14 @@
 #define WEBCFG_URL_PARAM "Device.X_RDK_WebConfig.URL"
 #define WEBCFG_PARAM_SUPPLEMENTARY_SERVICE   "Device.X_RDK_WebConfig.SupplementaryServiceUrls."
 #define SYSTEM_READY_PARM "Device.CR.SystemReady"
+
+#ifdef WEBCONFIG_MQTT_SUPPORT
+#define MQTT_LOCATIONID_PARAM "Device.X_RDK_WebConfig.MQTT.LocationId"
+#define MQTT_BROKER_PARAM "Device.X_RDK_WebConfig.MQTT.Broker"
+#define MQTT_SUBSCRIBE_TOPIC_PARAM "Device.X_RDK_WebConfig.MQTT.SubscribeTopic"
+#define MQTT_PUBLISH_GET_TOPIC_PARAM "Device.X_RDK_WebConfig.MQTT.PublishGetTopic"
+#define MQTT_PUBLISH_NOTIFY_TOPIC_PARAM "Device.X_RDK_WebConfig.MQTT.PublishNotifyTopic"
+#endif
 /*----------------------------------------------------------------------------*/
 /*                               Data Structures                              */
 /*----------------------------------------------------------------------------*/
@@ -726,3 +734,129 @@ static int webcfgRbusRegisterWithCR()
 	}
 	return 1;
 }
+#ifdef WEBCONFIG_MQTT_SUPPORT
+int Get_Mqtt_LocationId( char *pString)
+{
+	char *tempLocId = NULL;
+	int retPsmGet = 0;
+	if(isRbusEnabled())
+	{
+		retPsmGet = rbus_GetValueFromDB( MQTT_LOCATIONID_PARAM, &tempLocId);
+		WebcfgInfo("Get_Mqtt_LocationId. retPsmGet %d tempLocId %s\n", retPsmGet, tempLocId);
+		if (retPsmGet == RBUS_ERROR_SUCCESS)
+                {
+			if(tempLocId !=NULL)
+			{
+				cpeabStrncpy(pString, tempLocId, strlen(tempLocId)+1);
+			}
+			WebcfgDebug("Get_Mqtt_LocationId. pString %s\n", pString);
+		}
+		else
+                {
+                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_LOCATIONID_PARAM);
+                }
+	}
+	WebcfgDebug("Get_Mqtt_LocationId strong fn from lib\n");
+	return retPsmGet;
+}
+
+int Get_Mqtt_Broker( char *pString)
+{
+	char *tempBroker = NULL;
+	int retPsmGet = 0;
+	if(isRbusEnabled())
+	{
+		retPsmGet = rbus_GetValueFromDB( MQTT_BROKER_PARAM, &tempBroker);
+		WebcfgInfo("Get_Mqtt_Broker. retPsmGet %d tempBroker %s\n", retPsmGet, tempBroker);
+		if (retPsmGet == RBUS_ERROR_SUCCESS)
+                {
+			if(tempBroker !=NULL)
+			{
+				cpeabStrncpy(pString, tempBroker, strlen(tempBroker)+1);
+			}
+			WebcfgDebug("Get_Mqtt_Broker. pString %s\n", pString);
+		}
+		else
+                {
+                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_BROKER_PARAM);
+                }
+	}
+	WebcfgDebug("Get_Mqtt_Broker strong fn from lib\n");
+	return retPsmGet;
+}
+
+int Get_Mqtt_SubTopic( char *pString)
+{
+	char *tempSubTopic = NULL;
+	int retPsmGet = 0;
+	if(isRbusEnabled())
+	{
+		retPsmGet = rbus_GetValueFromDB( MQTT_SUBSCRIBE_TOPIC_PARAM, &tempSubTopic);
+		WebcfgDebug("Get_Mqtt_SubTopic. retPsmGet %d tempSubTopic %s\n", retPsmGet, tempSubTopic);
+		if (retPsmGet == RBUS_ERROR_SUCCESS)
+                {
+			if(tempSubTopic !=NULL)
+			{
+				cpeabStrncpy(pString, tempSubTopic, strlen(tempSubTopic)+1);
+			}
+			WebcfgDebug("Get_Mqtt_SubTopic. pString %s\n", pString);
+		}
+		else
+                {
+                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_SUBSCRIBE_TOPIC_PARAM);
+                }
+	}
+	WebcfgDebug("Get_Mqtt_SubTopic strong fn from lib\n");
+	return retPsmGet;
+}
+
+int Get_Mqtt_PublishGetTopic( char *pString)
+{
+	char *tempPublishGetTopic = NULL;
+	int retPsmGet = 0;
+	if(isRbusEnabled())
+	{
+		retPsmGet = rbus_GetValueFromDB( MQTT_PUBLISH_GET_TOPIC_PARAM, &tempPublishGetTopic);
+		WebcfgDebug("Get_Mqtt_PublishGetTopic. retPsmGet %d tempPublishGetTopic %s\n", retPsmGet, tempPublishGetTopic);
+		if (retPsmGet == RBUS_ERROR_SUCCESS)
+                {
+			if(tempPublishGetTopic !=NULL)
+			{
+				cpeabStrncpy(pString, tempPublishGetTopic, strlen(tempPublishGetTopic)+1);
+			}
+			WebcfgDebug("Get_Mqtt_PublishGetTopic. pString %s\n", pString);
+		}
+		else
+                {
+                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_PUBLISH_GET_TOPIC_PARAM);
+                }
+	}
+	WebcfgDebug("Get_Mqtt_PublishGetTopic strong fn from lib\n");
+	return retPsmGet;
+}
+
+int Get_Mqtt_PublishNotifyTopic( char *pString)
+{
+	char *tempPublishNotifyTopic = NULL;
+	int retPsmGet = 0;
+	if(isRbusEnabled())
+	{
+		retPsmGet = rbus_GetValueFromDB( MQTT_PUBLISH_NOTIFY_TOPIC_PARAM, &tempPublishNotifyTopic);
+		WebcfgDebug("Get_Mqtt_PublishNotifyTopic. retPsmGet %d tempPublishNotifyTopic %s\n", retPsmGet, tempPublishNotifyTopic);
+		if (retPsmGet == RBUS_ERROR_SUCCESS)
+                {
+			if(tempPublishNotifyTopic !=NULL)
+			{
+				cpeabStrncpy(pString, tempPublishNotifyTopic, strlen(tempPublishNotifyTopic)+1);
+			}
+			WebcfgDebug("Get_Mqtt_PublishNotifyTopic. pString %s\n", pString);
+		}
+		else
+                {
+                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_PUBLISH_NOTIFY_TOPIC_PARAM);
+                }
+	}
+	WebcfgDebug("Get_Mqtt_PublishNotifyTopic strong fn from lib\n");
+	return retPsmGet;
+}
+#endif
