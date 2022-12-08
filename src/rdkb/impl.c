@@ -21,11 +21,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <rbus/rbus.h>
-#include <rbus/rbus_object.h>
-#include <rbus/rbus_property.h>
-#include <rbus/rbus_value.h>
-#include <rbus-core/rbus_core.h>
-#include <rbus-core/rbus_session_mgr.h>
 #include "cpeabs.h"
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */

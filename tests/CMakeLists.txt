@@ -46,7 +46,7 @@ set(SOURCES test_rdkb.c ${PROJECT_SOURCE_DIR}/src/rdkb/impl.c )
 
 add_executable(test_rdkb ${SOURCES})
 
-target_link_libraries (test_rdkb -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus -lrbus-core)
+target_link_libraries (test_rdkb -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus)
 
 target_link_libraries (test_rdkb gcov -Wl,--no-as-needed )
 
@@ -61,7 +61,7 @@ set(SOURCES test_rdkv.c ${PROJECT_SOURCE_DIR}/src/rdkv/impl.c )
 
 add_executable(test_rdkv ${SOURCES})
 
-target_link_libraries (test_rdkv -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus -lrbus-core)
+target_link_libraries (test_rdkv -lcjson -lcunit -lmsgpackc -lwdmp-c -lcimplog -lpthread -lrbus)
 
 target_link_libraries (test_rdkv gcov -Wl,--no-as-needed )
 
