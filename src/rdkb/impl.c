@@ -60,10 +60,12 @@
 
 #ifdef WEBCONFIG_MQTT_SUPPORT
 #define MQTT_LOCATIONID_PARAM "Device.X_RDK_WebConfig.MQTT.LocationId"
+#define MQTT_NODEID_PARAM "Device.X_RDK_WebConfig.MQTT.NodeId"
 #define MQTT_BROKER_PARAM "Device.X_RDK_WebConfig.MQTT.Broker"
-#define MQTT_SUBSCRIBE_TOPIC_PARAM "Device.X_RDK_WebConfig.MQTT.SubscribeTopic"
+#define MQTT_PORT_PARAM "Device.X_RDK_WebConfig.MQTT.Port"
+/*#define MQTT_SUBSCRIBE_TOPIC_PARAM "Device.X_RDK_WebConfig.MQTT.SubscribeTopic"
 #define MQTT_PUBLISH_GET_TOPIC_PARAM "Device.X_RDK_WebConfig.MQTT.PublishGetTopic"
-#define MQTT_PUBLISH_NOTIFY_TOPIC_PARAM "Device.X_RDK_WebConfig.MQTT.PublishNotifyTopic"
+#define MQTT_PUBLISH_NOTIFY_TOPIC_PARAM "Device.X_RDK_WebConfig.MQTT.PublishNotifyTopic"*/
 #endif
 /*----------------------------------------------------------------------------*/
 /*                               Data Structures                              */
@@ -780,7 +782,56 @@ int Get_Mqtt_Broker( char *pString)
 	return retPsmGet;
 }
 
-int Get_Mqtt_SubTopic( char *pString)
+int Get_Mqtt_NodeId( char *pString)
+{
+	char *tempNodeId = NULL;
+	int retPsmGet = 0;
+	if(isRbusEnabled())
+	{
+		retPsmGet = rbus_GetValueFromDB( MQTT_NODEID_PARAM, &tempNodeId);
+		WebcfgInfo("Get_Mqtt_NodeId. retPsmGet %d tempNodeId %s\n", retPsmGet, tempNodeId);
+		if (retPsmGet == RBUS_ERROR_SUCCESS)
+                {
+			if(tempNodeId !=NULL)
+			{
+				cpeabStrncpy(pString, tempNodeId, strlen(tempNodeId)+1);
+			}
+			WebcfgDebug("Get_Mqtt_NodeId. pString %s\n", pString);
+		}
+		else
+                {
+                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_NODEID_PARAM);
+                }
+	}
+	WebcfgDebug("Get_Mqtt_NodeId strong fn from lib\n");
+	return retPsmGet;
+}
+
+int Get_Mqtt_Port( char *pString)
+{
+	char *tempPort = NULL;
+	int retPsmGet = 0;
+	if(isRbusEnabled())
+	{
+		retPsmGet = rbus_GetValueFromDB( MQTT_PORT_PARAM, &tempPort);
+		WebcfgInfo("Get_Mqtt_Port. retPsmGet %d tempPort %s\n", retPsmGet, tempPort);
+		if (retPsmGet == RBUS_ERROR_SUCCESS)
+                {
+			if(tempPort !=NULL)
+			{
+				cpeabStrncpy(pString, tempPort, strlen(tempPort)+1);
+			}
+			WebcfgDebug("Get_Mqtt_Port. pString %s\n", pString);
+		}
+		else
+                {
+                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_PORT_PARAM);
+                }
+	}
+	WebcfgDebug("Get_Mqtt_Port strong fn from lib\n");
+	return retPsmGet;
+}
+/*int Get_Mqtt_SubTopic( char *pString)
 {
 	char *tempSubTopic = NULL;
 	int retPsmGet = 0;
@@ -853,5 +904,5 @@ int Get_Mqtt_PublishNotifyTopic( char *pString)
 	}
 	WebcfgDebug("Get_Mqtt_PublishNotifyTopic strong fn from lib\n");
 	return retPsmGet;
-}
+}*/
 #endif
