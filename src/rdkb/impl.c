@@ -54,6 +54,20 @@
 #define DEVICE_MAC                   "Device.X_CISCO_COM_CableModem.MACAddress"
 #endif
 
+#if defined(_COSA_BCM_MIPS_)
+#define DEVICE_WAN_MAC                   "Device.DPoE.Mac_address"
+#elif defined(PLATFORM_RASPBERRYPI)
+#define DEVICE_WAN_MAC                   "Device.Ethernet.Interface.5.MACAddress"
+#elif defined(RDKB_EMU)
+#define DEVICE_WAN_MAC                   "Device.DeviceInfo.X_COMCAST-COM_WAN_MAC"
+#elif defined(_HUB4_PRODUCT_REQ_)
+#define DEVICE_WAN_MAC                   "Device.DeviceInfo.X_COMCAST-COM_WAN_MAC"
+#elif defined(_WNXL11BWL_PRODUCT_REQ_)
+#define DEVICE_WAN_MAC                   "Device.DeviceInfo.X_COMCAST-COM_WAN_MAC"
+#else
+#define DEVICE_WAN_MAC                   "Device.DeviceInfo.X_COMCAST-COM_WAN_MAC"
+#endif
+
 #define WEBCFG_URL_PARAM "Device.X_RDK_WebConfig.URL"
 #define WEBCFG_PARAM_SUPPLEMENTARY_SERVICE   "Device.X_RDK_WebConfig.SupplementaryServiceUrls."
 #define SYSTEM_READY_PARM "Device.CR.SystemReady"
@@ -71,6 +85,7 @@ typedef struct
 /*----------------------------------------------------------------------------*/
 static bool isRbus = false ;
 char deviceMAC[32]={'\0'};
+char deviceWanMAC[32]={'\0'};
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
 /*----------------------------------------------------------------------------*/
@@ -116,6 +131,28 @@ void macIDToLower(char macValue[],char macConverted[])
 	{
 	    macConverted[j] = tolower(macConverted[j]);
 	}
+}
+
+char* get_deviceWanMAC()
+{
+	if(strlen(deviceWanMAC) != 0)
+	{
+		WebcfgDebug("deviceWanMAC returned %s\n", deviceWanMAC);
+		return deviceWanMAC;
+	}
+
+	char *wanmacID = NULL;
+	char deviceWanMACValue[32] = { '\0' };
+	wanmacID = getParamValue(DEVICE_WAN_MAC);
+	if (wanmacID != NULL)
+	{
+	    cpeabStrncpy(deviceWanMACValue, wanmacID, strlen(wanmacID)+1);
+	    macIDToLower(deviceWanMACValue, deviceWanMAC);
+	    WebcfgDebug("deviceWanMAC: %s\n",deviceWanMAC);
+	    CPEABS_FREE(wanmacID);
+	}
+	WebcfgDebug("deviceWanMAC returned from lib is %s\n", deviceWanMAC);
+	return deviceWanMAC;
 }
 
 char* get_deviceMAC()
