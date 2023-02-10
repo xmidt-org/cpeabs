@@ -44,6 +44,17 @@
 #define WebcfgError(...)	__cimplog_rdk_generic(WEBCFG_RDK_LOG_MODULE, WEBCFG_LOG_MODULE, LEVEL_ERROR, __VA_ARGS__)
 #define WebcfgInfo(...)		__cimplog_rdk_generic(WEBCFG_RDK_LOG_MODULE, WEBCFG_LOG_MODULE, LEVEL_INFO, __VA_ARGS__)
 #define WebcfgDebug(...)	__cimplog_rdk_generic(WEBCFG_RDK_LOG_MODULE, WEBCFG_LOG_MODULE, LEVEL_DEBUG, __VA_ARGS__)
+
+#elif defined DEVICE_CAMERA
+
+#define WEBCFG_LOG_MODULE                     "WEBCONFIG"
+
+#define WebConfigLog(...) cimplog_info(WEBCFG_LOG_MODULE, __VA_ARGS__)
+
+#define WebcfgError(...) cimplog_error(WEBCFG_LOG_MODULE, __VA_ARGS__)
+#define WebcfgInfo(...) cimplog_info(WEBCFG_LOG_MODULE, __VA_ARGS__)
+#define WebcfgDebug(...) cimplog_debug(WEBCFG_LOG_MODULE, __VA_ARGS__)
+
 #else
 #define WebConfigLog(...)       printf(__VA_ARGS__)
 

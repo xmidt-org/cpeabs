@@ -202,9 +202,16 @@ char * getDeviceBootTime()
 
 char * getProductClass()
 {
+#ifndef DEVICE_CAMERA
     char *productClass = NULL;
     productClass = getParamValue(PRODUCT_CLASS);
-    WebcfgDebug("productClass returned from lib is %s\n", "CAMERA");
+#else
+    char *productClass = (char *) malloc(sizeof(char) * strlen("CAMERA") + 1);
+    strcpy(productClass, "CAMERA");
+#endif
+
+    if(productClass)
+      WebcfgDebug("productClass returned from lib is %s\n", "CAMERA");
     return productClass;
 }
 
