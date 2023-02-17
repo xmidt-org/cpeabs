@@ -41,6 +41,12 @@
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
+char* get_deviceWanMAC()
+{
+	//TODO:return the wan mac value
+	return NULL;
+}
+
 char * getParamValue(char *paramName)
 {
 	UNUSED(paramName);

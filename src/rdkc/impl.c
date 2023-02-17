@@ -184,6 +184,12 @@ char* get_deviceMAC()
     return deviceMAC;
 }
 
+char* get_deviceWanMAC()
+{
+	//TODO:return the wan mac value
+	return NULL;
+}
+
 char * getSerialNumber()
 {
     char *serialNum = NULL;
