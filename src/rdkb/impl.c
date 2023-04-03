@@ -782,28 +782,28 @@ int Get_Mqtt_Broker( char *pString)
 	return retPsmGet;
 }
 
-int Get_Mqtt_NodeId( char *pString)
+int Get_Mqtt_ClientId( char *pString)
 {
 	char *tempNodeId = NULL;
 	int retPsmGet = 0;
 	if(isRbusEnabled())
 	{
 		retPsmGet = rbus_GetValueFromDB( MQTT_NODEID_PARAM, &tempNodeId);
-		WebcfgInfo("Get_Mqtt_NodeId. retPsmGet %d tempNodeId %s\n", retPsmGet, tempNodeId);
+		WebcfgInfo("Get_Mqtt_ClientId. retPsmGet %d tempNodeId %s\n", retPsmGet, tempNodeId);
 		if (retPsmGet == RBUS_ERROR_SUCCESS)
                 {
 			if(tempNodeId !=NULL)
 			{
 				cpeabStrncpy(pString, tempNodeId, strlen(tempNodeId)+1);
 			}
-			WebcfgDebug("Get_Mqtt_NodeId. pString %s\n", pString);
+			WebcfgDebug("Get_Mqtt_ClientId. pString %s\n", pString);
 		}
 		else
                 {
                         WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_NODEID_PARAM);
                 }
 	}
-	WebcfgDebug("Get_Mqtt_NodeId strong fn from lib\n");
+	WebcfgDebug("Get_Mqtt_ClientId strong fn from lib\n");
 	return retPsmGet;
 }
 
