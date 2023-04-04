@@ -184,6 +184,12 @@ char* get_deviceMAC()
     return deviceMAC;
 }
 
+char* get_deviceWanMAC()
+{
+	//TODO:return the wan mac value
+	return NULL;
+}
+
 char * getSerialNumber()
 {
     char *serialNum = NULL;
@@ -202,9 +208,11 @@ char * getDeviceBootTime()
 
 char * getProductClass()
 {
-    char *productClass = NULL;
-    productClass = getParamValue(PRODUCT_CLASS);
-    WebcfgDebug("productClass returned from lib is %s\n", "CAMERA");
+    char *productClass = (char *) malloc(sizeof(char) * strlen("CAMERA") + 1);
+    strcpy(productClass, "CAMERA");
+
+    if(productClass)
+      WebcfgDebug("productClass returned from lib is %s\n", "CAMERA");
     return productClass;
 }
 

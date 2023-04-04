@@ -184,6 +184,11 @@ char* get_deviceMAC()
     return deviceMAC;
 }
 
+char* get_deviceWanMAC()
+{
+	return get_deviceMAC();
+}
+
 char * getSerialNumber()
 {
     char *serialNum = NULL;
