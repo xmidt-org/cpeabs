@@ -60,15 +60,14 @@
 #define WEBCFG_PARAM_SUPPLEMENTARY_SERVICE   "Device.X_RDK_WebConfig.SupplementaryServiceUrls."
 #define SYSTEM_READY_PARM "Device.CR.SystemReady"
 
-#ifdef WEBCONFIG_MQTT_SUPPORT
-#define MQTT_LOCATIONID_PARAM "Device.X_RDK_WebConfig.MQTT.LocationId"
-#define MQTT_NODEID_PARAM "Device.X_RDK_WebConfig.MQTT.NodeId"
-#define MQTT_BROKER_PARAM "Device.X_RDK_WebConfig.MQTT.Broker"
-#define MQTT_PORT_PARAM "Device.X_RDK_WebConfig.MQTT.Port"
-/*#define MQTT_SUBSCRIBE_TOPIC_PARAM "Device.X_RDK_WebConfig.MQTT.SubscribeTopic"
-#define MQTT_PUBLISH_GET_TOPIC_PARAM "Device.X_RDK_WebConfig.MQTT.PublishGetTopic"
-#define MQTT_PUBLISH_NOTIFY_TOPIC_PARAM "Device.X_RDK_WebConfig.MQTT.PublishNotifyTopic"*/
-#endif
+//#ifdef WEBCONFIG_MQTT_SUPPORT
+
+#define MQTT_LOCATIONID_PARAM "Device.X_RDK_MQTT.LocationId"
+#define MQTT_NODEID_PARAM "Device.X_RDK_MQTT.ClientID"
+#define MQTT_BROKER_PARAM "Device.X_RDK_MQTT.BrokerURL"
+#define MQTT_PORT_PARAM "Device.X_RDK_MQTT.Port"
+
+//#endif
 /*----------------------------------------------------------------------------*/
 /*                               Data Structures                              */
 /*----------------------------------------------------------------------------*/
@@ -756,7 +755,7 @@ static int webcfgRbusRegisterWithCR()
 	}
 	return 1;
 }
-#ifdef WEBCONFIG_MQTT_SUPPORT
+//#ifdef WEBCONFIG_MQTT_SUPPORT
 int Get_Mqtt_LocationId( char *pString)
 {
 	char *tempLocId = NULL;
@@ -930,4 +929,4 @@ int Get_Mqtt_PublishNotifyTopic( char *pString)
 	WebcfgDebug("Get_Mqtt_PublishNotifyTopic strong fn from lib\n");
 	return retPsmGet;
 }*/
-#endif
+//#endif
