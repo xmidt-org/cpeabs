@@ -82,6 +82,7 @@ typedef struct
 /*----------------------------------------------------------------------------*/
 static bool isRbus = false ;
 char deviceMAC[32]={'\0'};
+char deviceMACMqtt[32]={'\0'};
 char deviceWanMAC[32]={'\0'};
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
@@ -829,6 +830,33 @@ int Get_Mqtt_ClientId( char *pString)
 	}
 	WebcfgDebug("Get_Mqtt_ClientId strong fn from lib\n");
 	return retPsmGet;
+}
+
+
+int get_deviceMAC_Mqtt(char *pString)
+{
+	if(strlen(deviceMACMqtt) != 0)
+	{
+		cpeabStrncpy(pString, deviceMACMqtt, strlen(deviceMACMqtt)+1);
+		WebcfgDebug("deviceMAC returned %s\n", pString);
+		return 0;
+	}
+
+	char *macID = NULL;
+	macID = getParamValue(DEVICE_MAC);
+	if (macID != NULL)
+	{
+	    cpeabStrncpy(pString, macID, strlen(macID)+1);
+	    WebcfgDebug("deviceMAC: %s\n",pString);
+	    CPEABS_FREE(macID);
+	}
+	else
+	{
+	    WebcfgError("The deviceMac is empty\n");
+	    return 1;
+	}
+	WebcfgDebug("deviceMAC returned from lib is %s\n", pString);
+	return 0;
 }
 
 int Get_Mqtt_Port( char *pString)
