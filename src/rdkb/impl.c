@@ -89,6 +89,7 @@ char deviceWanMAC[32]={'\0'};
 /*----------------------------------------------------------------------------*/
 void __attribute__((weak)) getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus);
 static bool isRbusEnabled();
+void stripMacIdColon(char macValue[],char macConverted[]);
 void macIDToLower(char macValue[],char macConverted[]);
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize);
 rbusHandle_t  __attribute__((weak)) get_global_rbus_handle(void);
@@ -103,6 +104,26 @@ void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
 {
     strncpy(destStr, srcStr, destSize-1);
     destStr[destSize-1] = '\0';
+}
+
+void stripMacIdColon(char macValue[],char macConverted[])
+{
+	int i = 0;
+	char *token[32];
+	char tmp[32];
+	cpeabStrncpy(tmp, macValue, sizeof(tmp));
+	token[i] = strtok(tmp, ":");
+	if(token[i]!=NULL)
+	{
+	    cpeabStrncpy(macConverted, token[i], 32);
+	    i++;
+	}
+	while ((token[i] = strtok(NULL, ":")) != NULL)
+	{
+	    strncat(macConverted, token[i], 31);
+            macConverted[31]='\0';
+	    i++;
+	}
 }
 
 void macIDToLower(char macValue[],char macConverted[])
@@ -129,6 +150,38 @@ void macIDToLower(char macValue[],char macConverted[])
 	{
 	    macConverted[j] = tolower(macConverted[j]);
 	}
+}
+
+
+
+int get_deviceMAC_Mqtt(char *pString)
+{
+	if(strlen(deviceMACMqtt) != 0)
+	{
+		cpeabStrncpy(pString, deviceMACMqtt, strlen(deviceMACMqtt)+1);
+		WebcfgInfo("deviceMAC returned %s\n", pString);
+		return 0;
+	}
+
+	char *macID = NULL;
+	char clientIdValue[32] = { '\0' };
+	macID = getParamValue(DEVICE_MAC);
+	if (macID != NULL)
+	{
+	    cpeabStrncpy(clientIdValue, macID, strlen(macID)+1);
+	    stripMacIdColon(clientIdValue, deviceMACMqtt);
+	    WebcfgInfo("deviceMAC after conversion: %s\n",deviceMACMqtt);
+	    cpeabStrncpy(pString, deviceMACMqtt, strlen(deviceMACMqtt)+1);
+	    WebcfgInfo("deviceMAC after strip :%s\n", pString);
+	    CPEABS_FREE(macID);
+	}
+	else
+	{
+	    WebcfgError("The deviceMac is empty\n");
+	    return 1;
+	}
+	WebcfgInfo("deviceMAC returned from lib is %s\n", pString);
+	return 0;
 }
 
 char* get_deviceWanMAC()
@@ -830,33 +883,6 @@ int Get_Mqtt_ClientId( char *pString)
 	}
 	WebcfgDebug("Get_Mqtt_ClientId strong fn from lib\n");
 	return retPsmGet;
-}
-
-
-int get_deviceMAC_Mqtt(char *pString)
-{
-	if(strlen(deviceMACMqtt) != 0)
-	{
-		cpeabStrncpy(pString, deviceMACMqtt, strlen(deviceMACMqtt)+1);
-		WebcfgDebug("deviceMAC returned %s\n", pString);
-		return 0;
-	}
-
-	char *macID = NULL;
-	macID = getParamValue(DEVICE_MAC);
-	if (macID != NULL)
-	{
-	    cpeabStrncpy(pString, macID, strlen(macID)+1);
-	    WebcfgDebug("deviceMAC: %s\n",pString);
-	    CPEABS_FREE(macID);
-	}
-	else
-	{
-	    WebcfgError("The deviceMac is empty\n");
-	    return 1;
-	}
-	WebcfgDebug("deviceMAC returned from lib is %s\n", pString);
-	return 0;
 }
 
 int Get_Mqtt_Port( char *pString)
