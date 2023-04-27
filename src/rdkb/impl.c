@@ -463,7 +463,7 @@ char * getParamValue(char *paramName)
 		paramCount = sizeof(getParamList)/sizeof(getParamList[0]);
 		param_t **parametervalArr = (param_t **) malloc(sizeof(param_t *) * paramCount);
 
-		WebcfgDebug("paramName : %s paramCount %d\n",getParamList[0], paramCount);
+		WebcfgInfo("paramName : %s paramCount %d\n",getParamList[0], paramCount);
 		getValues_rbus(getParamList, paramCount, 0, NULL, &parametervalArr, &count, &ret);
 
 		if (ret == WDMP_SUCCESS )
@@ -518,7 +518,7 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
 	}
 	else
 	{
-		WebcfgDebug("SetPSMRecordValue is success\n");
+		WebcfgInfo("SetPSMRecordValue is success\n");
 		rbusObject_Release(outParams);
 		return 0;
 	}
@@ -557,7 +557,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 	}
 	else
 	{
-		WebcfgDebug("GetPSMRecordValue is success\n");
+		WebcfgInfo("GetPSMRecordValue is success\n");
 		rbusProperty_t prop = NULL;
 		rbusValue_t value = NULL;
 		char *str_value = NULL;
@@ -570,8 +570,8 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 				str_value = rbusValue_ToString(value,NULL,0);
 				if(str_value)
 				{
-					WebcfgDebug("Parameter Name : %s\n", rbusProperty_GetName(prop));
-					WebcfgDebug("Parameter Value fetched: %s\n", str_value);
+					WebcfgInfo("Parameter Name : %s\n", rbusProperty_GetName(prop));
+					WebcfgInfo("Parameter Value fetched: %s\n", str_value);
 				}
 			}
 			prop = rbusProperty_GetNext(prop);
@@ -580,7 +580,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 		{
 			*paramValue = strdup(str_value);
 			CPEABS_FREE(str_value);
-			WebcfgDebug("Requested param DB value [%s]\n", *paramValue);
+			WebcfgInfo("Requested param DB value [%s]\n", *paramValue);
 		}
 		rbusObject_Release(outParams);
 		return 0;
@@ -831,7 +831,7 @@ int Get_Mqtt_LocationId( char *pString)
                         WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_LOCATIONID_PARAM);
                 }
 	}
-	WebcfgDebug("Get_Mqtt_LocationId strong fn from lib\n");
+	WebcfgInfo("Get_Mqtt_LocationId strong fn from lib\n");
 	return retPsmGet;
 }
 
@@ -856,7 +856,7 @@ int Get_Mqtt_Broker( char *pString)
                         WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_BROKER_PARAM);
                 }
 	}
-	WebcfgDebug("Get_Mqtt_Broker strong fn from lib\n");
+	WebcfgInfo("Get_Mqtt_Broker strong fn from lib\n");
 	return retPsmGet;
 }
 
@@ -874,14 +874,14 @@ int Get_Mqtt_ClientId( char *pString)
 			{
 				cpeabStrncpy(pString, tempNodeId, strlen(tempNodeId)+1);
 			}
-			WebcfgDebug("Get_Mqtt_ClientId. pString %s\n", pString);
+			WebcfgInfo("Get_Mqtt_ClientId. pString %s\n", pString);
 		}
 		else
                 {
                         WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_NODEID_PARAM);
                 }
 	}
-	WebcfgDebug("Get_Mqtt_ClientId strong fn from lib\n");
+	WebcfgInfo("Get_Mqtt_ClientId strong fn from lib\n");
 	return retPsmGet;
 }
 
@@ -899,14 +899,14 @@ int Get_Mqtt_Port( char *pString)
 			{
 				cpeabStrncpy(pString, tempPort, strlen(tempPort)+1);
 			}
-			WebcfgDebug("Get_Mqtt_Port. pString %s\n", pString);
+			WebcfgInfo("Get_Mqtt_Port. pString %s\n", pString);
 		}
 		else
                 {
                         WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_PORT_PARAM);
                 }
 	}
-	WebcfgDebug("Get_Mqtt_Port strong fn from lib\n");
+	WebcfgInfo("Get_Mqtt_Port strong fn from lib\n");
 	return retPsmGet;
 }
 /*int Get_Mqtt_SubTopic( char *pString)
