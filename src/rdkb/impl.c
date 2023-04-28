@@ -155,21 +155,21 @@ char* get_clientId()
 {
 	if(strlen(clientId) != 0)
 	{
-		WebcfgDebug("clientId returned %s\n", clientId);
+		WebcfgInfo("clientId returned %s\n", clientId);
 		return clientId;
 	}
 
 	char *tempClientId = NULL;
 	char clientIdValue[32] = { '\0' };
-	tempClientId = getParamValue(DEVICE_WAN_MAC);
+	tempClientId = getParamValue(DEVICE_MAC);
 	if (tempClientId != NULL)
 	{
 	    cpeabStrncpy(clientIdValue, tempClientId, strlen(tempClientId)+1);
 	    stripMacIdColon(clientIdValue, clientId);
-	    WebcfgDebug("clientId: %s\n",clientId);
+	    WebcfgInfo("clientId: %s\n",clientId);
 	    CPEABS_FREE(tempClientId);
 	}
-	WebcfgDebug("clientId returned from lib is %s\n", clientId);
+	WebcfgInfo("clientId returned from lib is %s\n", clientId);
 	return clientId;
 }
 
