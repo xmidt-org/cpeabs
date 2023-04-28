@@ -161,7 +161,7 @@ char* get_clientId()
 
 	char *tempClientId = NULL;
 	char clientIdValue[32] = { '\0' };
-	tempClientId = getParamValue(DEVICE_MAC);
+	tempClientId = getParamValuemqtt(DEVICE_MAC);
 	if (tempClientId != NULL)
 	{
 	    cpeabStrncpy(clientIdValue, tempClientId, strlen(tempClientId)+1);
@@ -575,6 +575,134 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 		return 0;
 	}
 	return 1;
+}
+
+char * getParamValuemqtt(char *paramName)
+{
+	if(isRbusEnabled())
+	{
+		int paramCount=0;
+		int ret = WDMP_FAILURE;
+		int count=0;
+		const char *getParamList[1];
+		getParamList[0] = paramName;
+
+		char *paramValue = (char *) malloc(sizeof(char)*64);
+		paramCount = sizeof(getParamList)/sizeof(getParamList[0]);
+		param_t **parametervalArr = (param_t **) malloc(sizeof(param_t *) * paramCount);
+
+		WebcfgInfo("paramName : %s paramCount %d\n",getParamList[0], paramCount);
+		getValues_rbusmqtt(getParamList, paramCount, 0, NULL, &parametervalArr, &count, &ret);
+
+		if (ret == WDMP_SUCCESS )
+		{
+			cpeabStrncpy(paramValue, parametervalArr[0]->value,64);
+			CPEABS_FREE(parametervalArr[0]->name);
+			CPEABS_FREE(parametervalArr[0]->value);
+			CPEABS_FREE(parametervalArr[0]);
+		}
+		else
+		{
+			WebcfgError("Failed to GetValue for %s\n", getParamList[0]);
+			CPEABS_FREE(paramValue);
+		}
+		CPEABS_FREE(parametervalArr);
+		WebcfgDebug("getParamValue : paramValue is %s\n", paramValue);
+		return paramValue;
+	}
+	WebcfgError("getParamValue : returns NULL\n");
+	return NULL;
+}
+
+void getValues_rbusmqtt(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, int *retStatus)
+{
+	int resCount = 0;
+	rbusError_t rc;
+	rbusProperty_t props = NULL;
+	char* paramValue = NULL;
+	char *pName = NULL;
+	int i =0;
+	unsigned int val_size = 0;
+	rbusValue_t paramValue_t = NULL;
+	unsigned int cnt=0;
+	*retStatus = WDMP_FAILURE;
+	rbusHandle_t rbus_handle;
+
+	for(cnt = 0; cnt < paramCount; cnt++)
+	{
+		WebcfgDebug("rbus_getExt paramName[%d] : %s paramCount %d\n",cnt,paramName[cnt], paramCount);
+	}
+
+	WebcfgInfo("setValues_rbus index %d\n", index);
+	WebcfgInfo("getValues_rbus timeSpan %p\n",timeSpan);
+
+	rbus_handle = get_global_rbus_handle();
+	if(!rbus_handle)
+	{
+		WebcfgError("getValues_rbus Failed as rbus_handle is not initialized\n");
+		return;
+	}
+	rc = rbus_getExt(rbus_handle, paramCount, paramName, &resCount, &props);
+
+	WebcfgDebug("rbus_getExt rc=%d resCount=%d\n", rc, resCount);
+
+	if(RBUS_ERROR_SUCCESS != rc)
+	{
+		WebcfgError("Failed to get value rbus_getExt rc=%d resCount=%d\n", rc, resCount);
+		rbusProperty_Release(props);
+		return;
+	}
+	if(props)
+	{
+		rbusProperty_t next = props;
+		val_size = resCount;
+		WebcfgDebug("val_size : %d\n",val_size);
+		if(val_size > 0)
+		{
+			if(paramCount == val_size)
+			{
+				for (i = 0; i < resCount; i++)
+				{
+					WebcfgDebug("Response Param is %s\n", rbusProperty_GetName(next));
+					paramValue_t = rbusProperty_GetValue(next);
+
+					if(paramValue_t)
+					{
+						paramValue = rbusValue_ToString(paramValue_t, NULL, 0);
+						WebcfgDebug("Response paramValue is %s\n", paramValue);
+						pName = strdup(rbusProperty_GetName(next));
+						(*paramArr)[i] = (param_t *) malloc(sizeof(param_t));
+
+						WebcfgDebug("Framing paramArr\n");
+						(*paramArr)[i][0].name = strdup(pName);
+						(*paramArr)[i][0].value = strdup(paramValue);
+						(*paramArr)[i][0].type = WDMP_STRING;
+						WebcfgDebug("success: %s %s %d \n",(*paramArr)[i][0].name,(*paramArr)[i][0].value, (*paramArr)[i][0].type);
+						*retValCount = resCount;
+						*retStatus = WDMP_SUCCESS;
+						if(paramValue !=NULL)
+						{
+							CPEABS_FREE(paramValue);
+						}
+						if(pName !=NULL)
+						{
+							CPEABS_FREE(pName);
+						}
+					}
+					else
+					{
+						WebcfgError("Parameter value from rbus_getExt is empty\n");
+					}
+					next = rbusProperty_GetNext(next);
+				}
+			}
+		}
+		else if(val_size == 0 && rc == RBUS_ERROR_SUCCESS)
+		{
+			WebcfgInfo("No child elements found\n");
+		}
+		rbusProperty_Release(props);
+	}
 }
 
 void getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus)

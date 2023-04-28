@@ -72,6 +72,8 @@
 /*----------------------------------------------------------------------------*/
 
 char * getParamValue(char *paramName);
+char * getParamValuemqtt(char *paramName);
+void getValues_rbusmqtt(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, int *retStatus);
 void getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus);
 int rbus_GetValueFromDB( char* paramName, char** paramValue);
 int rbus_StoreValueIntoDB(char *paramName, char *value);
