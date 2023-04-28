@@ -62,8 +62,7 @@
 
 //#ifdef WEBCONFIG_MQTT_SUPPORT
 
-#define MQTT_LOCATIONID_PARAM "Device.X_RDK_MQTT.LocationId"
-#define MQTT_NODEID_PARAM "Device.X_RDK_MQTT.ClientID"
+#define MQTT_LOCATIONID_PARAM "Device.X_RDK_MQTT.LocationID"
 #define MQTT_BROKER_PARAM "Device.X_RDK_MQTT.BrokerURL"
 #define MQTT_PORT_PARAM "Device.X_RDK_MQTT.Port"
 
@@ -82,7 +81,7 @@ typedef struct
 /*----------------------------------------------------------------------------*/
 static bool isRbus = false ;
 char deviceMAC[32]={'\0'};
-char deviceMACMqtt[32]={'\0'};
+char clientId[32]={'\0'};
 char deviceWanMAC[32]={'\0'};
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
@@ -152,36 +151,26 @@ void macIDToLower(char macValue[],char macConverted[])
 	}
 }
 
-
-
-int get_deviceMAC_Mqtt(char *pString)
+char* get_clientId()
 {
-	if(strlen(deviceMACMqtt) != 0)
+	if(strlen(clientId) != 0)
 	{
-		cpeabStrncpy(pString, deviceMACMqtt, strlen(deviceMACMqtt)+1);
-		WebcfgInfo("deviceMAC returned %s\n", pString);
-		return 0;
+		WebcfgDebug("clientId returned %s\n", clientId);
+		return clientId;
 	}
 
-	char *macID = NULL;
+	char *tempClientId = NULL;
 	char clientIdValue[32] = { '\0' };
-	macID = getParamValue(DEVICE_MAC);
-	if (macID != NULL)
+	tempClientId = getParamValue(DEVICE_WAN_MAC);
+	if (tempClientId != NULL)
 	{
-	    cpeabStrncpy(clientIdValue, macID, strlen(macID)+1);
-	    stripMacIdColon(clientIdValue, deviceMACMqtt);
-	    WebcfgInfo("deviceMAC after conversion: %s\n",deviceMACMqtt);
-	    cpeabStrncpy(pString, deviceMACMqtt, strlen(deviceMACMqtt)+1);
-	    WebcfgInfo("deviceMAC after strip :%s\n", pString);
-	    CPEABS_FREE(macID);
+	    cpeabStrncpy(clientIdValue, tempClientId, strlen(tempClientId)+1);
+	    stripMacIdColon(clientIdValue, clientId);
+	    WebcfgDebug("clientId: %s\n",clientId);
+	    CPEABS_FREE(tempClientId);
 	}
-	else
-	{
-	    WebcfgError("The deviceMac is empty\n");
-	    return 1;
-	}
-	WebcfgInfo("deviceMAC returned from lib is %s\n", pString);
-	return 0;
+	WebcfgDebug("clientId returned from lib is %s\n", clientId);
+	return clientId;
 }
 
 char* get_deviceWanMAC()
@@ -857,31 +846,6 @@ int Get_Mqtt_Broker( char *pString)
                 }
 	}
 	WebcfgInfo("Get_Mqtt_Broker strong fn from lib\n");
-	return retPsmGet;
-}
-
-int Get_Mqtt_ClientId( char *pString)
-{
-	char *tempNodeId = NULL;
-	int retPsmGet = 0;
-	if(isRbusEnabled())
-	{
-		retPsmGet = rbus_GetValueFromDB( MQTT_NODEID_PARAM, &tempNodeId);
-		WebcfgInfo("Get_Mqtt_ClientId. retPsmGet %d tempNodeId %s\n", retPsmGet, tempNodeId);
-		if (retPsmGet == RBUS_ERROR_SUCCESS)
-                {
-			if(tempNodeId !=NULL)
-			{
-				cpeabStrncpy(pString, tempNodeId, strlen(tempNodeId)+1);
-			}
-			WebcfgInfo("Get_Mqtt_ClientId. pString %s\n", pString);
-		}
-		else
-                {
-                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_NODEID_PARAM);
-                }
-	}
-	WebcfgInfo("Get_Mqtt_ClientId strong fn from lib\n");
 	return retPsmGet;
 }
 
