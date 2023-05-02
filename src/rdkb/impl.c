@@ -40,6 +40,8 @@
 #define FIRMW_START_TIME			"Device.DeviceInfo.X_RDKCENTRAL-COM_MaintenanceWindow.FirmwareUpgradeStartTime"
 #define FIRMW_END_TIME			        "Device.DeviceInfo.X_RDKCENTRAL-COM_MaintenanceWindow.FirmwareUpgradeEndTime" 
 
+#define TIME_OFFSET                  "Device.Time.TimeOffset"
+
 #if defined(_COSA_BCM_MIPS_)
 #define DEVICE_MAC                   "Device.DPoE.Mac_address"
 #elif defined(PLATFORM_RASPBERRYPI)
@@ -163,6 +165,14 @@ char* get_deviceMAC()
 	}
 	WebcfgDebug("deviceMAC returned from lib is %s\n", deviceMAC);
 	return deviceMAC;
+}
+
+char * getTimeOffset()
+{
+	char *timeOffset = NULL;
+	timeOffset = getParamValue(TIME_OFFSET);
+	WebcfgDebug("timeOffset returned from lib is %s\n", timeOffset);
+	return timeOffset;
 }
 
 char * getSerialNumber()
