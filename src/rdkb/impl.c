@@ -171,7 +171,7 @@ char * getTimeOffset()
 {
 	char *timeOffset = NULL;
 	timeOffset = getParamValue(TIME_OFFSET);
-	WebcfgDebug("timeOffset returned from lib is %s\n", timeOffset);
+	WebcfgInfo("timeOffset returned from lib is %s\n", timeOffset);
 	return timeOffset;
 }
 
@@ -410,7 +410,7 @@ char * getParamValue(char *paramName)
 		paramCount = sizeof(getParamList)/sizeof(getParamList[0]);
 		param_t **parametervalArr = (param_t **) malloc(sizeof(param_t *) * paramCount);
 
-		WebcfgDebug("paramName : %s paramCount %d\n",getParamList[0], paramCount);
+		WebcfgInfo("paramName : %s paramCount %d\n",getParamList[0], paramCount);
 		getValues_rbus(getParamList, paramCount, 0, NULL, &parametervalArr, &count, &ret);
 
 		if (ret == WDMP_SUCCESS )
@@ -426,7 +426,7 @@ char * getParamValue(char *paramName)
 			CPEABS_FREE(paramValue);
 		}
 		CPEABS_FREE(parametervalArr);
-		WebcfgDebug("getParamValue : paramValue is %s\n", paramValue);
+		WebcfgInfo("getParamValue : paramValue is %s\n", paramValue);
 		return paramValue;
 	}
 	WebcfgError("getParamValue : returns NULL\n");
