@@ -151,28 +151,6 @@ void macIDToLower(char macValue[],char macConverted[])
 	}
 }
 
-char* get_clientId()
-{
-	if(strlen(clientId) != 0)
-	{
-		WebcfgInfo("clientId returned %s\n", clientId);
-		return clientId;
-	}
-
-	char *tempClientId = NULL;
-	char clientIdValue[32] = { '\0' };
-	tempClientId = getParamValuemqtt(DEVICE_MAC);
-	if (tempClientId != NULL)
-	{
-	    cpeabStrncpy(clientIdValue, tempClientId, strlen(tempClientId)+1);
-	    stripMacIdColon(clientIdValue, clientId);
-	    WebcfgInfo("clientId: %s\n",clientId);
-	    CPEABS_FREE(tempClientId);
-	}
-	WebcfgInfo("clientId returned from lib is %s\n", clientId);
-	return clientId;
-}
-
 char* get_deviceWanMAC()
 {
 	if(strlen(deviceWanMAC) != 0)
@@ -577,134 +555,6 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 	return 1;
 }
 
-char * getParamValuemqtt(char *paramName)
-{
-	if(isRbusEnabled())
-	{
-		int paramCount=0;
-		int ret = WDMP_FAILURE;
-		int count=0;
-		const char *getParamList[1];
-		getParamList[0] = paramName;
-
-		char *paramValue = (char *) malloc(sizeof(char)*64);
-		paramCount = sizeof(getParamList)/sizeof(getParamList[0]);
-		param_t **parametervalArr = (param_t **) malloc(sizeof(param_t *) * paramCount);
-
-		WebcfgInfo("paramName : %s paramCount %d\n",getParamList[0], paramCount);
-		getValues_rbusmqtt(getParamList, paramCount, 0, NULL, &parametervalArr, &count, &ret);
-
-		if (ret == WDMP_SUCCESS )
-		{
-			cpeabStrncpy(paramValue, parametervalArr[0]->value,64);
-			CPEABS_FREE(parametervalArr[0]->name);
-			CPEABS_FREE(parametervalArr[0]->value);
-			CPEABS_FREE(parametervalArr[0]);
-		}
-		else
-		{
-			WebcfgError("Failed to GetValue for %s\n", getParamList[0]);
-			CPEABS_FREE(paramValue);
-		}
-		CPEABS_FREE(parametervalArr);
-		WebcfgDebug("getParamValue : paramValue is %s\n", paramValue);
-		return paramValue;
-	}
-	WebcfgError("getParamValue : returns NULL\n");
-	return NULL;
-}
-
-void getValues_rbusmqtt(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, int *retStatus)
-{
-	int resCount = 0;
-	rbusError_t rc;
-	rbusProperty_t props = NULL;
-	char* paramValue = NULL;
-	char *pName = NULL;
-	int i =0;
-	unsigned int val_size = 0;
-	rbusValue_t paramValue_t = NULL;
-	unsigned int cnt=0;
-	*retStatus = WDMP_FAILURE;
-	rbusHandle_t rbus_handle;
-
-	for(cnt = 0; cnt < paramCount; cnt++)
-	{
-		WebcfgDebug("rbus_getExt paramName[%d] : %s paramCount %d\n",cnt,paramName[cnt], paramCount);
-	}
-
-	WebcfgInfo("setValues_rbus index %d\n", index);
-	WebcfgInfo("getValues_rbus timeSpan %p\n",timeSpan);
-
-	rbus_handle = get_global_rbus_handle();
-	if(!rbus_handle)
-	{
-		WebcfgError("getValues_rbus Failed as rbus_handle is not initialized\n");
-		return;
-	}
-	rc = rbus_getExt(rbus_handle, paramCount, paramName, &resCount, &props);
-
-	WebcfgDebug("rbus_getExt rc=%d resCount=%d\n", rc, resCount);
-
-	if(RBUS_ERROR_SUCCESS != rc)
-	{
-		WebcfgError("Failed to get value rbus_getExt rc=%d resCount=%d\n", rc, resCount);
-		rbusProperty_Release(props);
-		return;
-	}
-	if(props)
-	{
-		rbusProperty_t next = props;
-		val_size = resCount;
-		WebcfgDebug("val_size : %d\n",val_size);
-		if(val_size > 0)
-		{
-			if(paramCount == val_size)
-			{
-				for (i = 0; i < resCount; i++)
-				{
-					WebcfgDebug("Response Param is %s\n", rbusProperty_GetName(next));
-					paramValue_t = rbusProperty_GetValue(next);
-
-					if(paramValue_t)
-					{
-						paramValue = rbusValue_ToString(paramValue_t, NULL, 0);
-						WebcfgDebug("Response paramValue is %s\n", paramValue);
-						pName = strdup(rbusProperty_GetName(next));
-						(*paramArr)[i] = (param_t *) malloc(sizeof(param_t));
-
-						WebcfgDebug("Framing paramArr\n");
-						(*paramArr)[i][0].name = strdup(pName);
-						(*paramArr)[i][0].value = strdup(paramValue);
-						(*paramArr)[i][0].type = WDMP_STRING;
-						WebcfgDebug("success: %s %s %d \n",(*paramArr)[i][0].name,(*paramArr)[i][0].value, (*paramArr)[i][0].type);
-						*retValCount = resCount;
-						*retStatus = WDMP_SUCCESS;
-						if(paramValue !=NULL)
-						{
-							CPEABS_FREE(paramValue);
-						}
-						if(pName !=NULL)
-						{
-							CPEABS_FREE(pName);
-						}
-					}
-					else
-					{
-						WebcfgError("Parameter value from rbus_getExt is empty\n");
-					}
-					next = rbusProperty_GetNext(next);
-				}
-			}
-		}
-		else if(val_size == 0 && rc == RBUS_ERROR_SUCCESS)
-		{
-			WebcfgInfo("No child elements found\n");
-		}
-		rbusProperty_Release(props);
-	}
-}
-
 void getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus)
 {
 	UNUSED(paramName);
@@ -1001,78 +851,153 @@ int Get_Mqtt_Port( char *pString)
 	WebcfgInfo("Get_Mqtt_Port strong fn from lib\n");
 	return retPsmGet;
 }
-/*int Get_Mqtt_SubTopic( char *pString)
+
+char* Get_Mqtt_ClientId()
 {
-	char *tempSubTopic = NULL;
-	int retPsmGet = 0;
+	if(strlen(clientId) != 0)
+	{
+		WebcfgInfo("clientId returned %s\n", clientId);
+		return clientId;
+	}
+
+	char *tempClientId = NULL;
+	char clientIdValue[32] = { '\0' };
+	tempClientId = getParamValuemqtt(DEVICE_MAC);
+	if (tempClientId != NULL)
+	{
+	    cpeabStrncpy(clientIdValue, tempClientId, strlen(tempClientId)+1);
+	    stripMacIdColon(clientIdValue, clientId);
+	    WebcfgInfo("clientId: %s\n",clientId);
+	    CPEABS_FREE(tempClientId);
+	}
+	WebcfgInfo("clientId returned from lib is %s\n", clientId);
+	return clientId;
+}
+char * getParamValuemqtt(char *paramName)
+{
 	if(isRbusEnabled())
 	{
-		retPsmGet = rbus_GetValueFromDB( MQTT_SUBSCRIBE_TOPIC_PARAM, &tempSubTopic);
-		WebcfgDebug("Get_Mqtt_SubTopic. retPsmGet %d tempSubTopic %s\n", retPsmGet, tempSubTopic);
-		if (retPsmGet == RBUS_ERROR_SUCCESS)
-                {
-			if(tempSubTopic !=NULL)
-			{
-				cpeabStrncpy(pString, tempSubTopic, strlen(tempSubTopic)+1);
-			}
-			WebcfgDebug("Get_Mqtt_SubTopic. pString %s\n", pString);
+		int paramCount=0;
+		int ret = WDMP_FAILURE;
+		int count=0;
+		const char *getParamList[1];
+		getParamList[0] = paramName;
+
+		char *paramValue = (char *) malloc(sizeof(char)*64);
+		paramCount = sizeof(getParamList)/sizeof(getParamList[0]);
+		param_t **parametervalArr = (param_t **) malloc(sizeof(param_t *) * paramCount);
+
+		WebcfgInfo("paramName : %s paramCount %d\n",getParamList[0], paramCount);
+		getValues_rbusmqtt(getParamList, paramCount, 0, NULL, &parametervalArr, &count, &ret);
+
+		if (ret == WDMP_SUCCESS )
+		{
+			cpeabStrncpy(paramValue, parametervalArr[0]->value,64);
+			CPEABS_FREE(parametervalArr[0]->name);
+			CPEABS_FREE(parametervalArr[0]->value);
+			CPEABS_FREE(parametervalArr[0]);
 		}
 		else
-                {
-                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_SUBSCRIBE_TOPIC_PARAM);
-                }
+		{
+			WebcfgError("Failed to GetValue for %s\n", getParamList[0]);
+			CPEABS_FREE(paramValue);
+		}
+		CPEABS_FREE(parametervalArr);
+		WebcfgDebug("getParamValue : paramValue is %s\n", paramValue);
+		return paramValue;
 	}
-	WebcfgDebug("Get_Mqtt_SubTopic strong fn from lib\n");
-	return retPsmGet;
+	WebcfgError("getParamValue : returns NULL\n");
+	return NULL;
 }
 
-int Get_Mqtt_PublishGetTopic( char *pString)
+void getValues_rbusmqtt(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, int *retStatus)
 {
-	char *tempPublishGetTopic = NULL;
-	int retPsmGet = 0;
-	if(isRbusEnabled())
-	{
-		retPsmGet = rbus_GetValueFromDB( MQTT_PUBLISH_GET_TOPIC_PARAM, &tempPublishGetTopic);
-		WebcfgDebug("Get_Mqtt_PublishGetTopic. retPsmGet %d tempPublishGetTopic %s\n", retPsmGet, tempPublishGetTopic);
-		if (retPsmGet == RBUS_ERROR_SUCCESS)
-                {
-			if(tempPublishGetTopic !=NULL)
-			{
-				cpeabStrncpy(pString, tempPublishGetTopic, strlen(tempPublishGetTopic)+1);
-			}
-			WebcfgDebug("Get_Mqtt_PublishGetTopic. pString %s\n", pString);
-		}
-		else
-                {
-                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_PUBLISH_GET_TOPIC_PARAM);
-                }
-	}
-	WebcfgDebug("Get_Mqtt_PublishGetTopic strong fn from lib\n");
-	return retPsmGet;
-}
+	int resCount = 0;
+	rbusError_t rc;
+	rbusProperty_t props = NULL;
+	char* paramValue = NULL;
+	char *pName = NULL;
+	int i =0;
+	unsigned int val_size = 0;
+	rbusValue_t paramValue_t = NULL;
+	unsigned int cnt=0;
+	*retStatus = WDMP_FAILURE;
+	rbusHandle_t rbus_handle;
 
-int Get_Mqtt_PublishNotifyTopic( char *pString)
-{
-	char *tempPublishNotifyTopic = NULL;
-	int retPsmGet = 0;
-	if(isRbusEnabled())
+	for(cnt = 0; cnt < paramCount; cnt++)
 	{
-		retPsmGet = rbus_GetValueFromDB( MQTT_PUBLISH_NOTIFY_TOPIC_PARAM, &tempPublishNotifyTopic);
-		WebcfgDebug("Get_Mqtt_PublishNotifyTopic. retPsmGet %d tempPublishNotifyTopic %s\n", retPsmGet, tempPublishNotifyTopic);
-		if (retPsmGet == RBUS_ERROR_SUCCESS)
-                {
-			if(tempPublishNotifyTopic !=NULL)
-			{
-				cpeabStrncpy(pString, tempPublishNotifyTopic, strlen(tempPublishNotifyTopic)+1);
-			}
-			WebcfgDebug("Get_Mqtt_PublishNotifyTopic. pString %s\n", pString);
-		}
-		else
-                {
-                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_PUBLISH_NOTIFY_TOPIC_PARAM);
-                }
+		WebcfgDebug("rbus_getExt paramName[%d] : %s paramCount %d\n",cnt,paramName[cnt], paramCount);
 	}
-	WebcfgDebug("Get_Mqtt_PublishNotifyTopic strong fn from lib\n");
-	return retPsmGet;
-}*/
+
+	WebcfgInfo("setValues_rbus index %d\n", index);
+	WebcfgInfo("getValues_rbus timeSpan %p\n",timeSpan);
+
+	rbus_handle = get_global_rbus_handle();
+	if(!rbus_handle)
+	{
+		WebcfgError("getValues_rbus Failed as rbus_handle is not initialized\n");
+		return;
+	}
+	rc = rbus_getExt(rbus_handle, paramCount, paramName, &resCount, &props);
+
+	WebcfgDebug("rbus_getExt rc=%d resCount=%d\n", rc, resCount);
+
+	if(RBUS_ERROR_SUCCESS != rc)
+	{
+		WebcfgError("Failed to get value rbus_getExt rc=%d resCount=%d\n", rc, resCount);
+		rbusProperty_Release(props);
+		return;
+	}
+	if(props)
+	{
+		rbusProperty_t next = props;
+		val_size = resCount;
+		WebcfgDebug("val_size : %d\n",val_size);
+		if(val_size > 0)
+		{
+			if(paramCount == val_size)
+			{
+				for (i = 0; i < resCount; i++)
+				{
+					WebcfgDebug("Response Param is %s\n", rbusProperty_GetName(next));
+					paramValue_t = rbusProperty_GetValue(next);
+
+					if(paramValue_t)
+					{
+						paramValue = rbusValue_ToString(paramValue_t, NULL, 0);
+						WebcfgDebug("Response paramValue is %s\n", paramValue);
+						pName = strdup(rbusProperty_GetName(next));
+						(*paramArr)[i] = (param_t *) malloc(sizeof(param_t));
+
+						WebcfgDebug("Framing paramArr\n");
+						(*paramArr)[i][0].name = strdup(pName);
+						(*paramArr)[i][0].value = strdup(paramValue);
+						(*paramArr)[i][0].type = WDMP_STRING;
+						WebcfgDebug("success: %s %s %d \n",(*paramArr)[i][0].name,(*paramArr)[i][0].value, (*paramArr)[i][0].type);
+						*retValCount = resCount;
+						*retStatus = WDMP_SUCCESS;
+						if(paramValue !=NULL)
+						{
+							CPEABS_FREE(paramValue);
+						}
+						if(pName !=NULL)
+						{
+							CPEABS_FREE(pName);
+						}
+					}
+					else
+					{
+						WebcfgError("Parameter value from rbus_getExt is empty\n");
+					}
+					next = rbusProperty_GetNext(next);
+				}
+			}
+		}
+		else if(val_size == 0 && rc == RBUS_ERROR_SUCCESS)
+		{
+			WebcfgInfo("No child elements found\n");
+		}
+		rbusProperty_Release(props);
+	}
+}
 //#endif
