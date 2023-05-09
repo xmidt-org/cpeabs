@@ -167,12 +167,22 @@ char* get_deviceMAC()
 	return deviceMAC;
 }
 
-char * getTimeOffset()
+long getTimeOffset()
 {
 	char *timeOffset = NULL;
+	long tmOffset = 0;
+
 	timeOffset = getParamValue(TIME_OFFSET);
 	WebcfgDebug("timeOffset returned from lib is %s\n", timeOffset);
-	return timeOffset;
+
+	if( timeOffset != NULL)
+	{
+		tmOffset = atol(timeOffset);
+		WebcfgDebug("The offset obtained is %ld\n", tmOffset);
+		CPEABS_FREE(timeOffset);
+	}
+
+	return tmOffset;
 }
 
 char * getSerialNumber()
