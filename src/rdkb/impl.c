@@ -155,7 +155,7 @@ char* get_deviceWanMAC()
 {
 	if(strlen(deviceWanMAC) != 0)
 	{
-		WebcfgDebug("deviceWanMAC returned %s\n", deviceWanMAC);
+		CpeabsDebug("deviceWanMAC returned %s\n", deviceWanMAC);
 		return deviceWanMAC;
 	}
 
@@ -166,10 +166,10 @@ char* get_deviceWanMAC()
 	{
 	    cpeabStrncpy(deviceWanMACValue, wanmacID, strlen(wanmacID)+1);
 	    macIDToLower(deviceWanMACValue, deviceWanMAC);
-	    WebcfgDebug("deviceWanMAC: %s\n",deviceWanMAC);
+	    CpeabsDebug("deviceWanMAC: %s\n",deviceWanMAC);
 	    CPEABS_FREE(wanmacID);
 	}
-	WebcfgDebug("deviceWanMAC returned from lib is %s\n", deviceWanMAC);
+	CpeabsDebug("deviceWanMAC returned from lib is %s\n", deviceWanMAC);
 	return deviceWanMAC;
 }
 
@@ -177,7 +177,7 @@ char* get_deviceMAC()
 {
 	if(strlen(deviceMAC) != 0)
 	{
-		WebcfgDebug("deviceMAC returned %s\n", deviceMAC);
+		CpeabsDebug("deviceMAC returned %s\n", deviceMAC);
 		return deviceMAC;
 	}
 
@@ -188,10 +188,10 @@ char* get_deviceMAC()
 	{
 	    cpeabStrncpy(deviceMACValue, macID, strlen(macID)+1);
 	    macIDToLower(deviceMACValue, deviceMAC);
-	    WebcfgDebug("deviceMAC: %s\n",deviceMAC);
+	    CpeabsDebug("deviceMAC: %s\n",deviceMAC);
 	    CPEABS_FREE(macID);
 	}
-	WebcfgDebug("deviceMAC returned from lib is %s\n", deviceMAC);
+	CpeabsDebug("deviceMAC returned from lib is %s\n", deviceMAC);
 	return deviceMAC;
 }
 
@@ -199,7 +199,7 @@ char * getSerialNumber()
 {
 	char *serialNum = NULL;
 	serialNum = getParamValue(SERIAL_NUMBER);
-	WebcfgDebug("serialNum returned from lib is %s\n", serialNum);
+	CpeabsDebug("serialNum returned from lib is %s\n", serialNum);
 	return serialNum;
 }
 
@@ -207,7 +207,7 @@ char * getDeviceBootTime()
 {
 	char *bootTime = NULL;
 	bootTime = getParamValue(DEVICE_BOOT_TIME);
-	WebcfgDebug("bootTime returned from lib is %s\n", bootTime);
+	CpeabsDebug("bootTime returned from lib is %s\n", bootTime);
 	return bootTime;
 }
 
@@ -215,7 +215,7 @@ char * getProductClass()
 {
 	char *productClass = NULL;
 	productClass = getParamValue(PRODUCT_CLASS);
-	WebcfgDebug("productClass returned from lib is %s\n", productClass);
+	CpeabsDebug("productClass returned from lib is %s\n", productClass);
 	return productClass;
 }
 
@@ -223,7 +223,7 @@ char * getModelName()
 {
 	char *modelName = NULL;
 	modelName = getParamValue(MODEL_NAME);
-	WebcfgDebug("modelName returned from lib is %s\n", modelName);
+	CpeabsDebug("modelName returned from lib is %s\n", modelName);
 	return modelName;
 }
 
@@ -232,7 +232,7 @@ char * getInterfaceName()
 {
         char *interfaceName = NULL;
         interfaceName = getParamValue(INTERFACE_NAME);
-        WebcfgDebug("interfaceName returned from lib is %s\n", interfaceName);
+        CpeabsDebug("interfaceName returned from lib is %s\n", interfaceName);
         return interfaceName;
 }
 #endif
@@ -241,7 +241,7 @@ char * getFirmwareVersion()
 {
 	char *firmware = NULL;
 	firmware = getParamValue(FIRMWARE_VERSION);
-	WebcfgDebug("firmware returned from lib is %s\n", firmware);
+	CpeabsDebug("firmware returned from lib is %s\n", firmware);
 	return firmware;
 }
 
@@ -254,7 +254,7 @@ char * getRebootReason()
 {
 	char *reboot_reason = NULL;
 	reboot_reason = getParamValue(LAST_REBOOT_REASON);
-	WebcfgDebug("reboot_reason returned from lib is %s\n", reboot_reason);
+	CpeabsDebug("reboot_reason returned from lib is %s\n", reboot_reason);
 	return reboot_reason;
 }
 
@@ -262,7 +262,7 @@ char * getPartnerID()
 {
 	char *partnerId = NULL;
 	partnerId = getParamValue(PARTNER_ID);
-	WebcfgDebug("partnerId returned from lib is %s\n", partnerId);
+	CpeabsDebug("partnerId returned from lib is %s\n", partnerId);
 	return partnerId;
 }
 
@@ -270,7 +270,7 @@ char * getAccountID()
 {
 	char *accountId = NULL;
 	accountId = getParamValue(ACCOUNT_ID);
-	WebcfgDebug("accountId returned from lib is %s\n", accountId);
+	CpeabsDebug("accountId returned from lib is %s\n", accountId);
 	return accountId;
 }
 
@@ -278,7 +278,7 @@ char * getFirmwareUpgradeStartTime()
 {
 	char *FirmwareUpgradeStartTime = NULL;
 	FirmwareUpgradeStartTime = getParamValue(FIRMW_START_TIME);
-	WebcfgDebug("FirmwareUpgradeStartTime returned from lib is %s\n", FirmwareUpgradeStartTime);
+	CpeabsDebug("FirmwareUpgradeStartTime returned from lib is %s\n", FirmwareUpgradeStartTime);
 	return FirmwareUpgradeStartTime;
 }
 
@@ -286,7 +286,7 @@ char * getFirmwareUpgradeEndTime()
 {
 	char *FirmwareUpgradeEndTime = NULL;
 	FirmwareUpgradeEndTime = getParamValue(FIRMW_END_TIME);
-	WebcfgDebug("FirmwareUpgradeEndTime returned from lib is %s\n", FirmwareUpgradeEndTime);
+	CpeabsDebug("FirmwareUpgradeEndTime returned from lib is %s\n", FirmwareUpgradeEndTime);
 	return FirmwareUpgradeEndTime;
 }
 
@@ -300,7 +300,7 @@ bool isRbusEnabled()
 	{
 		isRbus = false;
 	}
-	WebcfgDebug("Webconfig util RBUS mode active status = %s\n", isRbus ? "true":"false");
+	CpeabsDebug("Webconfig util RBUS mode active status = %s\n", isRbus ? "true":"false");
 	return isRbus;
 }
 
@@ -311,21 +311,21 @@ int Get_Webconfig_URL( char *pString)
 	if(isRbusEnabled())
 	{
 		retPsmGet = rbus_GetValueFromDB( WEBCFG_URL_PARAM, &tempUrl);
-		WebcfgDebug("Get_Webconfig_URL. retPsmGet %d tempUrl %s\n", retPsmGet, tempUrl);
+		CpeabsDebug("Get_Webconfig_URL. retPsmGet %d tempUrl %s\n", retPsmGet, tempUrl);
 		if (retPsmGet == RBUS_ERROR_SUCCESS)
                 {
 			if(tempUrl !=NULL)
 			{
 				cpeabStrncpy(pString, tempUrl, strlen(tempUrl)+1);
 			}
-			WebcfgDebug("Get_Webconfig_URL. pString %s\n", pString);
+			CpeabsDebug("Get_Webconfig_URL. pString %s\n", pString);
 		}
 		else
                 {
-                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, WEBCFG_URL_PARAM);
+                        CpeabsError("psm_get failed ret %d for parameter %s\n", retPsmGet, WEBCFG_URL_PARAM);
                 }
 	}
-	WebcfgDebug("Get_Webconfig_URL strong fn from lib\n");
+	CpeabsDebug("Get_Webconfig_URL strong fn from lib\n");
 	return retPsmGet;
 }
 
@@ -335,16 +335,16 @@ int Set_Webconfig_URL( char *pString)
     if(isRbusEnabled())
     {
     	retPsmSet = rbus_StoreValueIntoDB( WEBCFG_URL_PARAM, pString );
-	WebcfgDebug("Set_Webconfig_URL. retPsmSet %d pString %s\n", retPsmSet, pString);
+	CpeabsDebug("Set_Webconfig_URL. retPsmSet %d pString %s\n", retPsmSet, pString);
 
 	if (retPsmSet != RBUS_ERROR_SUCCESS)
         {
-		WebcfgError("psm_set failed ret %d for parameter %s and value %s\n", retPsmSet, WEBCFG_URL_PARAM, pString);
+		CpeabsError("psm_set failed ret %d for parameter %s and value %s\n", retPsmSet, WEBCFG_URL_PARAM, pString);
                 return 0;
         }
         else
         {
-		WebcfgDebug("psm_set success ret %d for parameter %s and value %s\n", retPsmSet, WEBCFG_URL_PARAM, pString);
+		CpeabsDebug("psm_set success ret %d for parameter %s and value %s\n", retPsmSet, WEBCFG_URL_PARAM, pString);
         }
     }
     return retPsmSet;
@@ -360,21 +360,21 @@ int Get_Supplementary_URL( char *name, char *pString)
 		if(tempParam !=NULL)
 		{
 			snprintf(tempParam, MAX_BUFF_SIZE, "%s%s", WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name);
-			WebcfgDebug("tempParam is %s\n", tempParam);
+			CpeabsDebug("tempParam is %s\n", tempParam);
 			retPsmGet = rbus_GetValueFromDB( tempParam, &tempUrl);
 			if (retPsmGet == RBUS_ERROR_SUCCESS)
 			{
-				WebcfgDebug("Get_Supplementary_URL. retPsmGet %d tempUrl %s\n", retPsmGet, tempUrl);
+				CpeabsDebug("Get_Supplementary_URL. retPsmGet %d tempUrl %s\n", retPsmGet, tempUrl);
 				if(tempUrl !=NULL)
 				{
 					cpeabStrncpy(pString, tempUrl, strlen(tempUrl)+1);
 				}
-				WebcfgDebug("Get_Supplementary_URL. pString %s\n", pString);
+				CpeabsDebug("Get_Supplementary_URL. pString %s\n", pString);
 				CPEABS_FREE(tempParam);
 			}
 			else
 			{
-				WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, tempParam);
+				CpeabsError("psm_get failed ret %d for parameter %s\n", retPsmGet, tempParam);
 				CPEABS_FREE(tempParam);
 			}
 		}
@@ -393,22 +393,22 @@ int Set_Supplementary_URL( char *name, char *pString)
 		if ((name != NULL) && (strncmp(name, "Telemetry",strlen(name)+1)) == 0)
 		{
 			snprintf(tempParam, MAX_BUFF_SIZE, "%s%s", WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name);
-			WebcfgDebug("tempParam is %s\n", tempParam);
+			CpeabsDebug("tempParam is %s\n", tempParam);
 			retPsmSet = rbus_StoreValueIntoDB( tempParam, pString );
 			if (retPsmSet != RBUS_ERROR_SUCCESS)
 			{
-				WebcfgError("psm_set failed ret %d for parameter %s%s and value %s\n", retPsmSet, WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name, pString);
+				CpeabsError("psm_set failed ret %d for parameter %s%s and value %s\n", retPsmSet, WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name, pString);
 				CPEABS_FREE(tempParam);
 				return 0;
 			}
 			else
 			{
-				WebcfgDebug("psm_set success ret %d for parameter %s%s and value %s\n",retPsmSet, WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name, pString);
+				CpeabsDebug("psm_set success ret %d for parameter %s%s and value %s\n",retPsmSet, WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name, pString);
 			}
 		}
 		else
 		{
-			WebcfgError("Invalid supplementary doc name\n");
+			CpeabsError("Invalid supplementary doc name\n");
 		}
 		CPEABS_FREE(tempParam);
 	}
@@ -430,7 +430,7 @@ char * getParamValue(char *paramName)
 		paramCount = sizeof(getParamList)/sizeof(getParamList[0]);
 		param_t **parametervalArr = (param_t **) malloc(sizeof(param_t *) * paramCount);
 
-		WebcfgInfo("paramName : %s paramCount %d\n",getParamList[0], paramCount);
+		CpeabsInfo("paramName : %s paramCount %d\n",getParamList[0], paramCount);
 		getValues_rbus(getParamList, paramCount, 0, NULL, &parametervalArr, &count, &ret);
 
 		if (ret == WDMP_SUCCESS )
@@ -442,14 +442,14 @@ char * getParamValue(char *paramName)
 		}
 		else
 		{
-			WebcfgError("Failed to GetValue for %s\n", getParamList[0]);
+			CpeabsError("Failed to GetValue for %s\n", getParamList[0]);
 			CPEABS_FREE(paramValue);
 		}
 		CPEABS_FREE(parametervalArr);
-		WebcfgDebug("getParamValue : paramValue is %s\n", paramValue);
+		CpeabsDebug("getParamValue : paramValue is %s\n", paramValue);
 		return paramValue;
 	}
-	WebcfgError("getParamValue : returns NULL\n");
+	CpeabsError("getParamValue : returns NULL\n");
 	return NULL;
 }
 
@@ -467,7 +467,7 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
 	rbus_handle = get_global_rbus_handle();
 	if(!rbus_handle)
 	{
-		WebcfgError("rbus_StoreValueIntoDB failed as rbus_handle is empty\n");
+		CpeabsError("rbus_StoreValueIntoDB failed as rbus_handle is empty\n");
 		return 1;
 	}
 
@@ -481,11 +481,11 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
 	rbusObject_Release(inParams);
 	if(rc != RBUS_ERROR_SUCCESS)
 	{
-		WebcfgError("SetPSMRecordValue failed with err %d: %s\n", rc, rbusError_ToString(rc));
+		CpeabsError("SetPSMRecordValue failed with err %d: %s\n", rc, rbusError_ToString(rc));
 	}
 	else
 	{
-		WebcfgInfo("SetPSMRecordValue is success\n");
+		CpeabsInfo("SetPSMRecordValue is success\n");
 		rbusObject_Release(outParams);
 		return 0;
 	}
@@ -506,7 +506,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 	rbus_handle = get_global_rbus_handle();
 	if(!rbus_handle)
 	{
-		WebcfgError("rbus_GetValueFromDB failed as rbus_handle is empty\n");
+		CpeabsError("rbus_GetValueFromDB failed as rbus_handle is empty\n");
 		return 1;
 	}
 
@@ -520,11 +520,11 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 	rbusObject_Release(inParams);
 	if(rc != RBUS_ERROR_SUCCESS)
 	{
-		WebcfgError("GetPSMRecordValue failed with err %d: %s\n", rc, rbusError_ToString(rc));
+		CpeabsError("GetPSMRecordValue failed with err %d: %s\n", rc, rbusError_ToString(rc));
 	}
 	else
 	{
-		WebcfgInfo("GetPSMRecordValue is success\n");
+		CpeabsInfo("GetPSMRecordValue is success\n");
 		rbusProperty_t prop = NULL;
 		rbusValue_t value = NULL;
 		char *str_value = NULL;
@@ -537,8 +537,8 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 				str_value = rbusValue_ToString(value,NULL,0);
 				if(str_value)
 				{
-					WebcfgInfo("Parameter Name : %s\n", rbusProperty_GetName(prop));
-					WebcfgInfo("Parameter Value fetched: %s\n", str_value);
+					CpeabsInfo("Parameter Name : %s\n", rbusProperty_GetName(prop));
+					CpeabsInfo("Parameter Value fetched: %s\n", str_value);
 				}
 			}
 			prop = rbusProperty_GetNext(prop);
@@ -547,7 +547,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 		{
 			*paramValue = strdup(str_value);
 			CPEABS_FREE(str_value);
-			WebcfgInfo("Requested param DB value [%s]\n", *paramValue);
+			CpeabsInfo("Requested param DB value [%s]\n", *paramValue);
 		}
 		rbusObject_Release(outParams);
 		return 0;
@@ -579,10 +579,10 @@ int rbus_waitUntilSystemReady()
 
 	if(rbus_checkIfSystemReady())
 	{
-		WebcfgInfo("Checked CR - System is ready, proceed with webconfig startup\n");
+		CpeabsInfo("Checked CR - System is ready, proceed with webconfig startup\n");
 		if((fd = creat("/var/tmp/webcfgcacheready", S_IRUSR | S_IWUSR)) == -1)
 		{
-			WebcfgError("/var/tmp/webcfgcacheready file creation failed with error:%d\n", errno);
+			CpeabsError("/var/tmp/webcfgcacheready file creation failed with error:%d\n", errno);
 		}
 		else
 		{
@@ -601,17 +601,17 @@ int rbus_waitUntilSystemReady()
 		//Wait till Call back touches the indicator to proceed further
 		while((file = fopen("/var/tmp/webcfgcacheready", "r")) == NULL)
 		{
-			WebcfgInfo("Waiting for system ready signal\n");
+			CpeabsInfo("Waiting for system ready signal\n");
 			//After waiting for 24 * 5 = 120s (2mins) send message to CR to query for system ready
 			if(wait_time == 24)
 			{
 				wait_time = 0;
 				if(rbus_checkIfSystemReady())
 				{
-				    WebcfgInfo("Checked CR - System is ready\n");
+				    CpeabsInfo("Checked CR - System is ready\n");
 				    if((fd = creat("/var/tmp/webcfgcacheready", S_IRUSR | S_IWUSR)) == -1)
 				    {
-				       WebcfgError("/var/tmp/webcfgcacheready file creation failed, error:%d\n", errno);
+				       CpeabsError("/var/tmp/webcfgcacheready file creation failed, error:%d\n", errno);
 				    }
 				    else
 				    {
@@ -621,10 +621,10 @@ int rbus_waitUntilSystemReady()
 				}
 				else
 				{
-				    WebcfgInfo("Queried CR for system ready after waiting for 2 mins, it is still not ready\n");
+				    CpeabsInfo("Queried CR for system ready after waiting for 2 mins, it is still not ready\n");
 				    if(total_wait_time >= 84)
 				    {
-					    WebcfgInfo("Queried CR for system ready after waiting for 7 mins, it is still not ready. Proceeding ...\n");
+					    CpeabsInfo("Queried CR for system ready after waiting for 7 mins, it is still not ready. Proceeding ...\n");
                                             ret = 1;
 					    break;
 				    }
@@ -637,7 +637,7 @@ int rbus_waitUntilSystemReady()
 		// In case of WebConfig restart, we should be having cacheready already touched.
 		if(file != NULL)
 		{
-			WebcfgInfo("/var/tmp/webcfgcacheready file exists, proceed with webconfig start up\n");
+			CpeabsInfo("/var/tmp/webcfgcacheready file exists, proceed with webconfig start up\n");
 			fclose(file);
 		}
 	}
@@ -652,15 +652,15 @@ static void subscribeSystemReadyEvent()
 	rbus_handle = get_global_rbus_handle();
 	if(!rbus_handle)
 	{
-		WebcfgError("subscribeSystemReadyEvent failed as rbus_handle is empty\n");
+		CpeabsError("subscribeSystemReadyEvent failed as rbus_handle is empty\n");
 		return;
 	}
 
 	rc = rbusEvent_Subscribe(rbus_handle,SYSTEM_READY_PARM,systemReadyEventHandler,"webconfig",0);
 	if(rc != RBUS_ERROR_SUCCESS)
-		WebcfgError("systemready rbusEvent_Subscribe failed: %d, %s\n", rc, rbusError_ToString(rc));
+		CpeabsError("systemready rbusEvent_Subscribe failed: %d, %s\n", rc, rbusError_ToString(rc));
 	else
-		WebcfgInfo("systemready rbusEvent_Subscribe was successful\n");
+		CpeabsInfo("systemready rbusEvent_Subscribe was successful\n");
 }
 
 static void systemReadyEventHandler(rbusHandle_t handle, rbusEvent_t const* event, rbusEventSubscription_t* subscription)
@@ -673,18 +673,18 @@ static void systemReadyEventHandler(rbusHandle_t handle, rbusEvent_t const* even
 
 	value = rbusObject_GetValue(event->data, "value");
 	eventValue = (int) rbusValue_GetBoolean(value);
-	WebcfgDebug("eventValue is %d\n", eventValue);
+	CpeabsDebug("eventValue is %d\n", eventValue);
 	if(eventValue)
 	{
 		if((fd = creat("/var/tmp/webcfgcacheready", S_IRUSR | S_IWUSR)) == -1)
 		{
-			WebcfgError("Failed to create /var/tmp/webcfgcacheready file, error:%d\n", errno);
+			CpeabsError("Failed to create /var/tmp/webcfgcacheready file, error:%d\n", errno);
 		}
 		else
 		{
 			close(fd);
 		}
-		WebcfgInfo("Received system ready signal, created /var/tmp/webcfgcacheready file\n");
+		CpeabsInfo("Received system ready signal, created /var/tmp/webcfgcacheready file\n");
 	}
 }
 
@@ -702,7 +702,7 @@ static int rbus_checkIfSystemReady()
 	rbus_handle = get_global_rbus_handle();
 	if(!rbus_handle)
 	{
-		WebcfgError("rbus_checkIfSystemReady failed as rbus_handle is empty\n");
+		CpeabsError("rbus_checkIfSystemReady failed as rbus_handle is empty\n");
 		return rc;
 	}
 
@@ -710,24 +710,24 @@ static int rbus_checkIfSystemReady()
 	rc = rbus_get(rbus_handle, SYSTEM_READY_PARM, &value);
 	if(rc != RBUS_ERROR_SUCCESS)
         {
-		WebcfgError("rbus_checkIfSystemReady failed with err %d: %s\n", rc, rbusError_ToString(rc));
+		CpeabsError("rbus_checkIfSystemReady failed with err %d: %s\n", rc, rbusError_ToString(rc));
 		return rc;
 	}
 	else
 	{
-		WebcfgDebug("rbus_checkIfSystemReady returns %d\n", rbusValue_GetBoolean(value));
+		CpeabsDebug("rbus_checkIfSystemReady returns %d\n", rbusValue_GetBoolean(value));
 		sysVal = (int) rbusValue_GetBoolean(value);
-		WebcfgDebug("sysVal is %d\n", sysVal);
+		CpeabsDebug("sysVal is %d\n", sysVal);
         }
 	rbusValue_Release(value);
 	if(sysVal)
 	{
-		WebcfgDebug("SystemReady returns 1\n");
+		CpeabsDebug("SystemReady returns 1\n");
 		return 1;
 	}
 	else
 	{
-		WebcfgDebug("SystemReady returns 0\n");
+		CpeabsDebug("SystemReady returns 0\n");
 	}
 	return rc;
 }
@@ -746,7 +746,7 @@ static int webcfgRbusRegisterWithCR()
 	rbus_handle = get_global_rbus_handle();
 	if(!rbus_handle)
 	{
-		WebcfgError("webcfgRbusRegisterWithCR failed as rbus_handle is empty\n");
+		CpeabsError("webcfgRbusRegisterWithCR failed as rbus_handle is empty\n");
 		return 1;
 	}
 
@@ -766,11 +766,11 @@ static int webcfgRbusRegisterWithCR()
 	rbusObject_Release(inParams);
 	if(rc != RBUS_ERROR_SUCCESS)
 	{
-		WebcfgError("Device.CR.RegisterComponent failed with err %d: %s\n", rc, rbusError_ToString(rc));
+		CpeabsError("Device.CR.RegisterComponent failed with err %d: %s\n", rc, rbusError_ToString(rc));
 	}
 	else
 	{
-		WebcfgInfo("Device.CR.RegisterComponent is success\n");
+		CpeabsInfo("Device.CR.RegisterComponent is success\n");
 		rbusObject_Release(outParams);
 		return 0;
 	}
@@ -784,21 +784,21 @@ int Get_Mqtt_LocationId( char *pString)
 	if(isRbusEnabled())
 	{
 		retPsmGet = rbus_GetValueFromDB( MQTT_LOCATIONID_PARAM, &tempLocId);
-		WebcfgInfo("Get_Mqtt_LocationId. retPsmGet %d tempLocId %s\n", retPsmGet, tempLocId);
+		CpeabsInfo("Get_Mqtt_LocationId. retPsmGet %d tempLocId %s\n", retPsmGet, tempLocId);
 		if (retPsmGet == RBUS_ERROR_SUCCESS)
                 {
 			if(tempLocId !=NULL)
 			{
 				cpeabStrncpy(pString, tempLocId, strlen(tempLocId)+1);
 			}
-			WebcfgDebug("Get_Mqtt_LocationId. pString %s\n", pString);
+			CpeabsDebug("Get_Mqtt_LocationId. pString %s\n", pString);
 		}
 		else
                 {
-                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_LOCATIONID_PARAM);
+                        CpeabsError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_LOCATIONID_PARAM);
                 }
 	}
-	WebcfgInfo("Get_Mqtt_LocationId strong fn from lib\n");
+	CpeabsInfo("Get_Mqtt_LocationId strong fn from lib\n");
 	return retPsmGet;
 }
 
@@ -809,21 +809,21 @@ int Get_Mqtt_Broker( char *pString)
 	if(isRbusEnabled())
 	{
 		retPsmGet = rbus_GetValueFromDB( MQTT_BROKER_PARAM, &tempBroker);
-		WebcfgInfo("Get_Mqtt_Broker. retPsmGet %d tempBroker %s\n", retPsmGet, tempBroker);
+		CpeabsInfo("Get_Mqtt_Broker. retPsmGet %d tempBroker %s\n", retPsmGet, tempBroker);
 		if (retPsmGet == RBUS_ERROR_SUCCESS)
                 {
 			if(tempBroker !=NULL)
 			{
 				cpeabStrncpy(pString, tempBroker, strlen(tempBroker)+1);
 			}
-			WebcfgDebug("Get_Mqtt_Broker. pString %s\n", pString);
+			CpeabsDebug("Get_Mqtt_Broker. pString %s\n", pString);
 		}
 		else
                 {
-                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_BROKER_PARAM);
+                        CpeabsError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_BROKER_PARAM);
                 }
 	}
-	WebcfgInfo("Get_Mqtt_Broker strong fn from lib\n");
+	CpeabsInfo("Get_Mqtt_Broker strong fn from lib\n");
 	return retPsmGet;
 }
 
@@ -834,21 +834,21 @@ int Get_Mqtt_Port( char *pString)
 	if(isRbusEnabled())
 	{
 		retPsmGet = rbus_GetValueFromDB( MQTT_PORT_PARAM, &tempPort);
-		WebcfgInfo("Get_Mqtt_Port. retPsmGet %d tempPort %s\n", retPsmGet, tempPort);
+		CpeabsInfo("Get_Mqtt_Port. retPsmGet %d tempPort %s\n", retPsmGet, tempPort);
 		if (retPsmGet == RBUS_ERROR_SUCCESS)
                 {
 			if(tempPort !=NULL)
 			{
 				cpeabStrncpy(pString, tempPort, strlen(tempPort)+1);
 			}
-			WebcfgInfo("Get_Mqtt_Port. pString %s\n", pString);
+			CpeabsInfo("Get_Mqtt_Port. pString %s\n", pString);
 		}
 		else
                 {
-                        WebcfgError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_PORT_PARAM);
+                        CpeabsError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_PORT_PARAM);
                 }
 	}
-	WebcfgInfo("Get_Mqtt_Port strong fn from lib\n");
+	CpeabsInfo("Get_Mqtt_Port strong fn from lib\n");
 	return retPsmGet;
 }
 
@@ -856,7 +856,7 @@ char* Get_Mqtt_ClientId()
 {
 	if(strlen(clientId) != 0)
 	{
-		WebcfgInfo("clientId returned %s\n", clientId);
+		CpeabsInfo("clientId returned %s\n", clientId);
 		return clientId;
 	}
 
@@ -867,10 +867,10 @@ char* Get_Mqtt_ClientId()
 	{
 	    cpeabStrncpy(clientIdValue, tempClientId, strlen(tempClientId)+1);
 	    stripMacIdColon(clientIdValue, clientId);
-	    WebcfgInfo("clientId: %s\n",clientId);
+	    CpeabsInfo("clientId: %s\n",clientId);
 	    CPEABS_FREE(tempClientId);
 	}
-	WebcfgInfo("clientId returned from lib is %s\n", clientId);
+	CpeabsInfo("clientId returned from lib is %s\n", clientId);
 	return clientId;
 }
 char * getParamValuemqtt(char *paramName)
@@ -887,7 +887,7 @@ char * getParamValuemqtt(char *paramName)
 		paramCount = sizeof(getParamList)/sizeof(getParamList[0]);
 		param_t **parametervalArr = (param_t **) malloc(sizeof(param_t *) * paramCount);
 
-		WebcfgInfo("paramName : %s paramCount %d\n",getParamList[0], paramCount);
+		CpeabsInfo("paramName : %s paramCount %d\n",getParamList[0], paramCount);
 		getValues_rbusmqtt(getParamList, paramCount, 0, NULL, &parametervalArr, &count, &ret);
 
 		if (ret == WDMP_SUCCESS )
@@ -899,14 +899,14 @@ char * getParamValuemqtt(char *paramName)
 		}
 		else
 		{
-			WebcfgError("Failed to GetValue for %s\n", getParamList[0]);
+			CpeabsError("Failed to GetValue for %s\n", getParamList[0]);
 			CPEABS_FREE(paramValue);
 		}
 		CPEABS_FREE(parametervalArr);
-		WebcfgDebug("getParamValue : paramValue is %s\n", paramValue);
+		CpeabsDebug("getParamValue : paramValue is %s\n", paramValue);
 		return paramValue;
 	}
-	WebcfgError("getParamValue : returns NULL\n");
+	CpeabsError("getParamValue : returns NULL\n");
 	return NULL;
 }
 
@@ -926,25 +926,25 @@ void getValues_rbusmqtt(const char *paramName[], const unsigned int paramCount, 
 
 	for(cnt = 0; cnt < paramCount; cnt++)
 	{
-		WebcfgDebug("rbus_getExt paramName[%d] : %s paramCount %d\n",cnt,paramName[cnt], paramCount);
+		CpeabsDebug("rbus_getExt paramName[%d] : %s paramCount %d\n",cnt,paramName[cnt], paramCount);
 	}
 
-	WebcfgInfo("setValues_rbus index %d\n", index);
-	WebcfgInfo("getValues_rbus timeSpan %p\n",timeSpan);
+	CpeabsInfo("setValues_rbus index %d\n", index);
+	CpeabsInfo("getValues_rbus timeSpan %p\n",timeSpan);
 
 	rbus_handle = get_global_rbus_handle();
 	if(!rbus_handle)
 	{
-		WebcfgError("getValues_rbus Failed as rbus_handle is not initialized\n");
+		CpeabsError("getValues_rbus Failed as rbus_handle is not initialized\n");
 		return;
 	}
 	rc = rbus_getExt(rbus_handle, paramCount, paramName, &resCount, &props);
 
-	WebcfgDebug("rbus_getExt rc=%d resCount=%d\n", rc, resCount);
+	CpeabsDebug("rbus_getExt rc=%d resCount=%d\n", rc, resCount);
 
 	if(RBUS_ERROR_SUCCESS != rc)
 	{
-		WebcfgError("Failed to get value rbus_getExt rc=%d resCount=%d\n", rc, resCount);
+		CpeabsError("Failed to get value rbus_getExt rc=%d resCount=%d\n", rc, resCount);
 		rbusProperty_Release(props);
 		return;
 	}
@@ -952,28 +952,28 @@ void getValues_rbusmqtt(const char *paramName[], const unsigned int paramCount, 
 	{
 		rbusProperty_t next = props;
 		val_size = resCount;
-		WebcfgDebug("val_size : %d\n",val_size);
+		CpeabsDebug("val_size : %d\n",val_size);
 		if(val_size > 0)
 		{
 			if(paramCount == val_size)
 			{
 				for (i = 0; i < resCount; i++)
 				{
-					WebcfgDebug("Response Param is %s\n", rbusProperty_GetName(next));
+					CpeabsDebug("Response Param is %s\n", rbusProperty_GetName(next));
 					paramValue_t = rbusProperty_GetValue(next);
 
 					if(paramValue_t)
 					{
 						paramValue = rbusValue_ToString(paramValue_t, NULL, 0);
-						WebcfgDebug("Response paramValue is %s\n", paramValue);
+						CpeabsDebug("Response paramValue is %s\n", paramValue);
 						pName = strdup(rbusProperty_GetName(next));
 						(*paramArr)[i] = (param_t *) malloc(sizeof(param_t));
 
-						WebcfgDebug("Framing paramArr\n");
+						CpeabsDebug("Framing paramArr\n");
 						(*paramArr)[i][0].name = strdup(pName);
 						(*paramArr)[i][0].value = strdup(paramValue);
 						(*paramArr)[i][0].type = WDMP_STRING;
-						WebcfgDebug("success: %s %s %d \n",(*paramArr)[i][0].name,(*paramArr)[i][0].value, (*paramArr)[i][0].type);
+						CpeabsDebug("success: %s %s %d \n",(*paramArr)[i][0].name,(*paramArr)[i][0].value, (*paramArr)[i][0].type);
 						*retValCount = resCount;
 						*retStatus = WDMP_SUCCESS;
 						if(paramValue !=NULL)
@@ -987,7 +987,7 @@ void getValues_rbusmqtt(const char *paramName[], const unsigned int paramCount, 
 					}
 					else
 					{
-						WebcfgError("Parameter value from rbus_getExt is empty\n");
+						CpeabsError("Parameter value from rbus_getExt is empty\n");
 					}
 					next = rbusProperty_GetNext(next);
 				}
@@ -995,7 +995,7 @@ void getValues_rbusmqtt(const char *paramName[], const unsigned int paramCount, 
 		}
 		else if(val_size == 0 && rc == RBUS_ERROR_SUCCESS)
 		{
-			WebcfgInfo("No child elements found\n");
+			CpeabsInfo("No child elements found\n");
 		}
 		rbusProperty_Release(props);
 	}
