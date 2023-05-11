@@ -34,7 +34,14 @@
 /**
  * @brief Enables or disables debug logs.
  */
-#if defined DEVICE_GATEWAY && defined BUILD_YOCTO || defined DEVICE_VIDEO
+#if defined DEVICE_GATEWAY && defined BUILD_YOCTO
+
+#define LOGGING_MODULE   "CPEABS"
+#define CpeabsError( ... ) cimplog_error(LOGGING_MODULE, __VA_ARGS__)
+#define CpeabsInfo( ... )  cimplog_info(LOGGING_MODULE, __VA_ARGS__)
+#define CpeabsDebug( ... ) cimplog_debug(LOGGING_MODULE, __VA_ARGS__)
+
+#elif defined DEVICE_VIDEO
 
 #define WEBCFG_LOG_MODULE                     "WEBCONFIG"
 #define WEBCFG_RDK_LOG_MODULE                 "LOG.RDK.WEBCONFIG"
