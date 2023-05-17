@@ -56,6 +56,11 @@ void macIDToLower(char macValue[],char macConverted[]);
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
+long getTimeOffset()
+{
+	return 0;
+}
+
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
 {
     strncpy(destStr, srcStr, destSize-1);
