@@ -85,6 +85,11 @@ void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize);
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
+long getTimeOffset()
+{
+	return 0;
+}
+
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
 {
     snprintf(destStr, destSize, "%s", srcStr);
