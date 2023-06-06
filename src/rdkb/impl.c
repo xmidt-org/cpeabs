@@ -430,7 +430,7 @@ char * getParamValue(char *paramName)
 		paramCount = sizeof(getParamList)/sizeof(getParamList[0]);
 		param_t **parametervalArr = (param_t **) malloc(sizeof(param_t *) * paramCount);
 
-		CpeabsInfo("paramName : %s paramCount %d\n",getParamList[0], paramCount);
+		CpeabsDebug("paramName : %s paramCount %d\n",getParamList[0], paramCount);
 		getValues_rbus(getParamList, paramCount, 0, NULL, &parametervalArr, &count, &ret);
 
 		if (ret == WDMP_SUCCESS )
@@ -485,7 +485,7 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
 	}
 	else
 	{
-		CpeabsInfo("SetPSMRecordValue is success\n");
+		CpeabsDebug("SetPSMRecordValue is success\n");
 		rbusObject_Release(outParams);
 		return 0;
 	}
@@ -524,7 +524,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 	}
 	else
 	{
-		CpeabsInfo("GetPSMRecordValue is success\n");
+		CpeabsDebug("GetPSMRecordValue is success\n");
 		rbusProperty_t prop = NULL;
 		rbusValue_t value = NULL;
 		char *str_value = NULL;
@@ -537,8 +537,8 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 				str_value = rbusValue_ToString(value,NULL,0);
 				if(str_value)
 				{
-					CpeabsInfo("Parameter Name : %s\n", rbusProperty_GetName(prop));
-					CpeabsInfo("Parameter Value fetched: %s\n", str_value);
+					CpeabsDebug("Parameter Name : %s\n", rbusProperty_GetName(prop));
+					CpeabsDebug("Parameter Value fetched: %s\n", str_value);
 				}
 			}
 			prop = rbusProperty_GetNext(prop);
@@ -547,7 +547,7 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
 		{
 			*paramValue = strdup(str_value);
 			CPEABS_FREE(str_value);
-			CpeabsInfo("Requested param DB value [%s]\n", *paramValue);
+			CpeabsDebug("Requested param DB value [%s]\n", *paramValue);
 		}
 		rbusObject_Release(outParams);
 		return 0;
@@ -770,7 +770,7 @@ static int webcfgRbusRegisterWithCR()
 	}
 	else
 	{
-		CpeabsInfo("Device.CR.RegisterComponent is success\n");
+		CpeabsDebug("Device.CR.RegisterComponent is success\n");
 		rbusObject_Release(outParams);
 		return 0;
 	}
@@ -784,7 +784,7 @@ int Get_Mqtt_LocationId( char *pString)
 	if(isRbusEnabled())
 	{
 		retPsmGet = rbus_GetValueFromDB( MQTT_LOCATIONID_PARAM, &tempLocId);
-		CpeabsInfo("Get_Mqtt_LocationId. retPsmGet %d tempLocId %s\n", retPsmGet, tempLocId);
+		CpeabsDebug("Get_Mqtt_LocationId. retPsmGet %d tempLocId %s\n", retPsmGet, tempLocId);
 		if (retPsmGet == RBUS_ERROR_SUCCESS)
                 {
 			if(tempLocId !=NULL)
@@ -798,7 +798,7 @@ int Get_Mqtt_LocationId( char *pString)
                         CpeabsError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_LOCATIONID_PARAM);
                 }
 	}
-	CpeabsInfo("Get_Mqtt_LocationId strong fn from lib\n");
+	CpeabsDebug("Get_Mqtt_LocationId strong fn from lib\n");
 	return retPsmGet;
 }
 
@@ -809,7 +809,7 @@ int Get_Mqtt_Broker( char *pString)
 	if(isRbusEnabled())
 	{
 		retPsmGet = rbus_GetValueFromDB( MQTT_BROKER_PARAM, &tempBroker);
-		CpeabsInfo("Get_Mqtt_Broker. retPsmGet %d tempBroker %s\n", retPsmGet, tempBroker);
+		CpeabsDebug("Get_Mqtt_Broker. retPsmGet %d tempBroker %s\n", retPsmGet, tempBroker);
 		if (retPsmGet == RBUS_ERROR_SUCCESS)
                 {
 			if(tempBroker !=NULL)
@@ -823,7 +823,7 @@ int Get_Mqtt_Broker( char *pString)
                         CpeabsError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_BROKER_PARAM);
                 }
 	}
-	CpeabsInfo("Get_Mqtt_Broker strong fn from lib\n");
+	CpeabsDebug("Get_Mqtt_Broker strong fn from lib\n");
 	return retPsmGet;
 }
 
@@ -834,21 +834,21 @@ int Get_Mqtt_Port( char *pString)
 	if(isRbusEnabled())
 	{
 		retPsmGet = rbus_GetValueFromDB( MQTT_PORT_PARAM, &tempPort);
-		CpeabsInfo("Get_Mqtt_Port. retPsmGet %d tempPort %s\n", retPsmGet, tempPort);
+		CpeabsDebug("Get_Mqtt_Port. retPsmGet %d tempPort %s\n", retPsmGet, tempPort);
 		if (retPsmGet == RBUS_ERROR_SUCCESS)
                 {
 			if(tempPort !=NULL)
 			{
 				cpeabStrncpy(pString, tempPort, strlen(tempPort)+1);
 			}
-			CpeabsInfo("Get_Mqtt_Port. pString %s\n", pString);
+			CpeabsDebug("Get_Mqtt_Port. pString %s\n", pString);
 		}
 		else
                 {
                         CpeabsError("psm_get failed ret %d for parameter %s\n", retPsmGet, MQTT_PORT_PARAM);
                 }
 	}
-	CpeabsInfo("Get_Mqtt_Port strong fn from lib\n");
+	CpeabsDebug("Get_Mqtt_Port strong fn from lib\n");
 	return retPsmGet;
 }
 
@@ -856,7 +856,7 @@ char* Get_Mqtt_ClientId()
 {
 	if(strlen(clientId) != 0)
 	{
-		CpeabsInfo("clientId returned %s\n", clientId);
+		CpeabsDebug("clientId returned %s\n", clientId);
 		return clientId;
 	}
 
@@ -867,10 +867,10 @@ char* Get_Mqtt_ClientId()
 	{
 	    cpeabStrncpy(clientIdValue, tempClientId, strlen(tempClientId)+1);
 	    stripMacIdColon(clientIdValue, clientId);
-	    CpeabsInfo("clientId: %s\n",clientId);
+	    CpeabsDebug("clientId: %s\n",clientId);
 	    CPEABS_FREE(tempClientId);
 	}
-	CpeabsInfo("clientId returned from lib is %s\n", clientId);
+	CpeabsDebug("clientId returned from lib is %s\n", clientId);
 	return clientId;
 }
 char * getParamValuemqtt(char *paramName)
@@ -887,7 +887,7 @@ char * getParamValuemqtt(char *paramName)
 		paramCount = sizeof(getParamList)/sizeof(getParamList[0]);
 		param_t **parametervalArr = (param_t **) malloc(sizeof(param_t *) * paramCount);
 
-		CpeabsInfo("paramName : %s paramCount %d\n",getParamList[0], paramCount);
+		CpeabsDebug("paramName : %s paramCount %d\n",getParamList[0], paramCount);
 		getValues_rbusmqtt(getParamList, paramCount, 0, NULL, &parametervalArr, &count, &ret);
 
 		if (ret == WDMP_SUCCESS )
@@ -929,8 +929,8 @@ void getValues_rbusmqtt(const char *paramName[], const unsigned int paramCount, 
 		CpeabsDebug("rbus_getExt paramName[%d] : %s paramCount %d\n",cnt,paramName[cnt], paramCount);
 	}
 
-	CpeabsInfo("setValues_rbus index %d\n", index);
-	CpeabsInfo("getValues_rbus timeSpan %p\n",timeSpan);
+	CpeabsDebug("setValues_rbus index %d\n", index);
+	CpeabsDebug("getValues_rbus timeSpan %p\n",timeSpan);
 
 	rbus_handle = get_global_rbus_handle();
 	if(!rbus_handle)
@@ -995,7 +995,7 @@ void getValues_rbusmqtt(const char *paramName[], const unsigned int paramCount, 
 		}
 		else if(val_size == 0 && rc == RBUS_ERROR_SUCCESS)
 		{
-			CpeabsInfo("No child elements found\n");
+			CpeabsDebug("No child elements found\n");
 		}
 		rbusProperty_Release(props);
 	}
