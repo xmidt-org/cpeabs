@@ -643,13 +643,20 @@ int Set_Mqtt_LocationId( char *pString)
 {
 	int ret = RETURN_ERR;
 
-	if (json_string_value_set(MQTT_LOCATIONID_PARAM, pString) == true)
+	if(pString != NULL)
 	{
-		WebcfgDebug("%s: Successfully set Mqtt Location Id \n",__func__);
-		ret = RETURN_OK;
+		if (json_string_value_set(MQTT_LOCATIONID_PARAM, pString) == true)
+		{
+			WebcfgDebug("%s: Successfully set Mqtt Location Id \n",__func__);
+			ret = RETURN_OK;
+		}
+		else{
+			WebcfgError("%s: Error! Failed to set Mqtt Location Id\n",__func__);
+		}
 	}
-	else{
-		WebcfgError("%s: Error! Failed to set Mqtt Location Id\n",__func__);
+	else
+	{
+		WebcfgError("%s:Invalid input to set Mqtt Location Id\n",__func__);
 	}
 	return ret;
 }
@@ -675,17 +682,23 @@ int Get_Mqtt_LocationId( char *pString)
 
 int Set_Mqtt_Broker( char *pString)
 {
-         int ret = RETURN_ERR;
+	int ret = RETURN_ERR;
 
-         if (json_string_value_set(MQTT_BROKER_PARAM, pString) == true)
-         {
-                 WebcfgDebug("%s: Successfully set Mqtt broker URL \n",__func__);
-                 ret = RETURN_OK;
-         }
-         else{
-                 WebcfgError("%s: Error! Failed to set Mqtt broker URL \n",__func__);
-         }
-         return ret;
+	if(pString != NULL)
+	{
+		if (json_string_value_set(MQTT_BROKER_PARAM, pString) == true)
+		{
+			WebcfgDebug("%s: Successfully set Mqtt broker URL \n",__func__);
+			ret = RETURN_OK;
+		}
+		else{
+			WebcfgError("%s: Error! Failed to set Mqtt broker URL \n",__func__);
+		}
+	}
+	else {
+		WebcfgError("%s: Invalid input to set Mqtt broker URL \n",__func__);
+	}
+	return ret;
 }
 
 int Get_Mqtt_Broker( char *pString)
