@@ -749,17 +749,23 @@ char* Get_Mqtt_ClientId()
 
 int Set_Mqtt_Port( char *pString)
 {
-         int ret = RETURN_ERR;
+	int ret = RETURN_ERR;
 
-         if (json_string_value_set(MQTT_PORT_PARAM, pString) == true)
-         {
-                 WebcfgDebug("%s: Successfully set Mqtt Port \n",__func__);
-                 ret = RETURN_OK;
-         }
-         else{
-                 WebcfgError("%s: Error! Failed to set Mqtt Port \n",__func__);
-         }
-         return ret;
+	if(pString != NULL)
+	{
+		if (json_string_value_set(MQTT_PORT_PARAM, pString) == true)
+		{
+			WebcfgDebug("%s: Successfully set Mqtt Port \n",__func__);
+			ret = RETURN_OK;
+		}
+		else{
+			WebcfgError("%s: Error! Failed to set Mqtt Port \n",__func__);
+		}
+	}
+	else {
+		WebcfgError("%s: Invalid input to set Mqtt Port \n",__func__);
+	}
+	return ret;
 }
 
 int Get_Mqtt_Port( char *pString)
