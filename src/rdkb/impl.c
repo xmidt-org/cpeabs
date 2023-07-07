@@ -60,13 +60,13 @@
 #define WEBCFG_PARAM_SUPPLEMENTARY_SERVICE   "Device.X_RDK_WebConfig.SupplementaryServiceUrls."
 #define SYSTEM_READY_PARM "Device.CR.SystemReady"
 
-//#ifdef WEBCONFIG_MQTT_SUPPORT
+#ifdef FEATURE_SUPPORT_MQTTCM
 
 #define MQTT_LOCATIONID_PARAM "Device.X_RDK_MQTT.LocationID"
 #define MQTT_BROKER_PARAM "Device.X_RDK_MQTT.BrokerURL"
 #define MQTT_PORT_PARAM "Device.X_RDK_MQTT.Port"
 
-//#endif
+#endif
 /*----------------------------------------------------------------------------*/
 /*                               Data Structures                              */
 /*----------------------------------------------------------------------------*/
@@ -81,14 +81,18 @@ typedef struct
 /*----------------------------------------------------------------------------*/
 static bool isRbus = false ;
 char deviceMAC[32]={'\0'};
+#ifdef FEATURE_SUPPORT_MQTTCM
 char clientId[32]={'\0'};
+#endif
 char deviceWanMAC[32]={'\0'};
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
 /*----------------------------------------------------------------------------*/
 void __attribute__((weak)) getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus);
 static bool isRbusEnabled();
+#ifdef FEATURE_SUPPORT_MQTTCM
 void stripMacIdColon(char macValue[],char macConverted[]);
+#endif
 void macIDToLower(char macValue[],char macConverted[]);
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize);
 rbusHandle_t  __attribute__((weak)) get_global_rbus_handle(void);
@@ -105,6 +109,7 @@ void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize)
     destStr[destSize-1] = '\0';
 }
 
+#ifdef FEATURE_SUPPORT_MQTTCM
 void stripMacIdColon(char macValue[],char macConverted[])
 {
 	int i = 0;
@@ -124,6 +129,7 @@ void stripMacIdColon(char macValue[],char macConverted[])
 	    i++;
 	}
 }
+#endif
 
 void macIDToLower(char macValue[],char macConverted[])
 {
@@ -776,7 +782,7 @@ static int webcfgRbusRegisterWithCR()
 	}
 	return 1;
 }
-//#ifdef WEBCONFIG_MQTT_SUPPORT
+#ifdef FEATURE_SUPPORT_MQTTCM
 int Get_Mqtt_LocationId( char *pString)
 {
 	char *tempLocId = NULL;
@@ -1000,4 +1006,4 @@ void getValues_rbusmqtt(const char *paramName[], const unsigned int paramCount, 
 		rbusProperty_Release(props);
 	}
 }
-//#endif
+#endif
