@@ -209,12 +209,12 @@ long getTimeOffset()
 	long tmOffset = 0;
 
 	timeOffset = getParamValue(TIME_OFFSET);
-	WebcfgDebug("timeOffset returned from lib is %s\n", timeOffset);
+	CpeabsDebug("timeOffset returned from lib is %s\n", timeOffset);
 
 	if( timeOffset != NULL)
 	{
 		tmOffset = atol(timeOffset);
-		WebcfgDebug("The offset obtained is %ld\n", tmOffset);
+		CpeabsDebug("The offset obtained is %ld\n", tmOffset);
 		CPEABS_FREE(timeOffset);
 	}
 
