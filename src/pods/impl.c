@@ -186,37 +186,41 @@ void macIDToUpper(char macValue[],char macConverted[])
 
 char* get_deviceMAC()
 {
-        if(strlen(deviceMAC) != 0)
-        {
-                WebcfgDebug("deviceMAC returned %s\n", deviceMAC);
-                return deviceMAC;
-        }
+	if(strlen(deviceMAC) != 0)
+	{
+		WebcfgDebug("deviceMAC returned %s\n", deviceMAC);
+		return deviceMAC;
+	}
 
-        json_t *where = json_array();
-        char *table = "Wifi_Inet_State";
-        char *colv[] = {"hwaddr"};
-        char buff[BFR_SIZE_64];
-        char *where_str = "if_name==eth0";
+	FILE *fpipe;
+	char *command = "/usr/opensync/tools/pmf -r -E0 | awk '{print $5}'";
+	char comm_output[BFR_SIZE_64] = {'\0'};
+	char temp_devicemac[BFR_SIZE_64];
 
-        if (!ovsdb_parse_where(where,where_str, false))
-        {
-                WebcfgError("Error parsing WHERE statement: %s",where_str);
-        }
-        memset(deviceMAC,0,sizeof(deviceMAC));
-        memset(buff,0,sizeof(buff));
-        WebcfgDebug("Reaching after memset of buff inside get devicemac\n");
-        if (ovsdb_string_value_get(table,where,1,colv,buff,sizeof(buff)))
-        {
-                WebcfgDebug("Reaching after ovsdb_string_value_get success inside get devicemac\n");
-                macIDToLower(buff, deviceMAC);
-                WebcfgDebug("deviceMAC returned from lib in converted format is: %s\n",deviceMAC);
-                return deviceMAC;
-        }
-        else
-        {
-                WebcfgError("Failed to GetValue for deviceMAC\n");
-                return NULL;
-        }
+	memset(&temp_devicemac,0,sizeof(temp_devicemac));
+	if (0 == (fpipe = (FILE*)popen(command, "r")))
+	{
+		WebcfgError("%s: popen() failed while getting device mac",__func__);
+		return NULL;
+	}
+
+	fread(comm_output, 1, sizeof(comm_output), fpipe);
+	pclose(fpipe);
+
+	strncpy(temp_devicemac,comm_output,(strlen(comm_output)-1));
+	if (strlen(temp_devicemac) != 0)
+	{
+		WebcfgDebug("Reaching after retriving command output inside get devicemac\n");
+		macIDToLower(temp_devicemac, deviceMAC);
+		WebcfgDebug("deviceMAC returned from lib in converted format is: [%s]\n",deviceMAC);
+		return deviceMAC;
+	}
+	else
+	{
+		WebcfgError("Failed to GetValue for deviceMAC\n");
+		return NULL;
+	}
+
 }
 
 char* get_deviceWanMAC()
