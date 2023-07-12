@@ -193,7 +193,7 @@ char* get_deviceMAC()
 {
 	if(strlen(deviceMAC) != 0)
 	{
-		WebcfgDebug("deviceMAC returned %s\n", deviceMAC);
+		WebcfgDebug("%s: Device mac returned is %s\n",__func__, deviceMAC);
 		return deviceMAC;
 	}
 
@@ -214,18 +214,16 @@ char* get_deviceMAC()
 
 	strncpy(temp_devicemac,comm_output,(strlen(comm_output)-1));
 	if (strlen(temp_devicemac) != 0)
-	{
-		WebcfgDebug("Reaching after retriving command output inside get devicemac\n");
+        {
 		macIDToLower(temp_devicemac, deviceMAC);
-		WebcfgDebug("deviceMAC returned from lib in converted format is: [%s]\n",deviceMAC);
+		WebcfgDebug("%s: Device mac  returned after conversion: [%s]\n",__func__,deviceMAC);
 		return deviceMAC;
 	}
 	else
 	{
-		WebcfgError("Failed to GetValue for deviceMAC\n");
+		WebcfgError("%s: Failed to GetValue for deviceMAC\n",__func__);
 		return NULL;
 	}
-
 }
 
 char* get_deviceWanMAC()
