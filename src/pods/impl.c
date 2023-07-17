@@ -51,7 +51,7 @@
 #define RETURN_ERR -1
 
 /*----------------------------------------------------------------------------*/
-char deviceMAC[BFR_SIZE_64];
+char deviceMAC[BFR_SIZE_64] = {'\0'};
 char clientId[32]={'\0'};
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
@@ -195,7 +195,7 @@ char* get_deviceMAC()
 	FILE *fpipe;
 	char *command = "/usr/opensync/tools/pmf -r -E0 | awk '{print $5}'";
 	char comm_output[BFR_SIZE_64] = {'\0'};
-	char temp_devicemac[BFR_SIZE_64];
+	char temp_devicemac[BFR_SIZE_64] = {'\0'};
 
 	memset(&temp_devicemac,0,sizeof(temp_devicemac));
 	if (0 == (fpipe = (FILE*)popen(command, "r")))
