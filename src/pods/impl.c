@@ -42,17 +42,22 @@
 #define PARAM_RFC_ENABLE "eRT.com.cisco.spvtg.ccsp.webpa.WebConfigRfcEnable"
 #define WEBCFG_URL_PARAM "Device.X_RDK_WebConfig.URL"
 #define WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM  "Device.X_RDK_WebConfig.SupplementaryServiceUrls.Telemetry"
+#define MQTT_LOCATIONID_PARAM "Device.X_RDK_MQTT.LocationID"
+#define MQTT_BROKER_PARAM "Device.X_RDK_MQTT.BrokerURL"
+#define MQTT_PORT_PARAM "Device.X_RDK_MQTT.Port"
 
 #define WEBCFG_MAX_PARAM_LEN 128
 #define RETURN_OK 0
 #define RETURN_ERR -1
 
 /*----------------------------------------------------------------------------*/
-char deviceMAC[BFR_SIZE_64];
+char deviceMAC[BFR_SIZE_64] = {'\0'};
+char clientId[32]={'\0'};
 /*----------------------------------------------------------------------------*/
 /*                             Function Prototypes                            */
 /*----------------------------------------------------------------------------*/
 void macIDToLower(char macValue[],char macConverted[]);
+void macIDToUpper(char macValue[],char macConverted[]);
 /*----------------------------------------------------------------------------*/
 /*                                   Macros                                   */
 /*----------------------------------------------------------------------------*/
@@ -152,39 +157,68 @@ void macIDToLower(char macValue[],char macConverted[])
         }
 }
 
+void macIDToUpper(char macValue[],char macConverted[])
+{
+	int i = 0;
+	int j;
+	char *token[BFR_SIZE_64];
+	char tmp[BFR_SIZE_64];
+
+	cpeabStrncpy(tmp, macValue,sizeof(tmp));
+	token[i] = strtok(tmp, ":");
+	if(token[i]!=NULL)
+	{
+		cpeabStrncpy(macConverted, token[i],BFR_SIZE_64);
+		i++;
+	}
+	while ((token[i] = strtok(NULL, ":")) != NULL)
+	{
+		strncat(macConverted, token[i], 63);
+		macConverted[63]='\0';
+		i++;
+	}
+	macConverted[63]='\0';
+	for(j = 0; macConverted[j]; j++)
+	{
+		macConverted[j] = toupper(macConverted[j]);
+	}
+}
+
 char* get_deviceMAC()
 {
-        if(strlen(deviceMAC) != 0)
-        {
-                WebcfgDebug("deviceMAC returned %s\n", deviceMAC);
-                return deviceMAC;
-        }
+	if(strlen(deviceMAC) != 0)
+	{
+		WebcfgDebug("%s: Device mac returned is %s\n",__func__, deviceMAC);
+		return deviceMAC;
+	}
 
-        json_t *where = json_array();
-        char *table = "Wifi_Inet_State";
-        char *colv[] = {"hwaddr"};
-        char buff[BFR_SIZE_64];
-        char *where_str = "if_name==eth0";
+	FILE *fpipe;
+	char *command = "/usr/opensync/tools/pmf -r -E0 | awk '{print $5}'";
+	char comm_output[BFR_SIZE_64] = {'\0'};
+	char temp_devicemac[BFR_SIZE_64] = {'\0'};
 
-        if (!ovsdb_parse_where(where,where_str, false))
+	memset(&temp_devicemac,0,sizeof(temp_devicemac));
+	if (0 == (fpipe = (FILE*)popen(command, "r")))
+	{
+		WebcfgError("%s: popen() failed while getting device mac",__func__);
+		return NULL;
+	}
+
+	fread(comm_output, 1, sizeof(comm_output), fpipe);
+	pclose(fpipe);
+
+	strncpy(temp_devicemac,comm_output,(strlen(comm_output)-1));
+	if (strlen(temp_devicemac) != 0)
         {
-                WebcfgError("Error parsing WHERE statement: %s",where_str);
-        }
-        memset(deviceMAC,0,sizeof(deviceMAC));
-        memset(buff,0,sizeof(buff));
-        WebcfgDebug("Reaching after memset of buff inside get devicemac\n");
-        if (ovsdb_string_value_get(table,where,1,colv,buff,sizeof(buff)))
-        {
-                WebcfgDebug("Reaching after ovsdb_string_value_get success inside get devicemac\n");
-                macIDToLower(buff, deviceMAC);
-                WebcfgDebug("deviceMAC returned from lib in converted format is: %s\n",deviceMAC);
-                return deviceMAC;
-        }
-        else
-        {
-                WebcfgError("Failed to GetValue for deviceMAC\n");
-                return NULL;
-        }
+		macIDToLower(temp_devicemac, deviceMAC);
+		WebcfgDebug("%s: Device mac  returned after conversion: [%s]\n",__func__,deviceMAC);
+		return deviceMAC;
+	}
+	else
+	{
+		WebcfgError("%s: Failed to GetValue for deviceMAC\n",__func__);
+		return NULL;
+	}
 }
 
 char* get_deviceWanMAC()
@@ -607,6 +641,154 @@ int Set_Supplementary_URL( char *name, char *pString)
         return ret;
 }
 
+int Set_Mqtt_LocationId( char *pString)
+{
+	int ret = RETURN_ERR;
+
+	if(pString != NULL)
+	{
+		if (json_string_value_set(MQTT_LOCATIONID_PARAM, pString) == true)
+		{
+			WebcfgDebug("%s: Successfully set Mqtt Location Id \n",__func__);
+			ret = RETURN_OK;
+		}
+		else{
+			WebcfgError("%s: Error! Failed to set Mqtt Location Id\n",__func__);
+		}
+	}
+	else
+	{
+		WebcfgError("%s:Invalid input to set Mqtt Location Id\n",__func__);
+	}
+	return ret;
+}
+
+int Get_Mqtt_LocationId( char *pString)
+{
+	char id[128];
+	int ret = RETURN_ERR;
+
+	memset(id,0,sizeof(id));
+
+	if (json_string_value_get(MQTT_LOCATIONID_PARAM,id, sizeof(id)))
+	{
+		WebcfgDebug("Successfully fetched Mqtt Location Id : [%s] \n", id);
+		cpeabStrncpy(pString,id,sizeof(id));
+		ret = RETURN_OK;
+	}
+	else{
+		WebcfgError("Error! Failed to fetch Mqtt Location Id\n");
+	}
+	return ret;
+}
+
+int Set_Mqtt_Broker( char *pString)
+{
+	int ret = RETURN_ERR;
+
+	if(pString != NULL)
+	{
+		if (json_string_value_set(MQTT_BROKER_PARAM, pString) == true)
+		{
+			WebcfgDebug("%s: Successfully set Mqtt broker URL \n",__func__);
+			ret = RETURN_OK;
+		}
+		else{
+			WebcfgError("%s: Error! Failed to set Mqtt broker URL \n",__func__);
+		}
+	}
+	else {
+		WebcfgError("%s: Invalid input to set Mqtt broker URL \n",__func__);
+	}
+	return ret;
+}
+
+int Get_Mqtt_Broker( char *pString)
+{
+	char url[128];
+	int ret = RETURN_ERR;
+
+	memset(url,0,sizeof(url));
+
+	if (json_string_value_get(MQTT_BROKER_PARAM,url, sizeof(url)))
+	{
+		cpeabStrncpy(pString,url,sizeof(url));
+		WebcfgDebug("Successfully fetched Mqtt broker URL : [%s]. \n", url);
+		ret = RETURN_OK;
+	}
+	else{
+		WebcfgError("Error! Failed to fetch Mqtt broker URL\n");
+	}
+	return ret;
+}
+
+char* Get_Mqtt_ClientId()
+{
+	char *tempclientId = NULL;
+	char clientIdValue[32] = { '\0' };
+
+	if(strlen(clientId) != 0)
+	{
+		WebcfgInfo("clientId returned %s\n", clientId);
+		return clientId;
+	}
+
+	tempclientId = get_deviceMAC();
+
+	if(tempclientId != NULL )
+	{
+		cpeabStrncpy(clientIdValue, tempclientId, strlen(tempclientId)+1);
+		macIDToUpper(clientIdValue, clientId);
+		WebcfgDebug("Successfully fetched Mqtt Client Id : [%s]. \n", clientId );
+		//free(tempclientId);
+	}
+	else {
+		WebcfgError("Error! Failed to fetch Mqtt Client Id\n");
+	}
+
+	return clientId;
+}
+
+int Set_Mqtt_Port( char *pString)
+{
+	int ret = RETURN_ERR;
+
+	if(pString != NULL)
+	{
+		if (json_string_value_set(MQTT_PORT_PARAM, pString) == true)
+		{
+			WebcfgDebug("%s: Successfully set Mqtt Port \n",__func__);
+			ret = RETURN_OK;
+		}
+		else{
+			WebcfgError("%s: Error! Failed to set Mqtt Port \n",__func__);
+		}
+	}
+	else {
+		WebcfgError("%s: Invalid input to set Mqtt Port \n",__func__);
+	}
+	return ret;
+}
+
+int Get_Mqtt_Port( char *pString)
+{
+	char port[16];
+	int ret = RETURN_ERR;
+
+	memset(port,0,sizeof(port));
+
+	if (json_string_value_get(MQTT_PORT_PARAM,port, sizeof(port)))
+	{
+		cpeabStrncpy(pString,port,sizeof(port));
+		WebcfgDebug("Successfully fetched Mqtt broker port : [%s]. \n", port);
+		ret = RETURN_OK;
+	}
+	else{
+		WebcfgError("Error! Failed to fetch Mqtt broker port\n");
+	}
+	return ret;
+}
+
 /**
  * To persist TR181 parameter values in PSM DB.
  */
@@ -646,6 +828,30 @@ int rbus_StoreValueIntoDB(char *paramName, char *value)
                         ret = RETURN_OK;
                 }
         }
+	else if (strncmp(paramName,MQTT_LOCATIONID_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+	{
+		if (Set_Mqtt_LocationId(value) == RETURN_OK)
+		{
+			WebcfgDebug("%s : Successfully stored [%s] = [%s]. \n",__func__,MQTT_LOCATIONID_PARAM,value);
+			ret = RETURN_OK;
+		}
+	}
+	else if (strncmp(paramName,MQTT_BROKER_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+	{
+		if (Set_Mqtt_Broker(value) == RETURN_OK)
+		{
+			WebcfgDebug("%s : Successfully stored [%s] = [%s]. \n",__func__,MQTT_BROKER_PARAM,value);
+			ret = RETURN_OK;
+		}
+	}
+	else if (strncmp(paramName,MQTT_PORT_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+	{
+		if (Set_Mqtt_Port(value) == RETURN_OK)
+		{
+			WebcfgDebug("%s : Successfully stored [%s] = [%s]. \n",__func__,MQTT_PORT_PARAM,value);
+			ret = RETURN_OK;
+		}
+	}
         else {
                 WebcfgError("Invalid Param Name \n");
         }
@@ -697,6 +903,33 @@ int rbus_GetValueFromDB( char* paramName, char** paramValue)
                         ret = RETURN_OK;
                 }
         }
+        else if (strncmp(paramName,MQTT_LOCATIONID_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+        {
+                if (Get_Mqtt_LocationId(value_str) == RETURN_OK)
+                {
+                        *paramValue = strdup(value_str);
+                         WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,MQTT_LOCATIONID_PARAM,*paramValue);
+                         ret = RETURN_OK;
+                }
+        }
+        else if (strncmp(paramName,MQTT_BROKER_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+	{
+		if (Get_Mqtt_Broker(value_str) == RETURN_OK)
+		{
+			*paramValue = strdup(value_str);
+			WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,MQTT_BROKER_PARAM,*paramValue);
+			ret = RETURN_OK;
+		}
+	}
+	else if (strncmp(paramName,MQTT_PORT_PARAM,WEBCFG_MAX_PARAM_LEN) == 0)
+	{
+		if (Get_Mqtt_Port(value_str) == RETURN_OK)
+		{
+			*paramValue = strdup(value_str);
+			WebcfgDebug("%s : Successfully fetched [%s] = [%s]. \n",__func__,MQTT_PORT_PARAM,*paramValue);
+			ret = RETURN_OK;
+		}
+	}
         else
         {
                 WebcfgError("Invalid Param Name \n");
