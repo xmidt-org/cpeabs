@@ -449,6 +449,7 @@ int get_id_pstore(int id_chk, char *id_type)
         int ret = RETURN_ERR, i,fd;
 
         memset(pstore_content,0,sizeof(pstore_content));
+        memset(data,0,sizeof(data));
 
         if ((fd = open(OSP_PSTORE_ACCOUNT, O_RDONLY)) == -1)
         {
@@ -464,7 +465,7 @@ int get_id_pstore(int id_chk, char *id_type)
                 break;
         }
         strncpy(data,(pstore_content+i),strlen(pstore_content+i));
-        WebcfgDebug("Data Abi from the file:\n%s\n", data);
+        WebcfgDebug("Data from the file:\n%s\n", data);
         close(fd);
 
         if((strchr(data, ',') != NULL) && (strlen(data) > 0))
