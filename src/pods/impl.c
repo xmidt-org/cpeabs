@@ -18,6 +18,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <sys/sysinfo.h>
 #include "cpeabs.h"
 #include "cpeabs_ovsdb_utils.h"
@@ -437,45 +439,50 @@ char * cutting_delimiters(char *pstore_content, char * PATTERN1, char *PATTERN2)
 int get_id_pstore(int id_chk, char *id_type)
 {
         char pstore_content[BFR_SIZE_256];
-        char acc_id[BFR_SIZE_64];
-        char partner_id[BFR_SIZE_64];
-        char *acc_id_ret = NULL;
-        char *partner_id_ret = NULL;
-        int ret = RETURN_ERR;
+        char data[BFR_SIZE_256];
+        char *search_partnerid = "partnerId";
+        char *search_accountid = "accountId";
+        char *tmp_partnerid = NULL;
+        char *tmp_accountid = NULL;
+        char *acc_id_ret, *res_accountid = NULL;
+        char *partner_id_ret, *res_partnerid = NULL;
+        int ret = RETURN_ERR, i,fd;
 
-        FILE *fptr = NULL;
-        if ((fptr = fopen(OSP_PSTORE_ACCOUNT, "r")) == NULL)
+        memset(pstore_content,0,sizeof(pstore_content));
+        memset(data,0,sizeof(data));
+
+        if ((fd = open(OSP_PSTORE_ACCOUNT, O_RDONLY)) == -1)
         {
                 WebcfgError("Error! File %s cannot be opened.",OSP_PSTORE_ACCOUNT);
                 return ret;
         }
-        memset(pstore_content,0,sizeof(pstore_content));
-        fscanf(fptr, "%[^\n]", pstore_content);
-        WebcfgDebug("Data from the file:\n%s\n", pstore_content);
-        fclose(fptr);
 
-        memset(acc_id,0,sizeof(acc_id));
-        memset(partner_id,0,sizeof(partner_id));
+        read(fd,&pstore_content,BFR_SIZE_256);
 
-        if((strchr(pstore_content, ',') != NULL) && (strlen(pstore_content) > 0))
+        for ( i=0; i<BFR_SIZE_256; i++)
         {
-                sscanf(pstore_content, "%*[^:]%*c%[^,]%*[^:]%*c%[^}]", acc_id, partner_id);
-                acc_id_ret = cutting_delimiters(acc_id, "\"", "\"");
-                partner_id_ret = cutting_delimiters(partner_id, "\"", "\"");
+                if(pstore_content[i] == '{')
+                break;
         }
-        else if(strlen(pstore_content) > 0)
+        strncpy(data,(pstore_content+i),strlen(pstore_content+i));
+        WebcfgDebug("Data from the file:\n%s\n", data);
+        close(fd);
+
+        if((strchr(data, ',') != NULL) && (strlen(data) > 0))
         {
-                sscanf(pstore_content, "%*[^:]%*c%[^}]", acc_id);
-                acc_id_ret = cutting_delimiters(acc_id, "\"", "\"");
+                tmp_partnerid = strstr(data,search_partnerid);
+                tmp_accountid = strstr(data,search_accountid);
         }
         else
         {
                 WebcfgError("Error!The file is present but is empty!\n");
                 return ret;
         }
-        if ((id_chk == 1) && (strlen(partner_id) > 0))
+        if ((id_chk == 1) && (strlen(tmp_partnerid) > 0))
         {
-                cpeabStrncpy(id_type,partner_id_ret,BFR_SIZE_64*sizeof(char));
+                partner_id_ret  = cutting_delimiters(tmp_partnerid,":",",");
+                res_partnerid = cutting_delimiters(partner_id_ret,"\"","\"");
+                cpeabStrncpy(id_type,res_partnerid,BFR_SIZE_64*sizeof(char));
                 ret = RETURN_OK;
                 return ret;
         }
@@ -485,9 +492,11 @@ int get_id_pstore(int id_chk, char *id_type)
                 return ret;
         }
 
-        if ((id_chk == 0) && (strlen(acc_id) > 0))
+        if ((id_chk == 0) && (strlen(tmp_accountid) > 0))
         {
-                cpeabStrncpy(id_type,acc_id_ret,BFR_SIZE_64*sizeof(char));
+                acc_id_ret = cutting_delimiters(tmp_accountid,":",",");
+                res_accountid = cutting_delimiters(acc_id_ret,"\"","\"");
+                cpeabStrncpy(id_type,res_accountid,BFR_SIZE_64*sizeof(char));
                 ret = RETURN_OK;
                 return ret;
         }
