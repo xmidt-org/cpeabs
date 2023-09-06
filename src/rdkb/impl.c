@@ -357,7 +357,7 @@ int Get_Webconfig_URL( char *pString)
 
 int Set_Webconfig_URL( char *pString)
 {
-    int retPsmSet = 0;
+    int retPsmSet = RBUS_ERROR_BUS_ERROR;
     if(isRbusEnabled())
     {
     	retPsmSet = rbus_StoreValueIntoDB( WEBCFG_URL_PARAM, pString );
@@ -366,7 +366,6 @@ int Set_Webconfig_URL( char *pString)
 	if (retPsmSet != RBUS_ERROR_SUCCESS)
         {
 		CpeabsError("psm_set failed ret %d for parameter %s and value %s\n", retPsmSet, WEBCFG_URL_PARAM, pString);
-                return 0;
         }
         else
         {
@@ -410,7 +409,7 @@ int Get_Supplementary_URL( char *name, char *pString)
 
 int Set_Supplementary_URL( char *name, char *pString)
 {
-    int retPsmSet = 0;
+    int retPsmSet = RBUS_ERROR_BUS_ERROR;
     if(isRbusEnabled())
     {
 	char *tempParam = (char *) malloc (sizeof(char)*MAX_BUFF_SIZE);
@@ -425,7 +424,6 @@ int Set_Supplementary_URL( char *name, char *pString)
 			{
 				CpeabsError("psm_set failed ret %d for parameter %s%s and value %s\n", retPsmSet, WEBCFG_PARAM_SUPPLEMENTARY_SERVICE, name, pString);
 				CPEABS_FREE(tempParam);
-				return 0;
 			}
 			else
 			{
