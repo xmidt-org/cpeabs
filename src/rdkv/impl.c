@@ -82,6 +82,7 @@ webCfgValue_t webCfgPersist;
 void __attribute__((weak)) getValues_rbus(const char *paramName[], const unsigned int paramCount, int index, money_trace_spans *timeSpan, param_t ***paramArr, int *retValCount, WDMP_STATUS *retStatus);
 void macIDToLower(char macValue[],char macConverted[]);
 void cpeabStrncpy(char *destStr, const char *srcStr, size_t destSize);
+void load_partnerid_params();
 /*----------------------------------------------------------------------------*/
 /*                             External Functions                             */
 /*----------------------------------------------------------------------------*/
@@ -104,7 +105,7 @@ cJSON* load_partner_json_file(const char* fileName)
     FILE* fp = fopen(fileName, "rb");
     if(!fp)
     {
-        printf("open file %s failed.\n", WEBCFG_PARTNER_JSON_FILE);
+        WebcfgError("open file %s failed.\n", WEBCFG_PARTNER_JSON_FILE);
         return NULL;
     }
 
@@ -123,22 +124,12 @@ cJSON* load_partner_json_file(const char* fileName)
     json = cJSON_Parse(JSON_content);
     if (json == NULL)
     {
-        printf("json file - parse null\n");
+        WebcfgInfo("Json file - parse null\n");
         return NULL;
     }
 
     fclose(fp);
     return json;
-}
-
-cJSON* read_json_file(cJSON *parser,char *partnerId)
-{
-    cJSON *json=parser;
-    char *part_id=partnerId;
-    cJSON *item = NULL;
-
-    item=cJSON_GetObjectItem(json,part_id);
-    return item;
 }
 
 void macIDToLower(char macValue[],char macConverted[])
@@ -309,12 +300,12 @@ void writeToFile(char* pText)
 {
     FILE* fpw = fopen(WEBCFG_DB_STORE, "wb");
     if (fpw == NULL) {
-        printf("Failed to open file- %s",WEBCFG_DB_STORE);
+        WebcfgError("Failed to open file- %s",WEBCFG_DB_STORE);
         return;
     }
     int wret = fwrite(pText, 1, strlen(pText), fpw);
     if (wret == 0) {
-        printf("Failed to write in file- %s", WEBCFG_DB_STORE);
+        WebcfgError("Failed to write in file- %s", WEBCFG_DB_STORE);
         return;
     }
     fwrite("\n", 1, strlen("\n"), fpw);
@@ -345,35 +336,102 @@ void populatePersistenceData()
     if (access(WEBCFG_DB_STORE, F_OK) == 0)
     {
         cJSON *pParser = load_partner_json_file(WEBCFG_DB_STORE);
-        cJSON *pUrl = cJSON_GetObjectItem(pParser, WEBCFG_URL_PARAM);
-        cJSON *pTeleSuplUrl = cJSON_GetObjectItem(pParser, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM);
-        cJSON *pRfc = cJSON_GetObjectItem(pParser, WEBCFG_RFC_PARAM);
+        if(!pParser)
+        {
+            WebcfgInfo("DB file present, but contents/parse empty. Regenerate data\n");
+            load_partnerid_params();
+        }
+        else
+        {
+            cJSON *pUrl = cJSON_GetObjectItem(pParser, WEBCFG_URL_PARAM);
+            if(!pUrl)
+            {
+                WebcfgInfo("WebUrl empty in db json file. Load value\n");
+                load_partnerid_params();
+                return;
+            }
+            else
+            {
+                WebcfgInfo("WebUrl present in db json file\n");
+                snprintf(webCfgPersist.m_url, 1024, "%s",cJSON_GetStringValue(pUrl));
+            }
 
-        snprintf(webCfgPersist.m_url, 1024, "%s",cJSON_GetStringValue(pUrl));
-        snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", cJSON_GetStringValue(pTeleSuplUrl));
-        snprintf(webCfgPersist.m_rfcStatus, 16, "%s", cJSON_GetStringValue(pRfc));
+            cJSON *pTeleSuplUrl = cJSON_GetObjectItem(pParser, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM);
+            if(!pTeleSuplUrl)
+            {
+                WebcfgInfo("Supl_url empty in db json file. Load value\n");
+                load_partnerid_params();
+                return;
+            }
+            else
+            {
+                WebcfgInfo("Sup_url present in db json file\n");
+                snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", cJSON_GetStringValue(pTeleSuplUrl));
+            }
+
+            cJSON *pRfc = cJSON_GetObjectItem(pParser, WEBCFG_RFC_PARAM);
+            if(!pRfc)
+            {
+                WebcfgInfo("Rfc empty in db json file. Load value\n");
+                load_partnerid_params();
+                return;
+            }
+            else
+            {
+                WebcfgInfo("Rfc present in db json file\n");
+                snprintf(webCfgPersist.m_rfcStatus, 16, "%s", cJSON_GetStringValue(pRfc));
+            }
+        }
     }
     else
     {
-        char *pPartnerId = NULL;
-        pPartnerId = getPartnerID();
-        cJSON *pParser = load_partner_json_file(WEBCFG_PARTNER_JSON_FILE);
-        cJSON *pItem = cJSON_GetObjectItem(pParser, pPartnerId);
+        WebcfgInfo("DB file is not present. Regenerate file & contents\n");
+        load_partnerid_params();
+    }
+}
+
+
+void load_partnerid_params()
+{
+    char *pPartnerId = NULL;
+    pPartnerId = getPartnerID();
+    if(!pPartnerId)
+    {
+        pPartnerId="default";
+        WebcfgInfo("Partner id is default.\n");
+    }
+    cJSON *pParser = load_partner_json_file(WEBCFG_PARTNER_JSON_FILE);
+    if(!pParser)
+    {
+        WebcfgError("Parsing from main json file is empty.\n");
+        return;
+    }
+    cJSON *pItem = cJSON_GetObjectItem(pParser, pPartnerId);
+    if(pItem)
+    {
         cJSON *name = cJSON_CreateString("true");
         cJSON_AddItemToObject(pItem, WEBCFG_RFC_PARAM, name);
         char *pValue2 = cJSON_Print(pItem);
-
-
+        if((pValue2) && (strlen(pValue2)))
         {
+            WebcfgInfo("Parsing item/get item from parser\n");
             cJSON *pUrl = cJSON_GetObjectItemCaseSensitive(pItem, WEBCFG_URL_PARAM);
             cJSON *pTeleSuplUrl = cJSON_GetObjectItemCaseSensitive(pItem, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM);
 
             snprintf(webCfgPersist.m_rfcStatus, 16, "%s", "true");
             snprintf(webCfgPersist.m_url, 1024, "%s", cJSON_GetStringValue(pUrl));
             snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", cJSON_GetStringValue(pTeleSuplUrl));
+
+            WebcfgInfo("Writing from json obj to db file.\n");
+            writeToFile(pValue2);
         }
-        writeToFile(pValue2);
     }
+    else
+    {
+        WebcfgError("pItem/get item from parser is empty.\n");
+        return;
+    }
+
 }
 
 int Get_Webconfig_URL( char *pString)
