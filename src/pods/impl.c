@@ -230,8 +230,17 @@ char* get_deviceMAC()
 
 char* get_deviceWanMAC()
 {
-	//TODO:return the wan mac value
-	return NULL;
+    get_deviceMAC();
+    if(strlen(deviceMAC) != 0)
+    {
+        WebcfgDebug("%s: Device Wan mac returned is %s\n",__func__, deviceMAC);
+        return deviceMAC;
+    }
+    else
+    {
+        WebcfgError("%s: Failed to GetValue for deviceWanMAC\n",__func__);
+        return NULL;
+    }
 }
 
 char * getSerialNumber()
@@ -486,12 +495,6 @@ int get_id_pstore(int id_chk, char *id_type)
                 ret = RETURN_OK;
                 return ret;
         }
-        else
-        {
-                WebcfgError("Partner ID couldnt be parsed\n");
-                return ret;
-        }
-
         if ((id_chk == 0) && (strlen(tmp_accountid) > 0))
         {
                 acc_id_ret = cutting_delimiters(tmp_accountid,":",",");
@@ -502,7 +505,7 @@ int get_id_pstore(int id_chk, char *id_type)
         }
         else
         {
-                WebcfgError("Account ID couldnt be parsed\n");
+                WebcfgError((id_chk == 1) ? "Error! PartnerId  couldnt be parsed\n" : "Error! Account ID couldnt be parsed\n");
                 return ret;
         }
 
