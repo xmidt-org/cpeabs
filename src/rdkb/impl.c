@@ -53,7 +53,7 @@
 #elif defined(_WNXL11BWL_PRODUCT_REQ_)
 #define DEVICE_MAC                   "Device.DeviceInfo.X_COMCAST-COM_WAN_MAC"
 #elif defined(_XER5_PRODUCT_REQ_)
-#define DEVICE_MAC                   "Device.DeviceInfo.X_COMCAST-COM_WAN_MAC"
+#define DEVICE_MAC                   "Device.DeviceInfo.X_COMCAST-COM_CM_MAC"
 #else
 #define DEVICE_MAC                   "Device.X_CISCO_COM_CableModem.MACAddress"
 #endif
