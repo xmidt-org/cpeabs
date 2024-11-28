@@ -46,7 +46,7 @@
 #define PARAM_RFC_ENABLE "eRT.com.cisco.spvtg.ccsp.webpa.WebConfigRfcEnable"
 
 #define WEBCFG_PARTNER_JSON_FILE "/etc/partners_defaults_webcfg_video.json"
-#define WEBCFG_DB_STORE          "/opt/.webconfig.json"
+#define WEBCFG_DB_STORE          "/opt/secure/webcfg.json"
 
 #define RETURN_OK 0
 #define RETURN_ERR -1
@@ -411,20 +411,15 @@ void load_partnerid_params()
     {
         cJSON *name = cJSON_CreateString("true");
         cJSON_AddItemToObject(pItem, WEBCFG_RFC_PARAM, name);
-        char *pValue2 = cJSON_Print(pItem);
-        if((pValue2) && (strlen(pValue2)))
-        {
-            WebcfgInfo("Parsing item/get item from parser\n");
-            cJSON *pUrl = cJSON_GetObjectItemCaseSensitive(pItem, WEBCFG_URL_PARAM);
-            cJSON *pTeleSuplUrl = cJSON_GetObjectItemCaseSensitive(pItem, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM);
+	WebcfgInfo("Parsing item/get item from parser\n");
+	cJSON *pUrl = cJSON_GetObjectItemCaseSensitive(pItem, WEBCFG_URL_PARAM);
+	cJSON *pTeleSuplUrl = cJSON_GetObjectItemCaseSensitive(pItem, WEBCFG_SUPPLEMENTARY_TELEMETRY_PARAM);
 
-            snprintf(webCfgPersist.m_rfcStatus, 16, "%s", "true");
-            snprintf(webCfgPersist.m_url, 1024, "%s", cJSON_GetStringValue(pUrl));
-            snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", cJSON_GetStringValue(pTeleSuplUrl));
+	snprintf(webCfgPersist.m_rfcStatus, 16, "%s", "true");
+	snprintf(webCfgPersist.m_url, 1024, "%s", cJSON_GetStringValue(pUrl));
+	snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", cJSON_GetStringValue(pTeleSuplUrl));
 
-            WebcfgInfo("Writing from json obj to db file.\n");
-            writeToFile(pValue2);
-        }
+	WebcfgInfo("Writing from json obj to db file.\n");
     }
     else
     {
