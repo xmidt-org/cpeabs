@@ -446,6 +446,14 @@ int Get_Webconfig_URL( char *pString)
 int Set_Webconfig_URL( char *pString)
 {
     snprintf(webCfgPersist.m_url, 1024, "%s", pString);
+    cJSON * pWebCfg = convertWebCfgDataToJson();
+    if (pWebCfg)
+    {
+            char* pString = cJSON_Print(pWebCfg);
+            writeToFile(pString);
+            cJSON_Delete(pWebCfg);
+    }
+
     return RETURN_OK;
 }
 
@@ -466,6 +474,13 @@ int Set_Supplementary_URL( char *name, char *pString)
 {
     (void) name;
     snprintf(webCfgPersist.m_teleSuplUrl, 1024, "%s", pString);
+    cJSON * pWebCfg = convertWebCfgDataToJson();
+    if (pWebCfg)
+    {
+            char* pString = cJSON_Print(pWebCfg);
+            writeToFile(pString);
+            cJSON_Delete(pWebCfg);
+    }
     return RETURN_OK;
 }
 
