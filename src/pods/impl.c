@@ -388,7 +388,7 @@ char * getRebootReason()
         char reboot_str[BFR_SIZE_32];
         char reboot_osprsn[BFR_SIZE_128];
         char reboot_fileresp[BFR_SIZE_256];
-	char * reboot_reason = NULL;
+        char * reboot_reason = NULL;
 
         reboot_reason = malloc(BFR_SIZE_64*sizeof(char));
         if (!reboot_reason)
@@ -445,78 +445,82 @@ char * cutting_delimiters(char *pstore_content, char * PATTERN1, char *PATTERN2)
         return target;
 }
 
-int get_id_pstore(int id_chk, char *id_type)
-{
-        char pstore_content[BFR_SIZE_256];
-        char data[BFR_SIZE_256];
-        char *search_partnerid = "partnerId";
-        char *search_accountid = "accountId";
-        char *tmp_partnerid = NULL;
-        char *tmp_accountid = NULL;
-        char *acc_id_ret, *res_accountid = NULL;
-        char *partner_id_ret, *res_partnerid = NULL;
-        int ret = RETURN_ERR, i,fd;
+int get_id_pstore(int id_chk, char *id_type) {
 
-        memset(pstore_content,0,sizeof(pstore_content));
-        memset(data,0,sizeof(data));
+        char accountId[BFR_SIZE_32] = {0};
+        char partnerId[BFR_SIZE_32] = {0};
+        unsigned char buffer[BFR_SIZE_256];
+        int foundAccount = 0, foundPartner = 0;
 
-        if ((fd = open(OSP_PSTORE_ACCOUNT, O_RDONLY)) == -1)
-        {
-                WebcfgError("Error! File %s cannot be opened.",OSP_PSTORE_ACCOUNT);
-                return ret;
+        FILE *file = fopen(OSP_PSTORE_ACCOUNT, "rb");
+        if (!file) {
+                if (id_chk == 1) {
+                        cpeabStrncpy(id_type, "comcast", BFR_SIZE_64*sizeof(char));
+                        WebcfgDebug("File opening failed, using default partnerId: comcast\n");
+                        return RETURN_OK;
+                }else {
+                        perror("Failed to open file");
+                        return RETURN_ERR;
+                }
         }
 
-        read(fd,&pstore_content,BFR_SIZE_256);
+        size_t bytesRead = fread(buffer, 1, sizeof(buffer), file);
+        fclose(file);
 
-        for ( i=0; i<BFR_SIZE_256; i++)
-        {
-                if(pstore_content[i] == '{')
+        for (size_t i = 0; i < bytesRead - 13; i++) {
+        if (id_chk == 0 && !foundAccount && memcmp(&buffer[i], "\"accountId\":\"", 13) == 0) {
+                size_t j = i + 13, k = 0;
+                while (j < bytesRead && buffer[j] != '"' && k < sizeof(accountId) - 1) {
+                        accountId[k++] = buffer[j++];
+                }
+                accountId[k] = '\0';
+                foundAccount = 1;
+                WebcfgDebug("Found accountId: %s\n", accountId);
                 break;
         }
-        strncpy(data,(pstore_content+i),strlen(pstore_content+i));
-        WebcfgDebug("Data from the file:\n%s\n", data);
-        close(fd);
 
-        if((strchr(data, ',') != NULL) && (strlen(data) > 0))
-        {
-                tmp_partnerid = strstr(data,search_partnerid);
-                tmp_accountid = strstr(data,search_accountid);
+        if (id_chk == 1 && !foundPartner && memcmp(&buffer[i], "\"partnerId\":\"", 13) == 0) {
+                size_t j = i + 13, k = 0;
+                while (j < bytesRead && buffer[j] != '"' && k < sizeof(partnerId) - 1) {
+                        partnerId[k++] = buffer[j++];
+                }
+                partnerId[k] = '\0';
+                foundPartner = 1;
+                WebcfgDebug("Found partnerId: %s\n", partnerId);
+                break;
         }
-        else
-        {
-                WebcfgError("Error!The file is present but is empty!\n");
-                return ret;
-        }
-        if ((id_chk == 1) && (strlen(tmp_partnerid) > 0))
-        {
-                partner_id_ret  = cutting_delimiters(tmp_partnerid,":",",");
-                res_partnerid = cutting_delimiters(partner_id_ret,"\"","\"");
-                cpeabStrncpy(id_type,res_partnerid,BFR_SIZE_64*sizeof(char));
-                ret = RETURN_OK;
-                return ret;
-        }
-        if ((id_chk == 0) && (strlen(tmp_accountid) > 0))
-        {
-                acc_id_ret = cutting_delimiters(tmp_accountid,":",",");
-                res_accountid = cutting_delimiters(acc_id_ret,"\"","\"");
-                cpeabStrncpy(id_type,res_accountid,BFR_SIZE_64*sizeof(char));
-                ret = RETURN_OK;
-                return ret;
-        }
-        else
-        {
-                WebcfgError((id_chk == 1) ? "Error! PartnerId  couldnt be parsed\n" : "Error! Account ID couldnt be parsed\n");
-                return ret;
         }
 
+        // Return based on id_chk
+        if (id_chk == 0) {
+                if (foundAccount) {
+                        cpeabStrncpy(id_type, accountId, BFR_SIZE_64*sizeof(char));
+                        return RETURN_OK;
+                } else {
+                        WebcfgDebug("Not able to parse accountID\n");
+                        return RETURN_ERR;
+                }
+        } else if (id_chk == 1) {
+                if (foundPartner) {
+                        cpeabStrncpy(id_type, partnerId, BFR_SIZE_64*sizeof(char));
+                        return RETURN_OK;
+                } else {
+                        cpeabStrncpy(id_type, "comcast", BFR_SIZE_64*sizeof(char));
+                        WebcfgDebug("Partner ID not found. Using default: comcast\n");
+                        return RETURN_OK;
+                }
+        }
+
+        return RETURN_ERR;
 }
+
 char * getPartnerID()
 {
         int partner_id_chk = 1;
         char *partner_id = NULL;
         int ret_val;
 
-  	partner_id = malloc(BFR_SIZE_64*sizeof(char));
+        partner_id = malloc(BFR_SIZE_64*sizeof(char));
         if (!partner_id)
         {
                 WebcfgError("%s : partner_id couldnt be assigned with memory\n",__func__);
@@ -564,7 +568,7 @@ char * getFirmwareUpgradeStartTime()
 {
         char * start_time = NULL;
 
-	start_time = malloc(BFR_SIZE_32*sizeof(char));
+        start_time = malloc(BFR_SIZE_32*sizeof(char));
         if (!start_time)
         {
                 WebcfgError("%s : start_time couldnt be assigned with memory\n",__func__);
@@ -579,7 +583,7 @@ char * getFirmwareUpgradeEndTime()
 {
         char * end_time = NULL;
         
-	end_time = malloc(BFR_SIZE_32*sizeof(char));
+        end_time = malloc(BFR_SIZE_32*sizeof(char));
         if (!end_time)
         {
                 WebcfgError("%s : end_time couldnt be assigned with memory\n",__func__);
