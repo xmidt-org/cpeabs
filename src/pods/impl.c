@@ -493,7 +493,8 @@ int get_id_pstore(int id_chk, char *id_type) {
 
         // Return based on id_chk
         if (id_chk == 0) {
-                if (foundAccount) {
+
+                if ((foundAccount) && (accountId[0] != '\0')) {
                         cpeabStrncpy(id_type, accountId, BFR_SIZE_64*sizeof(char));
                         return RETURN_OK;
                 } else {
@@ -501,7 +502,7 @@ int get_id_pstore(int id_chk, char *id_type) {
                         return RETURN_ERR;
                 }
         } else if (id_chk == 1) {
-                if (foundPartner) {
+                if ((foundPartner) && (partnerId[0] != '\0')) {
                         cpeabStrncpy(id_type, partnerId, BFR_SIZE_64*sizeof(char));
                         return RETURN_OK;
                 } else {
